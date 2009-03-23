@@ -66,17 +66,16 @@ my @t =
 1e1,
 0.1e1
     ]>>,
-#1e-1,
-#1e00,2e+00,2e-00
-#,"rosebud"]>>,
-#    Q<<[[[[[[[[[[[[[[[[[[["Not too deep"]]]]]]]]]]]]]]]]]]]>>,
-#    Q<<{
-#    "JSON Test Pattern pass3": {
-#        "The outermost value": "must be an object or array.",
-#        "In this test": "It is an object."
-#    }
-#}
-#>>,
+    Q<<[1e-1]>>,
+    Q<<[1e00,2e+00,2e-00,"rosebud"]>>,
+    Q<<[[[[[[[[[[[[[[[[[[["Not too deep"]]]]]]]]]]]]]]]]]]]>>,
+    Q<<{
+    "JSON Test Pattern pass3": {
+        "The outermost value": "must be an object or array.",
+        "In this test": "It is an object."
+    }
+}
+>>,
     ;
 
 my @n = 
