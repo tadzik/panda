@@ -37,7 +37,7 @@ grammar JSON::Tiny::Grammar {
 
     token string {
         \" ~ \" [
-            | <-["\\]>
+            | <-["\\\t\n]>
             | \\ <str_escape>
         ]*
     };

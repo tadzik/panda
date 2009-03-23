@@ -93,7 +93,8 @@ my @n =
     Q<<["Illegal backslash escape: \x15"]>>,
     Q<<[\naked]>>,
     Q<<["Illegal backslash escape: \017"]>>,
-    Q<<[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["Too deep"]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]>>,
+# skipped: wo don't implement no stinkin' aritifical limits.
+#    Q<<[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["Too deep"]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]>>,
     Q<<{"Missing colon" null}>>,
     Q<<["Unclosed array">>,
     Q<<{"Double colon":: null}>>,
@@ -134,8 +135,12 @@ for @t -> $t {
 }
 
 for @n -> $t {
-    ok (try { JSON::Tiny::Grammar.parse($t) }) ~~ undef, "NOT parsed «$t»";
-
+    my $desc = $t;
+    if $desc ~~ m/\n/ {
+        $desc .= subst(/\n.*$/, "\\n...[$i]");
+    }
+    ok (try { JSON::Tiny::Grammar.parse($t) }) ~~ undef, "NOT parsed «$desc»";
+    $i++;
 }
 
 
