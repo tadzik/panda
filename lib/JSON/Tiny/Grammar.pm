@@ -18,7 +18,7 @@ grammar JSON::Tiny::Grammar {
             [   # work around non-existing LTM
                 [
                     <value>
-                    [\, <value> ]*
+                    [\, [<value> | <fail: "expected value after comma">] ]*
                 ]?
                 \s*
             ]
