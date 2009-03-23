@@ -1,7 +1,7 @@
 use v6;
 grammar JSON::Tiny::Grammar {
-    rule TOP        { ^ <object> $          {*}   };
-    rule object     { '{' <pairlist> '}'    {*}   };
+    rule TOP        { ^ [<object> | <array>] $  {*}   };
+    rule object     { '{' ~ '}' <pairlist>      {*}   };
     rule pairlist   {
         [ <pair>
          [\, <pair> ]*
@@ -14,12 +14,11 @@ grammar JSON::Tiny::Grammar {
     };
 
     rule array {
-        '['
+        '[' ~ ']'
             [
                 <value>
                 [\, <value> ]*
             ]?
-        ']'
     };
 
     rule value {
