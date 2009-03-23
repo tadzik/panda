@@ -4,7 +4,7 @@ grammar JSON::Tiny::Grammar {
     rule object     { '{' ~ '}' <pairlist>      {*}   };
     rule pairlist   {
         [ <pair>
-         [\, <pair> ]*
+         [\, [ <pair> | <.fail_trailing> ] ]*
         ]?
         {*}
     };
@@ -18,10 +18,11 @@ grammar JSON::Tiny::Grammar {
             [   # work around non-existing LTM
                 [
                     <value>
-                    [\, [<value> | <fail: "expected value after comma">] ]*
+                    [\, [<value> | <.fail_trailing>] ]*
                 ]?
                 \s*
             ]
+        {*}
     };
 
     rule value {
@@ -53,6 +54,9 @@ grammar JSON::Tiny::Grammar {
         [ <[eE]> [\+|\-]? <[0..9]>+ ]?
     }
 
+    regex fail_trailing {
+        <fail: 'Expecting value after comma (trailing comma?)'>
+    }
 }
 
 # vim: ft=perl6
