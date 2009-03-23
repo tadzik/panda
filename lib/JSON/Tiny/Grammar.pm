@@ -15,10 +15,13 @@ grammar JSON::Tiny::Grammar {
 
     rule array {
         '[' ~ ']'
-            [
-                <value>
-                [\, <value> ]*
-            ]?
+            [   # work around non-existing LTM
+                [
+                    <value>
+                    [\, <value> ]*
+                ]?
+                \s*
+            ]
     };
 
     rule value {
@@ -35,7 +38,7 @@ grammar JSON::Tiny::Grammar {
         \" ~ \" [
             | <-["\\]>
             | \\ <str_escape>
-        ]
+        ]*
     };
 
     token str_escape {
