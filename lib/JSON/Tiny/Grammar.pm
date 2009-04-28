@@ -1,6 +1,10 @@
 use v6;
 grammar JSON::Tiny::Grammar {
-    rule TOP        { ^ [<object> | <array>] $  {*}   };
+    rule TOP { 
+        ^ [
+            | <object> {*}      #= object
+            | <array>           #= array
+        ]$ };
     rule object     { '{' ~ '}' <pairlist>      {*}   };
     rule pairlist   {
         [ <pair>
@@ -17,7 +21,7 @@ grammar JSON::Tiny::Grammar {
         '[' ~ ']'
             [   # work around non-existing LTM
                 [
-                    <value>
+                    <value>**1
                     [\, [<value> | <.fail_trailing>] ]*
                 ]?
                 \s*
@@ -36,10 +40,10 @@ grammar JSON::Tiny::Grammar {
     };
 
     token string {
-        \" ~ \" [
+        \" ~ \" ([
             | <-["\\\t\n]>
             | \\ <str_escape>
-        ]*
+        ]*) {*}
     };
 
     token str_escape {

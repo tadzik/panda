@@ -22,17 +22,33 @@ method pair($/) {
     };
 }
 
-method value($/, $what) {
-#    do { do { make 1 } };
-    when * { make 1 } ;
+method array($/) {
+    make [ $<value>.map: *.ast ];
+}
 
-#    given $what {
-#        when 'true'     { make Bool::True  };
-#        when 'false'    { make Bool::False };
-#        when 'null'     { make undef       };
-#        when *          { make 2           };
-##        when *          { make $/{$_}.ast  };
-#    }
+method value($/, $what) {
+    given $what {
+        when 'true'     { make Bool::True  };
+        when 'false'    { make Bool::False };
+        when 'null'     { make undef       };
+        when *          { make $/{$_}.ast  };
+    }
+}
+
+method string($/) {
+    my $s = '';
+    for $0.chunks {
+        if .key eq '~' {
+            $s ~= .value;
+        } else {
+            $s ~= .value.ast;
+        }
+    }
+    make $s;
+}
+
+method number($/) {
+    make +$/;
 }
 
 # vim: ft=perl6
