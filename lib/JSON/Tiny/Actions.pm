@@ -45,10 +45,27 @@ method string($/) {
         if .key eq '~' {
             $s ~= .value;
         } else {
-            $s ~= .value.ast;
+            say $_.perl;
+            $s ~= .value.<str_escape>.ast;
+            say "alive";
         }
     }
     make $s;
+}
+
+method str_escape($/) {
+    if $<xdigit> {
+        make chr(:16($<xdigit>.join));
+    } else {
+        given ~$/ {
+            when '\\' { make '\\'; }
+            when 'n'  { make "\n"; }
+            when 't'  { make "\t"; }
+            when 'f'  { make "\f"; }
+            when 'r'  { make "\r"; }
+        }
+    }
+#    say "In str_escape(): ", $/.ast.perl;
 }
 
 method number($/) {
