@@ -3,7 +3,7 @@ grammar JSON::Tiny::Grammar {
     rule TOP { 
         ^ [
             | <object> {*}      #= object
-            | <array>           #= array
+            | <array>  {*}      #= array
         ]$ };
     rule object     { '{' ~ '}' <pairlist>      {*}   };
     rule pairlist   {
@@ -56,6 +56,7 @@ grammar JSON::Tiny::Grammar {
         [ 0 | <[1..9]> <[0..9]>* ]
         [ \. <[0..9]>+ ]?
         [ <[eE]> [\+|\-]? <[0..9]>+ ]?
+        {*}
     }
 
     regex fail_trailing {

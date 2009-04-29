@@ -4,7 +4,7 @@ method TOP($/, $what) {
     make $/{$what}.ast;
 };
 method object($/) {
-    make $<pairlist>.ast;
+    make hash ( $<pairlist>.ast );
 }
 
 method pairlist($/) {
@@ -23,7 +23,11 @@ method pair($/) {
 }
 
 method array($/) {
-    make [ $<value>.map: *.ast ];
+    if $<value> {
+        make [ $<value>.map: *.ast ];
+    } else {
+        make [];
+    }
 }
 
 method value($/, $what) {

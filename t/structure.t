@@ -3,11 +3,15 @@ BEGIN { @*INC.push('lib') };
 use JSON::Tiny::Grammar;
 use JSON::Tiny::Actions;
 use Test;
-plan 1;
 
 my @t = 
    '{ "a" : 1 }' => { a => 1 },
+   '[]'          => [],
+   '[ "a", "b"]' => [ "a", "b" ],
+   '[3]'         => [3],
+   '[{ "foo" : { "bar" : 3 } }, 78]' => [{ foo => { bar => 3 }}, 78],
 ;
+plan +@t;
 
 for @t -> $p {
     my $a = JSON::Tiny::Actions.new();
