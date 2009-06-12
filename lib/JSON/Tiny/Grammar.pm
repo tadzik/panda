@@ -41,10 +41,14 @@ grammar JSON::Tiny::Grammar {
 
     token string {
         \" ~ \" ([
-            | <-["\\\t\n]>+
+            | <str>
             | \\ <str_escape>
         ]*) {*}
     };
+
+    token str {
+        <-["\\\t\n]>+
+    }
 
     token str_escape {
         [

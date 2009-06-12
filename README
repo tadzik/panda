@@ -10,6 +10,3 @@ State:
 
     The parser is pretty complete, if you find anything that it should
     parse and doesn't, or the other way round, please let me know.
-    
-    The action methods are bit buggy.
-    Currently string escape sequences of the form \uFFFF make it die.
