@@ -43,11 +43,10 @@ method string($/) {
     my $s = '';
     for $0.chunks {
         if .key eq '~' {
+            next if .value eq '\\'; #'
             $s ~= .value;
         } else {
-            say $_.perl;
-            $s ~= .value.<str_escape>.ast;
-            say "alive";
+            $s ~= ~(.value.ast);
         }
     }
     make $s;
@@ -58,14 +57,13 @@ method str_escape($/) {
         make chr(:16($<xdigit>.join));
     } else {
         given ~$/ {
-            when '\\' { make '\\'; }
+            when '\\' { make '\\'; } #'
             when 'n'  { make "\n"; }
             when 't'  { make "\t"; }
             when 'f'  { make "\f"; }
             when 'r'  { make "\r"; }
         }
     }
-#    say "In str_escape(): ", $/.ast.perl;
 }
 
 method number($/) {
