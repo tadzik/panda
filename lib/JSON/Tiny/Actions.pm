@@ -24,7 +24,12 @@ method pair($/) {
 
 method array($/) {
     if $<value> {
-        make [ $<value>.map: *.ast ];
+        my @r = ();
+        for $<value>>>.ast {
+            when Hash { @r.push: \$_ }
+            default   { @r.push:  $_ }
+        }
+        make @r
     } else {
         make [];
     }

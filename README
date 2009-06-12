@@ -12,5 +12,4 @@ State:
     parse and doesn't, or the other way round, please let me know.
     
     The action methods are bit buggy.
-    Currently string escape sequences of the form \uFFFF make it die, and
-    [{ a => b}] is reproduced as [ a => b].
+    Currently string escape sequences of the form \uFFFF make it die.
