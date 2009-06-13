@@ -4,7 +4,7 @@ BEGIN { @*INC.push('lib') };
 use JSON::Tiny::Grammar;
 use Test;
 
-my @t = 
+my @t =
     '{  }',
     '{ "a" : "b" }',
     '{ "a" : null }',
@@ -119,7 +119,7 @@ my @t =
         "width": 500,
         "height": 500
     },
-    "image": { 
+    "image": {
         "src": "Images/Sun.png",
         "name": "sun1",
         "hOffset": 250,
@@ -139,7 +139,7 @@ my @t =
 }}>>,
     ;
 
-my @n = 
+my @n =
     '{ ',
     '{ 3 : 4 }',
     '{ 3 : tru }',  # not quite true

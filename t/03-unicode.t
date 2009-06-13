@@ -6,7 +6,7 @@ use JSON::Tiny::Actions;
 use Test;
 
 
-my @t = 
+my @t =
     '{ "a" : "b\u00E5" }' => { 'a' => 'bå' },
     '[ "\u2685" ]' => [ '⚅' ];
 
