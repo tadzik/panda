@@ -62,7 +62,7 @@ my @t =
 plan +@t;
 
 for @t -> $p {
-    my $s = from_json($p.key);
+    my $s = from-json($p.key);
     is_deeply $s, $p.value, "Correct data structure for «{$p.key}»"
         or say "# Got: $s\n# Expected: {$p.value.perl}";
 }

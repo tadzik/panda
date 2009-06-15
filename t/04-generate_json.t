@@ -1,5 +1,6 @@
-use JSON::Tiny;
 use Test;
+BEGIN { @*INC.push: 'lib' };
+use JSON::Tiny;
 
 my @s =
         'Int'            => [ 1 ],
@@ -28,8 +29,8 @@ my @s =
 plan +@s;
 
 for @s {
-    warn "The json is <{ to_json( .value ) }>";
-    my $r = from_json( to_json( .value ) );
+    warn "The json is <{ to-json( .value ) }>";
+    my $r = from-json( to-json( .value ) );
     is_deeply $r, .value, .key
         or say "# Got: {$r.perl}\n# Expected: {$_.perl}";
 }
