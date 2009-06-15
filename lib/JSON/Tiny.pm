@@ -27,7 +27,8 @@ module JSON::Tiny {
     multi to-json(Int $d) { $d }
     multi to-json(Str $d) { 
         '"'
-        ~ $d
+        ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
+                => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])
         ~ '"'
     }
     multi to-json(Array $data) {
