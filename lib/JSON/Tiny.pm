@@ -8,8 +8,8 @@ It supports strings, numbers, arrays and hashes (no custom objects).
 =head1 Synopsis
 
     use JSON::Tiny;
-    my $json = to_json([1, 2, "a third item"]);
-    my $original-data-structure = to-json($json);
+    my $json = to-json([1, 2, "a third item"]);
+    my $copy-of-original-data-structure = from-json($json);
 
 =end Pod
 
@@ -17,30 +17,30 @@ module JSON::Tiny {
     use JSON::Tiny::Actions;
     use JSON::Tiny::Grammar;
 
-    sub from_json($text) is export {
+    sub from-json($text) is export {
         my $a = JSON::Tiny::Actions.new();
         my $o = JSON::Tiny::Grammar.parse($text, :action($a));
         return $o.ast;
     }
 
-    multi to_json(Num $d) is export { $d }
-    multi to_json(Int $d) { $d }
-    multi to_json(Str $d) { 
+    multi to-json(Num $d) is export { $d }
+    multi to-json(Int $d) { $d }
+    multi to-json(Str $d) { 
         '"'
         ~ $d
         ~ '"'
     }
-    multi to_json(Array $data) {
+    multi to-json(Array $data) {
         return  '[ ' 
-               ~ (map { to_json($_) }, $data.values).join(', ')
+               ~ (map { to-json($_) }, $data.values).join(', ')
                ~ ' ]';
     }
-    multi to_json(Hash  $data) {
+    multi to-json(Hash  $data) {
         return '{ '
-               ~ (map { to_json(.key) ~ ' : ' ~ to_json(.value) }, $data.pairs).join(', ')
+               ~ (map { to-json(.key) ~ ' : ' ~ to-json(.value) }, $data.pairs).join(', ')
                ~ ' }';
     }
-    multi to_json(Bool  $data) { $data ?? 'true' !! 'false'; }
-    multi to_json($s) { die }
+    multi to-json(Bool  $data) { $data ?? 'true' !! 'false'; }
+    multi to-json($s) { die }
 }
 # vim: ft=perl6
