@@ -1,3 +1,18 @@
+=begin Pod
+
+=head1 JSON::Tiny
+
+C<JSON::Tiny> is a minimalistic module that reads and writes JSON.
+It supports strings, numbers, arrays and hashes (no custom objects).
+
+=head1 Synopsis
+
+    use JSON::Tiny;
+    my $json = to_json([1, 2, "a third item"]);
+    my $original-data-structure = to-json($json);
+
+=end Pod
+
 module JSON::Tiny {
     use JSON::Tiny::Actions;
     use JSON::Tiny::Grammar;
