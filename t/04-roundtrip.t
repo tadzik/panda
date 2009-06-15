@@ -8,6 +8,7 @@ my @s =
         'Str'            => [ 'one' ],
         'Str with quote' => [ '"foo"'],
         'other escapes'  => [ "\\/\"\n\r\tfoo\\"],
+        'Non-ASCII'      => [ 'möp stüff' ],
         'Empty Array'    => [ ],
         'Array of Int'   => [ 1, 2, 3, 123123123 ],
         'Array of Num'   => [ 1.3, 2.8, 32323423.4, 4.0 ],

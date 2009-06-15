@@ -26,9 +26,11 @@ module JSON::Tiny {
     multi to-json(Num $d) is export { $d }
     multi to-json(Int $d) { $d }
     multi to-json(Str $d) { 
+        my $s = 
         '"'
         ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
-                => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])
+                => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
+             .subst(/<-[\c0..\c127]>/, { sprintf '\u%04x', ord(~$_) }, :g)
         ~ '"'
     }
     multi to-json(Array $data) {
