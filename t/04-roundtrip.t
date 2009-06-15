@@ -32,7 +32,7 @@ my @s =
 plan +@s;
 
 for @s {
-    warn "The json is <{ to-json( .value ) }>";
+    #warn "The json is <{ to-json( .value ) }>";
     my $r = from-json( to-json( .value ) );
     is_deeply $r, .value, .key
         or say "# Got: {$r.perl}\n# Expected: {$_.perl}";

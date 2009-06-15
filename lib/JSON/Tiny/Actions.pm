@@ -4,7 +4,7 @@ method TOP($/, $what) {
     make $/{$what}.ast;
 };
 method object($/) {
-    make ~$<pairlist> ?? hash ( $<pairlist>.ast ) !! {};
+    make $<pairlist>.ast ?? hash ( $<pairlist>.ast ) !! {};
 }
 
 method pairlist($/) {

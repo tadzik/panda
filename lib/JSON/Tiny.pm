@@ -26,11 +26,8 @@ module JSON::Tiny {
     multi to-json(Num $d) is export { $d }
     multi to-json(Int $d) { $d }
     multi to-json(Str $d) { 
-        '"'
-        ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
-                => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
-             .subst(/<-[\c0..\c127]>/, { sprintf '\u%04x', ord(~$_) }, :g)
-        ~ '"'
+        # RAKUDO BUG #66596 (can't .subst in multis)
+        string-to-json($d);
     }
     multi to-json(Array $data) {
         return  '[ ' 
@@ -44,5 +41,14 @@ module JSON::Tiny {
     }
     multi to-json(Bool  $data) { $data ?? 'true' !! 'false'; }
     multi to-json($s) { die }
+
+    # RAKUDO BUG #66596 (can't .subst in multis)
+    sub string-to-json($d) {
+        '"'
+        ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
+                => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
+             .subst(/<-[\c0..\c127]>/, { sprintf '\u%04x', ord(~$_) }, :g)
+        ~ '"'
+    }
 }
 # vim: ft=perl6
