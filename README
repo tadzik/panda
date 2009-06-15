@@ -14,9 +14,7 @@ State:
     The parser is pretty complete, if you find anything that it should
     parse and doesn't, or the other way round, please let me know.
 
-    The emitter works, it just has troubles with emitting Unicode escape
-    sequences (it's blocking on
-    <http://rt.perl.org/rt3/Ticket/Display.html?id=66596>).
+    The emitter works.
 
 Credits
     Moritz Lenz <moritz@faui2k3.org>
