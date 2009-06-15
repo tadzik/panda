@@ -1,12 +1,23 @@
 An initial Perl 6 grammar for JSON.
 
-This is a work in early progress. For more information please join #perl6 on
-irc.freenode.net, and talk to moritz_.
+This is a work in progress. For more information please join #perl6 on
+irc.freenode.net, and talk to moritz_ or viklund, or write a mail to
+perl6-users@perl.org.
 
 All files (unless noted otherwise) can be used, modified and redistributed
-under the terms of the Artistic License Version 2.
+under the terms of the Artistic License Version 2. Examples (in the
+documentation, in tests or distributed as separate files) can be considered
+public domain.
 
 State:
 
     The parser is pretty complete, if you find anything that it should
     parse and doesn't, or the other way round, please let me know.
+
+    The emitter works, it just has troubles with emitting Unicode escape
+    sequences (it's blocking on
+    <http://rt.perl.org/rt3/Ticket/Display.html?id=66596>).
+
+Credits
+    Moritz Lenz <moritz@faui2k3.org>
+    Johan Viklund
