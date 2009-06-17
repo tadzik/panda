@@ -1,0 +1,12 @@
+lib/JSON/Tiny.pm
+lib/JSON/Tiny/Actions.pm
+lib/JSON/Tiny/Grammar.pm
+lib/Configure.pm
+t/04-roundtrip.t
+t/03-unicode.t
+t/01-parse.t
+t/02-structure.t
+META.yml
+Makfile.in
+README
+Configure
