@@ -1,6 +1,6 @@
 ---
 name: JSON-Tiny
-version: 0.1.1
+version: '0.1.2_1'
 author: 
     - 'Moritz Lenz <moritz@faui2k3.org>'
     - 'Johan Viklund <johan.viklund@gmail.com>'
@@ -14,7 +14,7 @@ requires:
 provides:
     JSON::Tiny:
         file: lib/JSON/Tiny.pm
-        version: 0.1.1
+        version: '0.1.2_1'
     JSON::Tiny::Grammar:
         file: lib/JSON/Tiny/Grammar.pm
     JSON::Tiny::Actions:
