@@ -35,7 +35,7 @@ for @s {
     #warn "The json is <{ to-json( .value ) }>";
     my $r = from-json( to-json( .value ) );
     is_deeply $r, .value, .key
-        or say "# Got: {$r.perl}\n# Expected: {$_.perl}";
+        or say "# Got: {$r.perl}\n# Expected: {$_.value.perl}";
 }
 
 # vim: ft=perl6
