@@ -16,6 +16,8 @@ State:
 
     The emitter works.
 
+    Both currently ignore possible surrogate pairs.
+
 Credits
     Moritz Lenz <moritz@faui2k3.org>
     Johan Viklund
