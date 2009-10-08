@@ -43,6 +43,7 @@ module JSON::Tiny {
                ~ ' }';
     }
     multi to-json(Bool  $data) { $data ?? 'true' !! 'false'; }
+    multi to-json($data where undef) { 'null' }
     multi to-json($s) { die }
 }
 # vim: ft=perl6
