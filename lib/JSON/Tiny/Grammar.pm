@@ -8,6 +8,10 @@ grammar JSON::Tiny::Grammar {
     rule object     { '{' ~ '}' <pairlist>      {*}   };
     rule pairlist   {
         [ <pair>
+         # JSON doesn't allow trailing commas in lists,
+         # even though Javascript does. Since this causes
+         # lots of Perl hackers by surprise, throw a designated
+         # error mesasge in that case
          [\, [ <pair> | <.fail_trailing> ] ]*
         ]?
         {*}
@@ -29,6 +33,7 @@ grammar JSON::Tiny::Grammar {
         {*}
     };
 
+    # TODO: turn into a proto regex once they are implemented
     rule value {
         | <string>  {*}     #= string
         | <number>  {*}     #= number
