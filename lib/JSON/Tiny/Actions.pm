@@ -1,6 +1,6 @@
 class JSON::Tiny::Actions;
 
-method TOP($/, $what) { 
+method TOP($/, $what) {
     make $/{$what}.ast;
 };
 method object($/) {
@@ -10,7 +10,7 @@ method object($/) {
 method pairlist($/) {
     if $<pair> {
         my %r;
-        for $<pair>.map({$_.ast}) -> $m {
+        for $<pair>.map(*.ast) -> $m {
             %r{$m<key>} = $m<value>;
         }
         make %r;
@@ -22,7 +22,7 @@ method pairlist($/) {
 
 method pair($/) {
     make {
-        key => $<string>.ast,
+        key   => $<string>.ast,
         value => $<value>.ast,
     };
 }
@@ -56,7 +56,7 @@ method string($/) {
             next if .value eq '\\'; #'
             $s ~= .value;
         } else {
-            $s ~= ~(.value.ast);
+            $s ~= .value.ast;
         }
     }
     make $s;
@@ -67,7 +67,7 @@ method str_escape($/) {
         make chr(:16($<xdigit>.join));
     } else {
         given ~$/ {
-            when '\\' { make '\\'; } #'
+            when '\\' { make '\\'; }
             when 'n'  { make "\n"; }
             when 't'  { make "\t"; }
             when 'f'  { make "\f"; }
