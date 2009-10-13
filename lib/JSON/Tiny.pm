@@ -20,6 +20,7 @@ use JSON::Tiny::Grammar;
 
 multi to-json(Num $d) { ~$d }
 multi to-json(Int $d) { ~$d }
+multi to-json(Bool  $data) { $data ?? 'true' !! 'false'; }
 multi to-json(Str $d) {
     '"'
     ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
@@ -37,7 +38,7 @@ multi to-json(Hash  $data) {
             ~ (map { to-json(.key) ~ ' : ' ~ to-json(.value) }, $data.pairs).join(', ')
             ~ ' }';
 }
-multi to-json(Bool  $data) { $data ?? 'true' !! 'false'; }
+
 multi to-json($data where undef) { 'null' }
 multi to-json($s) {
     die "Can't serialize an object of type " ~ $s.WHAT.perl
