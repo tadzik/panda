@@ -18,8 +18,8 @@ module JSON::Tiny;
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
 
-multi to-json(Num $d) is export { $d }
-multi to-json(Int $d) { $d }
+multi to-json(Num $d) { ~$d }
+multi to-json(Int $d) { ~$d }
 multi to-json(Str $d) {
     '"'
     ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
