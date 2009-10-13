@@ -13,39 +13,39 @@ It supports strings, numbers, arrays and hashes (no custom objects).
 
 =end Pod
 
-module JSON::Tiny {
-    use JSON::Tiny::Actions;
-    use JSON::Tiny::Grammar;
+module JSON::Tiny;
 
-    multi to-json(Num $d) is export { $d }
-    multi to-json(Int $d) { $d }
-    multi to-json(Str $d) {
-        '"'
-        ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
-                => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
-             .subst(/<-[\c0..\c127]>/, { sprintf '\u%04x', ord(~$_) }, :g)
-        ~ '"'
-    }
-    multi to-json(Array $data) {
-        return  '[ '
-               ~ (map { to-json($_) }, $data.values).join(', ')
-               ~ ' ]';
-    }
-    multi to-json(Hash  $data) {
-        return '{ '
-               ~ (map { to-json(.key) ~ ' : ' ~ to-json(.value) }, $data.pairs).join(', ')
-               ~ ' }';
-    }
-    multi to-json(Bool  $data) { $data ?? 'true' !! 'false'; }
-    multi to-json($data where undef) { 'null' }
-    multi to-json($s) {
-        die "Can't serialize an object of type " ~ $s.WHAT.perl
-    }
+use JSON::Tiny::Actions;
+use JSON::Tiny::Grammar;
 
-    sub from-json($text) is export {
-        my $a = JSON::Tiny::Actions.new();
-        my $o = JSON::Tiny::Grammar.parse($text, :action($a));
-        return $o.ast;
-    }
+multi to-json(Num $d) is export { $d }
+multi to-json(Int $d) { $d }
+multi to-json(Str $d) {
+    '"'
+    ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
+            => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
+            .subst(/<-[\c0..\c127]>/, { sprintf '\u%04x', ord(~$_) }, :g)
+    ~ '"'
+}
+multi to-json(Array $data) {
+    return  '[ '
+            ~ (map { to-json($_) }, $data.values).join(', ')
+            ~ ' ]';
+}
+multi to-json(Hash  $data) {
+    return '{ '
+            ~ (map { to-json(.key) ~ ' : ' ~ to-json(.value) }, $data.pairs).join(', ')
+            ~ ' }';
+}
+multi to-json(Bool  $data) { $data ?? 'true' !! 'false'; }
+multi to-json($data where undef) { 'null' }
+multi to-json($s) {
+    die "Can't serialize an object of type " ~ $s.WHAT.perl
+}
+
+sub from-json($text) is export {
+    my $a = JSON::Tiny::Actions.new();
+    my $o = JSON::Tiny::Grammar.parse($text, :action($a));
+    return $o.ast;
 }
 # vim: ft=perl6
