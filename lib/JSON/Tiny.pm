@@ -17,12 +17,6 @@ module JSON::Tiny {
     use JSON::Tiny::Actions;
     use JSON::Tiny::Grammar;
 
-    sub from-json($text) is export {
-        my $a = JSON::Tiny::Actions.new();
-        my $o = JSON::Tiny::Grammar.parse($text, :action($a));
-        return $o.ast;
-    }
-
     multi to-json(Num $d) is export { $d }
     multi to-json(Int $d) { $d }
     multi to-json(Str $d) {
@@ -46,6 +40,12 @@ module JSON::Tiny {
     multi to-json($data where undef) { 'null' }
     multi to-json($s) {
         die "Can't serialize an object of type " ~ $s.WHAT.perl
+    }
+
+    sub from-json($text) is export {
+        my $a = JSON::Tiny::Actions.new();
+        my $o = JSON::Tiny::Grammar.parse($text, :action($a));
+        return $o.ast;
     }
 }
 # vim: ft=perl6
