@@ -1,12 +1,12 @@
 use v6;
 grammar JSON::Tiny::Grammar;
-rule TOP { 
+rule TOP {
     ^ [
         | <object> {*}      #= object
         | <array>  {*}      #= array
     ]$
-};
-rule object     { '{' ~ '}' <pairlist>      {*}   };
+}
+rule object     { '{' ~ '}' <pairlist>      {*}   }
 rule pairlist   {
     [ <pair>
         # JSON doesn't allow trailing commas in lists,
@@ -16,11 +16,11 @@ rule pairlist   {
         [\, [ <pair> | <.fail_trailing> ] ]*
     ]?
     {*}
-};
+}
 
 rule pair {
     <string> ':' <value>        {*}
-};
+}
 
 rule array {
     '[' ~ ']'
@@ -32,7 +32,7 @@ rule array {
             \s*
         ]
     {*}
-};
+}
 
 # TODO: turn into a proto regex once they are implemented
 rule value {
@@ -43,14 +43,14 @@ rule value {
     | 'true'    {*}     #= true
     | 'false'   {*}     #= false
     | 'null'    {*}     #= null
-};
+}
 
 token string {
     \" ~ \" ([
         | <str>
         | \\ <str_escape>
     ]*) {*}
-};
+}
 
 token str {
     <-["\\\t\n]>+
@@ -61,7 +61,7 @@ token str_escape {
         <["\\/bfnrt]>
     | u <xdigit>**4
     ] {*}
-};
+}
 
 token number {
     \- ?
