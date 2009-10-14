@@ -18,28 +18,28 @@ module JSON::Tiny;
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
 
-multi to-json(Num $d) { ~$d }
-multi to-json(Int $d) { ~$d }
-multi to-json(Bool  $data) { $data ?? 'true' !! 'false'; }
-multi to-json(Str $d) {
+multi to-json(Num  $d) { ~$d }
+multi to-json(Int  $d) { ~$d }
+multi to-json(Bool $d) { $d ?? 'true' !! 'false'; }
+multi to-json(Str  $d) {
     '"'
     ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
             => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
             .subst(/<-[\c0..\c127]>/, { sprintf '\u%04x', ord(~$_) }, :g)
     ~ '"'
 }
-multi to-json(Array $data) {
+multi to-json(Array $d) {
     return  '[ '
-            ~ (map { to-json($_) }, $data.values).join(', ')
+            ~ (map { to-json($_) }, $d.values).join(', ')
             ~ ' ]';
 }
-multi to-json(Hash  $data) {
+multi to-json(Hash  $d) {
     return '{ '
-            ~ (map { to-json(.key) ~ ' : ' ~ to-json(.value) }, $data.pairs).join(', ')
+            ~ (map { to-json(.key) ~ ' : ' ~ to-json(.value) }, $d.pairs).join(', ')
             ~ ' }';
 }
 
-multi to-json($data where undef) { 'null' }
+multi to-json($d where undef) { 'null' }
 multi to-json($s) {
     die "Can't serialize an object of type " ~ $s.WHAT.perl
 }
