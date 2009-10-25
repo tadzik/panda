@@ -53,7 +53,7 @@ method string($/) {
     my $s = '';
     for $0.chunks {
         if .key eq '~' {
-            next if .value eq '\\'; #'
+            next if .value eq '\\';
             $s ~= .value;
         } else {
             $s ~= .value.ast;
