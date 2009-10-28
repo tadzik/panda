@@ -13,7 +13,7 @@ rule pairlist   {
         # even though Javascript does. Since this causes
         # lots of Perl hackers by surprise, throw a designated
         # error mesasge in that case
-        [\, [ <pair> | <.fail_trailing> ] ]*
+        [\, [ <pair> || <.fail_trailing> ] ]*
     ]?
     {*}
 }
@@ -27,7 +27,7 @@ rule array {
         [   # work around non-existing LTM
             [
                 <value>**1
-                [\, [<value> | <.fail_trailing>] ]*
+                [\, [<value> || <.fail_trailing>] ]*
             ]?
             \s*
         ]
