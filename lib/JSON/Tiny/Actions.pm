@@ -4,40 +4,19 @@ method TOP($/, $what) {
     make $/{$what}.ast;
 };
 method object($/) {
-    make $<pairlist>.ast ?? hash ( $<pairlist>.ast ) !! {};
+    make %($<pairlist>.ast)
 }
 
 method pairlist($/) {
-    if $<pair> {
-        my %r;
-        for $<pair>.map(*.ast) -> $m {
-            %r{$m<key>} = $m<value>;
-        }
-        make %r;
-    }
-    else {
-        make undef;
-    }
+    make = $<pair>».ast;
 }
 
 method pair($/) {
-    make {
-        key   => $<string>.ast,
-        value => $<value>.ast,
-    };
+    make ( $<string>.ast => $<value>.ast );
 }
 
 method array($/) {
-    if $<value> {
-        my @r = ();
-        for $<value>>>.ast {
-            when Hash { @r.push: \$_ }
-            default   { @r.push:  $_ }
-        }
-        make @r
-    } else {
-        make [];
-    }
+    make $<value>».ast;
 }
 
 method value($/, $what) {
