@@ -18,6 +18,8 @@ module JSON::Tiny;
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
 
+proto to-json($d) is export(:DEFAULT) { to-json($d) }
+
 multi to-json(Num  $d) { ~$d }
 multi to-json(Int  $d) { ~$d }
 multi to-json(Bool $d) { $d ?? 'true' !! 'false'; }
