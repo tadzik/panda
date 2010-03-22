@@ -32,7 +32,7 @@ method value($/, $what) {
     given $what {
         when 'true'     { make Bool::True  };
         when 'false'    { make Bool::False };
-        when 'null'     { make undef       };
+        when 'null'     { make Any         };
         when *          { make $/{$_}.ast  };
     }
 }
