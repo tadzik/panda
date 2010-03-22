@@ -9,7 +9,7 @@ method object($/) {
 
 method pairlist($/) {
     if $<pair> {
-        make $<pair>».ast;
+        make $<pair>>>.ast;
     }
     else {
         make ();
@@ -22,7 +22,7 @@ method pair($/) {
 
 method array($/) {
     if $<value> {
-        make $<value>».ast;
+        make $<value>>>.ast;
     } else {
         make [];
     }
@@ -41,7 +41,7 @@ method string($/) {
     my $s = '';
     for $0.chunks {
         if .key eq '~' {
-            next if .value eq '\\';
+            if .value eq '\\' { next }
             $s ~= .value;
         } else {
             $s ~= .value.ast;

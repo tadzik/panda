@@ -41,7 +41,7 @@ multi to-json(Hash  $d) {
             ~ ' }';
 }
 
-multi to-json($d where undef) { 'null' }
+multi to-json($d where { $d.notdef }) { 'null' }
 multi to-json($s) {
     die "Can't serialize an object of type " ~ $s.WHAT.perl
 }
