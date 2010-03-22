@@ -191,7 +191,12 @@ for @t -> $t {
     if $desc ~~ m/\n/ {
         $desc .= subst(/\n.*$/, "\\n...[$i]");
     }
-    ok JSON::Tiny::Grammar.parse($t), "JSON string «$desc» parsed";
+    my $parsed = 0;
+    try {
+        JSON::Tiny::Grammar.parse($t);
+        $parsed = 1;
+    }
+    ok $parsed, "JSON string «$desc» parsed";
     $i++;
 }
 
