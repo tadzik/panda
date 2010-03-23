@@ -12,11 +12,11 @@
 #     my $copy-of-original-data-structure = from-json($json);
 # 
 # =end Pod
-# 
-module JSON::Tiny;
 
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
+
+module JSON::Tiny_;
 
 proto to-json($d) is export(:DEFAULT) { to-json($d) }
 
@@ -48,7 +48,7 @@ multi to-json($s) {
 
 sub from-json($text) is export {
     my $a = JSON::Tiny::Actions.new();
-    my $o = JSON::Tiny::Grammar.parse($text, :action($a));
+    my $o = JSON::Tiny::Grammar.parse($text, :actions($a));
     return $o.ast;
 }
 # vim: ft=perl6

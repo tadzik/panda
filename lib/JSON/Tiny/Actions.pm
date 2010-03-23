@@ -28,15 +28,6 @@ method array($/) {
     }
 }
 
-method value($/, $what) {
-    given $what {
-        when 'true'     { make Bool::True  };
-        when 'false'    { make Bool::False };
-        when 'null'     { make Any         };
-        when *          { make $/{$_}.ast  };
-    }
-}
-
 method string($/) {
     my $s = '';
     for $0.chunks {
@@ -49,6 +40,13 @@ method string($/) {
     }
     make $s;
 }
+method value:sym<number>($/) { make +$/ }
+method value:sym<string>($/) { make $<string>.ast }
+method value:sym<true>($/)   { make Bool::True  }
+method value:sym<false>($/)  { make Bool::False }
+method value:sym<null>($/)   { make Any }
+method value:sym<object>($/) { make $<object>.ast }
+method value:sym<array>($/)  { make $<array>.ast }
 
 method str_escape($/) {
     if $<xdigit> {
@@ -64,8 +62,5 @@ method str_escape($/) {
     }
 }
 
-method number($/) {
-    make +$/;
-}
 
 # vim: ft=perl6

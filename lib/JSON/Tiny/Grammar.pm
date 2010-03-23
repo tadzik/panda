@@ -34,22 +34,30 @@ rule array {
     {*}
 }
 
-# TODO: turn into a proto regex once they are implemented
-rule value {
-    | <string>  {*}     #= string
-    | <number>  {*}     #= number
-    | <object>  {*}     #= object
-    | <array>   {*}     #= array
-    | 'true'    {*}     #= true
-    | 'false'   {*}     #= false
-    | 'null'    {*}     #= null
-}
 
-token string {
+proto rule value { <...> };
+token value:sym<string> {
+    <string>
+}
+rule value:sym<number> {
+    \- ?
+    [ 0 | <[1..9]> <[0..9]>* ]
+    [ \. <[0..9]>+ ]?
+    [ <[eE]> [\+|\-]? <[0..9]>+ ]?
+}
+rule value:sym<true>   { <sym>    };
+rule value:sym<false>  { <sym>    };
+rule value:sym<null>   { <sym>    };
+rule value:sym<object> { <object> };
+rule value:sym<array>  { <array>  };
+
+rule string {
+    <.ws>
     \" ~ \" ([
         | <str>
         | \\ <str_escape>
-    ]*) {*}
+    ]*)
+    <.ws>
 }
 
 token str {
@@ -61,14 +69,6 @@ token str_escape {
         <["\\/bfnrt]>
     | u <xdigit>**4
     ] {*}
-}
-
-token number {
-    \- ?
-    [ 0 | <[1..9]> <[0..9]>* ]
-    [ \. <[0..9]>+ ]?
-    [ <[eE]> [\+|\-]? <[0..9]>+ ]?
-    {*}
 }
 
 regex fail_trailing {
