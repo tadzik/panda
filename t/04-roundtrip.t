@@ -1,6 +1,6 @@
 use Test;
 BEGIN { @*INC.push: 'lib' };
-use JSON::Tiny_;
+use JSON::Tiny;
 
 my @s =
         'Int'            => [ 1 ],

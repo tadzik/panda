@@ -16,7 +16,7 @@
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
 
-module JSON::Tiny_;
+module JSON::Tiny;
 
 proto to-json($d) is export(:DEFAULT) { to-json($d) }
 

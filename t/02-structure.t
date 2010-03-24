@@ -1,6 +1,6 @@
 use v6;
 BEGIN { @*INC.push('lib') };
-use JSON::Tiny_;
+use JSON::Tiny;
 use Test;
 
 my @t =
