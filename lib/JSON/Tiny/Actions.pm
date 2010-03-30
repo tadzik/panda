@@ -9,7 +9,7 @@ method object($/) {
 
 method pairlist($/) {
     if $<pair> {
-        make $<pair>>>.ast;
+        make $<pair>».ast;
     }
     else {
         make ();
@@ -22,7 +22,7 @@ method pair($/) {
 
 method array($/) {
     if $<value> {
-        make $<value>>>.ast;
+        make $<value>».ast;
     } else {
         make [];
     }
