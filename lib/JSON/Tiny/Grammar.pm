@@ -35,19 +35,19 @@ rule array {
 }
 
 
-proto rule value { <...> };
-rule value:sym<number> {
-    \- ?
+proto token value { <...> };
+token value:sym<number> {
+    '-'?
     [ 0 | <[1..9]> <[0..9]>* ]
     [ \. <[0..9]>+ ]?
     [ <[eE]> [\+|\-]? <[0..9]>+ ]?
 }
-rule value:sym<true>    { <sym>    };
-rule value:sym<false>   { <sym>    };
-rule value:sym<null>    { <sym>    };
-rule value:sym<object>  { <object> };
-rule value:sym<array>   { <array>  };
-rule value:sym<string>  { <string> }
+token value:sym<true>    { <sym>    };
+token value:sym<false>   { <sym>    };
+token value:sym<null>    { <sym>    };
+token value:sym<object>  { <object> };
+token value:sym<array>   { <array>  };
+token value:sym<string>  { <string> }
 
 rule string {
     <.ws>
