@@ -59,7 +59,14 @@ rule string {
 }
 
 token str {
-    <-["\\\t\n]>+
+    [
+        <!before \t>
+        <!before \n>
+        <!before \\>
+        <!before \">
+        .
+    ]+
+#    <-["\\\t\n]>+
 }
 
 token str_escape {
