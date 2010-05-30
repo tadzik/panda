@@ -4,7 +4,6 @@ method TOP($/) {
     make $/.hash.values.[0].ast;
 };
 method object($/) {
-    say $<pairlist>.ast.hash.perl;
     make $<pairlist>.ast.hash ;
 }
 
@@ -18,7 +17,7 @@ method pairlist($/) {
 }
 
 method pair($/) {
-    make ( $<string>.ast => $<value>.ast );
+    make $<string>.ast => $<value>.ast;
 }
 
 method array($/) {
@@ -39,10 +38,9 @@ method string($/) {
             $s ~= .value.ast;
         }
     }
-    say "String: $s.perl()";
     make $s;
 }
-method value:sym<number>($/) { say "Number: $/"; make +$/}
+method value:sym<number>($/) { make +$/.Str }
 method value:sym<string>($/) { make $<string>.ast }
 method value:sym<true>($/)   { make Bool::True  }
 method value:sym<false>($/)  { make Bool::False }

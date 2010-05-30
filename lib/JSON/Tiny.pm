@@ -18,32 +18,30 @@ module JSON::Tiny;
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
 
+proto to-json($d) is export { _tj($d) }
 
-proto to-json($d) is export(:DEFAULT) { to-json($d) }
-
-multi to-json(Num  $d) { ~$d }
-multi to-json(Int  $d) { ~$d }
-multi to-json(Bool $d) { $d ?? 'true' !! 'false'; }
-multi to-json(Str  $d) {
+multi _tj(Real $d) { ~$d }
+multi _tj(Bool $d) { $d ?? 'true' !! 'false'; }
+multi _tj(Str  $d) {
     '"'
     ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
             => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
             .subst(/<-[\c0..\c127]>/, { sprintf '\u%04x', ord(~$_) }, :g)
     ~ '"'
 }
-multi to-json(Array $d) {
+multi _tj(Array $d) {
     return  '[ '
-            ~ (map { to-json($_) }, $d.values).join(', ')
+            ~ (map { _tj($_) }, $d.values).join(', ')
             ~ ' ]';
 }
-multi to-json(Hash  $d) {
+multi _tj(Hash  $d) {
     return '{ '
-            ~ (map { to-json(.key) ~ ' : ' ~ to-json(.value) }, $d.pairs).join(', ')
+            ~ (map { _tj(.key) ~ ' : ' ~ _tj(.value) }, $d.pairs).join(', ')
             ~ ' }';
 }
 
-multi to-json($d where { $d.notdef }) { 'null' }
-multi to-json($s) {
+multi _tj($d where { $d.notdef }) { 'null' }
+multi _tj($s) {
     die "Can't serialize an object of type " ~ $s.WHAT.perl
 }
 

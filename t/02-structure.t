@@ -61,10 +61,8 @@ plan +@t;
 
 for @t -> $p {
     my $s = from-json($p.key);
-    say "# Got: $s\n# Expected: {$p.value.perl}";
     is_deeply $s, $p.value, 
-        "Correct data structure for «{$p.key.subst(/\n/, '\n', :g)}»"
-        or say "# Got: $s\n# Expected: {$p.value.perl}";
+        "Correct data structure for «{$p.key.subst(/\n/, '\n', :g)}»";
 }
 
 # vim: ft=perl6
