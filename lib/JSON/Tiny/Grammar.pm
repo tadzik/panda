@@ -70,7 +70,7 @@ token str_escape {
 }
 
 regex fail_trailing {
-    <fail: 'Expecting value after comma (trailing comma?)'>
+    <panic: 'Expecting value after comma (trailing comma?)'>
 }
 
 # vim: ft=perl6

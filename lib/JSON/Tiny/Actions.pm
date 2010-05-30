@@ -1,9 +1,10 @@
 class JSON::Tiny::Actions;
 
-method TOP($/, $what) {
-    make $/{$what}.ast;
+method TOP($/) {
+    make $/.hash.values.[0].ast;
 };
 method object($/) {
+    say $<pairlist>.ast.hash.perl;
     make $<pairlist>.ast.hash ;
 }
 
@@ -22,7 +23,7 @@ method pair($/) {
 
 method array($/) {
     if $<value> {
-        make $<value>>>.ast;
+        make [$<value>>>.ast];
     } else {
         make [];
     }
@@ -38,9 +39,10 @@ method string($/) {
             $s ~= .value.ast;
         }
     }
+    say "String: $s.perl()";
     make $s;
 }
-method value:sym<number>($/) { make +$/ }
+method value:sym<number>($/) { say "Number: $/"; make +$/}
 method value:sym<string>($/) { make $<string>.ast }
 method value:sym<true>($/)   { make Bool::True  }
 method value:sym<false>($/)  { make Bool::False }
