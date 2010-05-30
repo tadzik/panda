@@ -2,11 +2,11 @@ use v6;
 grammar JSON::Tiny::Grammar;
 rule TOP {
     ^ [
-        | <object> {*}      #= object
-        | <array>  {*}      #= array
+        | <object>
+        | <array>
     ]$
 }
-rule object     { '{' ~ '}' <pairlist>      {*}   }
+rule object     { '{' ~ '}' <pairlist> }
 rule pairlist   {
     [ <pair>
         # JSON doesn't allow trailing commas in lists,
@@ -19,7 +19,7 @@ rule pairlist   {
 }
 
 rule pair {
-    <string> ':' <value>        {*}
+    <string> ':' <value>
 }
 
 rule array {
@@ -36,20 +36,18 @@ rule array {
 
 
 proto rule value { <...> };
-token value:sym<string> {
-    <string>
-}
 rule value:sym<number> {
     \- ?
     [ 0 | <[1..9]> <[0..9]>* ]
     [ \. <[0..9]>+ ]?
     [ <[eE]> [\+|\-]? <[0..9]>+ ]?
 }
-rule value:sym<true>   { <sym>    };
-rule value:sym<false>  { <sym>    };
-rule value:sym<null>   { <sym>    };
-rule value:sym<object> { <object> };
-rule value:sym<array>  { <array>  };
+rule value:sym<true>    { <sym>    };
+rule value:sym<false>   { <sym>    };
+rule value:sym<null>    { <sym>    };
+rule value:sym<object>  { <object> };
+rule value:sym<array>   { <array>  };
+rule value:sym<string>  { <string> }
 
 rule string {
     <.ws>

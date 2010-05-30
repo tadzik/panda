@@ -13,10 +13,11 @@
 # 
 # =end Pod
 
+module JSON::Tiny;
+
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
 
-module JSON::Tiny;
 
 proto to-json($d) is export(:DEFAULT) { to-json($d) }
 

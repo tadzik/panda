@@ -4,12 +4,12 @@ method TOP($/, $what) {
     make $/{$what}.ast;
 };
 method object($/) {
-    make %( $<pairlist>.ast );
+    make $<pairlist>.ast.hash ;
 }
 
 method pairlist($/) {
     if $<pair> {
-        make $<pair>».ast;
+        make $<pair>>>.ast;
     }
     else {
         make ();
@@ -22,7 +22,7 @@ method pair($/) {
 
 method array($/) {
     if $<value> {
-        make $<value>».ast;
+        make $<value>>>.ast;
     } else {
         make [];
     }
@@ -47,6 +47,8 @@ method value:sym<false>($/)  { make Bool::False }
 method value:sym<null>($/)   { make Any }
 method value:sym<object>($/) { make $<object>.ast }
 method value:sym<array>($/)  { make $<array>.ast }
+
+method str($/)               { make ~$/ }
 
 method str_escape($/) {
     if $<xdigit> {
