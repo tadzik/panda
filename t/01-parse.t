@@ -166,8 +166,7 @@ my @n =
     Q<<["Colon instead of comma": false]>>,
     Q<<["Bad value", truth]>>,
     Q<<['single quote']>>,
-    Q<<["	tab	character	in	string	"]>>,
-    Q<<["tab\   character\   in\  string\  "]>>,
+    qq<["\ttab\tcharacter	in	string	"]>,
     Q<<["line
 break"]>>,
     Q<<["line\
