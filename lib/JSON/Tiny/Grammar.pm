@@ -45,14 +45,7 @@ token str {
 }
 
 token str_escape {
-    [
-        <["\\/bfnrt]>
-    | u <xdigit>**4
-    ] {*}
-}
-
-regex fail_trailing {
-    <panic: 'Expecting value after comma (trailing comma?)'>
+    <["\\/bfnrt]> | u <xdigit>**4
 }
 
 # vim: ft=perl6
