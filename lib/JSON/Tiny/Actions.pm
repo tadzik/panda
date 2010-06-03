@@ -8,12 +8,7 @@ method object($/) {
 }
 
 method pairlist($/) {
-    if $<pair> {
-        make $<pair>>>.ast;
-    }
-    else {
-        make ();
-    }
+    make $<pair>>>.ast;
 }
 
 method pair($/) {
