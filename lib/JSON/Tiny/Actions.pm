@@ -16,11 +16,7 @@ method pair($/) {
 }
 
 method array($/) {
-    if $<value> {
-        make [$<value>>>.ast];
-    } else {
-        make [];
-    }
+    make [$<value>>>.ast];
 }
 
 method string($/) {
