@@ -4,7 +4,7 @@ use JSON::Tiny;
 
 my @s =
         'Int'            => [ 1 ],
-        'Num'            => [ 3.2 ],
+        'Rat'            => [ 3.2 ],
         'Str'            => [ 'one' ],
         'Str with quote' => [ '"foo"'],
         'Undef'          => [ Any, 1 ],

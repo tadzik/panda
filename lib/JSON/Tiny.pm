@@ -24,9 +24,9 @@ multi _tj(Real $d) { ~$d }
 multi _tj(Bool $d) { $d ?? 'true' !! 'false'; }
 multi _tj(Str  $d) {
     '"'
-    ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
+    ~ (~$d).trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
             => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
-            .subst(/<-[\c0..\c127]>/, { sprintf '\u%04x', ord(~$_) }, :g)
+            .subst(/<-[\c0..\c127]>/, { ord(~$_).fmt('\u%04x') }, :g)
     ~ '"'
 }
 multi _tj(Array $d) {
