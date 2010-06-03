@@ -3,14 +3,9 @@ grammar JSON::Tiny::Grammar;
 
 rule TOP        { ^[ <object> | <array> ]$ }
 rule object     { '{' ~ '}' <pairlist>     }
-rule pairlist   { [ <pair> ** ','  ]?      }
+rule pairlist   { [ <pair> ** [ \, ]  ]?   }
 rule pair       { <string> ':' <value>     }
-
-rule array {
-    '[' ~ ']' [
-                <value> [\, <value> ]*
-            ]?
-}
+rule array      { '[' ~ ']' [ <value> ** [ \, ] ]?  }
 
 proto token value { <...> };
 token value:sym<number> {
@@ -27,10 +22,7 @@ token value:sym<array>   { <array>  };
 token value:sym<string>  { <string> }
 
 token string {
-    \" ~ \" ([
-        | <str>
-        | \\ <str_escape>
-    ]*)
+    \" ~ \" [ <str> | \\ <str_escape> ]*
 }
 
 token str {

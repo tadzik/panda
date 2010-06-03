@@ -21,13 +21,8 @@ method array($/) {
 
 method string($/) {
     my $s = '';
-    for $0.chunks {
-        if .key eq '~' {
-            if .value eq '\\' { next }
-            $s ~= .value;
-        } else {
-            $s ~= .value.ast;
-        }
+    for $/.caps {
+        $s ~= .value.ast;
     }
     make $s;
 }
