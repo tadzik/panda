@@ -36,13 +36,12 @@ method str_escape($/) {
     if $<xdigit> {
         make chr(:16($<xdigit>.join));
     } else {
-        given ~$/ {
-            when '\\' { make '\\'; }
-            when 'n'  { make "\n"; }
-            when 't'  { make "\t"; }
-            when 'f'  { make "\f"; }
-            when 'r'  { make "\r"; }
-        }
+        my %h = '\\' => "\\",
+                'n'  => "\n",
+                't'  => "\t",
+                'f'  => "\f",
+                'r'  => "\r";
+        make %h{$/};
     }
 }
 
