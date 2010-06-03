@@ -49,7 +49,7 @@ token value:sym<object>  { <object> };
 token value:sym<array>   { <array>  };
 token value:sym<string>  { <string> }
 
-rule string {
+token string {
     <.ws>
     \" ~ \" ([
         | <str>

@@ -209,7 +209,7 @@ for @n -> $t {
     }
     my $parsed = 0;
     try { JSON::Tiny::Grammar.parse($t) && $parsed = 1 };
-    ok !$parsed, "NOT parsed «$desc»";
+    nok $parsed, "NOT parsed «$desc»";
     $i++;
 }
 
