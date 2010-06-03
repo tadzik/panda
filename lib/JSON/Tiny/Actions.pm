@@ -20,11 +20,7 @@ method array($/) {
 }
 
 method string($/) {
-    my $s = '';
-    for $/.caps {
-        $s ~= .value.ast;
-    }
-    make $s;
+    make join '', $/.caps>>.value>>.ast
 }
 method value:sym<number>($/) { make eval $/.Str }
 method value:sym<string>($/) { make $<string>.ast }
