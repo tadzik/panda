@@ -1,39 +1,16 @@
 use v6;
 grammar JSON::Tiny::Grammar;
-rule TOP {
-    ^ [
-        | <object>
-        | <array>
-    ]$
-}
-rule object     { '{' ~ '}' <pairlist> }
-rule pairlist   {
-    [ <pair>
-        # JSON doesn't allow trailing commas in lists,
-        # even though Javascript does. Since this causes
-        # lots of Perl hackers by surprise, throw a designated
-        # error mesasge in that case
-        [\, [ <pair> || <.fail_trailing> ] ]*
-    ]?
-    {*}
-}
 
-rule pair {
-    <string> ':' <value>
-}
+rule TOP        { ^[ <object> | <array> ]$ }
+rule object     { '{' ~ '}' <pairlist>     }
+rule pairlist   { [ <pair> ** ','  ]?      }
+rule pair       { <string> ':' <value>     }
 
 rule array {
-    '[' ~ ']'
-        [   # work around non-existing LTM
-            [
-                <value>**1
-                [\, [<value> || <.fail_trailing>] ]*
+    '[' ~ ']' [
+                <value> [\, <value> ]*
             ]?
-            \s*
-        ]
-    {*}
 }
-
 
 proto token value { <...> };
 token value:sym<number> {
@@ -50,12 +27,10 @@ token value:sym<array>   { <array>  };
 token value:sym<string>  { <string> }
 
 token string {
-    <.ws>
     \" ~ \" ([
         | <str>
         | \\ <str_escape>
     ]*)
-    <.ws>
 }
 
 token str {
