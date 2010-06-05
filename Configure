@@ -1,4 +1,0 @@
-#!perl6
-use v6;
-BEGIN { @*INC.push('lib') }
-use Configure;
