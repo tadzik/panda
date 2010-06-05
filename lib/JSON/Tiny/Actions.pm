@@ -20,16 +20,7 @@ method array($/) {
 }
 
 method string($/) {
-    my $s = '';
-    for $0.chunks {
-        if .key eq '~' {
-            if .value eq '\\' { next }
-            $s ~= .value;
-        } else {
-            $s ~= .value.ast;
-        }
-    }
-    make $s;
+    make join '', $/.caps>>.value>>.ast
 }
 method value:sym<number>($/) { make eval $/.Str }
 method value:sym<string>($/) { make $<string>.ast }
@@ -45,13 +36,12 @@ method str_escape($/) {
     if $<xdigit> {
         make chr(:16($<xdigit>.join));
     } else {
-        given ~$/ {
-            when '\\' { make '\\'; }
-            when 'n'  { make "\n"; }
-            when 't'  { make "\t"; }
-            when 'f'  { make "\f"; }
-            when 'r'  { make "\r"; }
-        }
+        my %h = '\\' => "\\",
+                'n'  => "\n",
+                't'  => "\t",
+                'f'  => "\f",
+                'r'  => "\r";
+        make %h{$/};
     }
 }
 
