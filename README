@@ -9,6 +9,18 @@ under the terms of the Artistic License Version 2. Examples (in the
 documentation, in tests or distributed as separate files) can be considered
 public domain.
 
+To build and test this module, plese get 'ufo' from
+http://github.com/masak/ufo and run
+
+    ufo
+    make
+    make test
+
+(installation is not yet supported; you can do that manually by copying the .pm
+files from lib/ recursivley in your ~/.perl6/lib/ dir; installing .pir files
+is discouraged, since simple changes in Rakudo will render them worthless,
+might result in confusing errors).
+
 State:
 
     The parser is pretty complete, if you find anything that it should
