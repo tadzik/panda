@@ -41,7 +41,7 @@ method str_escape($/) {
                 't'  => "\t",
                 'f'  => "\f",
                 'r'  => "\r";
-        make %h{$/};
+        make %h{~$/};
     }
 }
 
