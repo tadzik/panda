@@ -8,7 +8,7 @@ method object($/) {
 }
 
 method pairlist($/) {
-    make $<pair>>>.ast;
+    make $<pair>>>.ast.flat;
 }
 
 method pair($/) {
