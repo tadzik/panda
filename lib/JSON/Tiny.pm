@@ -26,7 +26,9 @@ multi _tj(Str  $d) {
     '"'
     ~ (~$d).trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
             => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
-            .subst(/<-[\c0..\c127]>/, { ord(~$_).fmt('\u%04x') }, :g)
+            # RAKUDO: This would be nicer to write as <-[\c32..\c126]>,
+            #         but Rakudo doesn't do \c yet. [perl #73698]
+            .subst(/<-[\ ..~]>/, { ord(~$_).fmt('\u%04x') }, :g)
     ~ '"'
 }
 multi _tj(Array $d) {
