@@ -1,7 +1,7 @@
 class JSON::Tiny::Actions;
 
 method TOP($/) {
-    make $/.hash.values.[0].ast;
+    make $/.values.[0].ast;
 };
 method object($/) {
     make $<pairlist>.ast.hash ;
