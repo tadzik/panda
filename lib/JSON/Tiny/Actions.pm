@@ -40,6 +40,8 @@ method str_escape($/) {
         make chr(:16($<xdigit>.join));
     } else {
         my %h = '\\' => "\\",
+                '/'  => "/",
+                'b'  => "\b",
                 'n'  => "\n",
                 't'  => "\t",
                 'f'  => "\f",
