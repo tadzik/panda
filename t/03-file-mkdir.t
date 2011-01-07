@@ -10,4 +10,4 @@ ok ('t/dupa/foo/bar'.IO ~~ :d), 'mkdir :p, 1/2';
 unlink 't/dupa/foo/bar';
 unlink 't/dupa/foo';
 unlink 't/dupa/';
-done_testing;
+done;

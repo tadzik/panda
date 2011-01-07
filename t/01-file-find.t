@@ -33,4 +33,4 @@ $res = find(:dir<t/dir1>, :type<file>, :name(/foo/));
 is @test, <t/dir1/file.foo t/dir1/foodir/not_a_dir>,
 	'types: file, combined with name';
 
-done_testing;
+done;

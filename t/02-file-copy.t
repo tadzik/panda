@@ -7,4 +7,4 @@ is slurp('t/test.file'),
    slurp('t/another.file'),
    "copied file is identical";
 unlink 't/another.file';
-done_testing;
+done;
