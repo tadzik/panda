@@ -1,8 +1,9 @@
 use v6;
 use Test;
+use Test::Mock;
 use Pies;
 
-plan 13;
+plan 9;
 
 my $dep = Pies::Project.new(
     name => 'dep'
@@ -36,25 +37,25 @@ role DummyEco does Pies::Ecosystem {
 
 role DummyFetcher does Pies::Fetcher {
     method fetch(Pies::Project $a) {
-        ok 1, "{$a.name} fetched";
+        Bool::True
     }
 }
 
 role DummyBuilder does Pies::Builder {
     method build(Pies::Project $a) {
-        ok 1, "{$a.name} built";
+        Bool::True
     }
 }
 
 role DummyTester does Pies::Tester {
     method test(Pies::Project $a) {
-        ok 1, "{$a.name} tested";
+        Bool::True
     }
 }
 
 role DummyInstaller does Pies::Installer {
     method install(Pies::Project $a) {
-        ok 1, "{$a.name} installed";
+        Bool::True
     }
 }
 
@@ -62,12 +63,21 @@ my $eco = DummyEco.new;
 $eco.add-project($proj);
 $eco.add-project($dep);
 
+class F does DummyFetcher   {};
+class B does DummyBuilder   {};
+class T does DummyTester    {};
+class I does DummyInstaller {};
+my $f = mocked(F);
+my $b = mocked(B);
+my $t = mocked(T);
+my $i = mocked(I);
+
 my $p = Pies.new(
     ecosystem => $eco,
-    fetcher   => DummyFetcher.new,
-    builder   => DummyBuilder.new,
-    tester    => DummyTester.new,
-    installer => DummyInstaller.new,
+    fetcher   => $f,
+    builder   => $b,
+    tester    => $t,
+    installer => $i,
 );
 
 is $p.ecosystem.project-get-state($proj), 'absent',
@@ -86,5 +96,10 @@ is $p.ecosystem.project-get-state($dep), 'installed-dep',
 # own, internal copy
 is $eco.project-get-state($proj), 'installed',
                                   'same state in our object';
+
+check-mock($f, *.called('fetch', times => 2));
+check-mock($b, *.called('build', times => 2));
+check-mock($t, *.called('test', times => 2));
+check-mock($i, *.called('install', times => 2));
 
 # vim: ft=perl6
