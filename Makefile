@@ -6,7 +6,7 @@ BLIB = blib
 P6LIB = $(PWD)/$(BLIB)/lib:$(PWD)/lib:$(PERL6LIB)
 
 SOURCES=lib/Pies.pm
-SCRIPTS=
+SCRIPTS=bin/ufobuilder
 PIRS = $(patsubst %.pm6,%.pir,$(SOURCES:%.pm=%.pir))
 BLIB_PIRS = $(PIRS:%=$(BLIB)/%)
 BLIB_PMS = $(SOURCES:%=$(BLIB)/%)

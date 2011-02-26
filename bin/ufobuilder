@@ -1,0 +1,80 @@
+#!/usr/bin/env perl6
+use v6;
+use Pies;
+
+our $workdir = 'workdir';
+our $get-ufo  = 'wget -q https://github.com/masak/ufo/raw/master/bin/ufo';
+
+role UfoEco does Pies::Ecosystem {
+    has $!p;
+    method add-project(Pies::Project $p) { $!p = $p }
+
+    method get-project($p as Str) { $!p }
+
+    method project-set-state(Pies::Project $p,
+                             Pies::Project::State $s) { Bool::True }
+
+    method project-get-state(Pies::Project $p) { return 'absent' }
+}
+
+role UfoFetcher does Pies::Fetcher {
+    method fetch(Pies::Project $p) {
+        my $url = $p.name;
+        my $cmd = 'ufo';
+        if $url.IO ~~ :d {
+            chdir $url;
+        } else {
+            if $workdir.IO ~~ :e {
+                say "Old $workdir exists, removing";
+                if run "rm -rf $workdir" {
+                    die "Could not remove $workdir"
+                }
+            }
+            run "git clone -q $url $workdir"
+                and die "Failed to clone the repo";
+            chdir $workdir;
+        }
+        if run 'which ufo &> /dev/null' {
+            say 'ufo not found, downloading';
+            run $get-ufo and die "Failed to get ufo";
+            'ufo'.IO.chmod(0o755);
+            $cmd = './ufo';
+        }
+
+        run $cmd and die "Writing makefile failed"
+    }
+}
+
+role UfoBuilder does Pies::Builder {
+    method build(Pies::Project $a) { run 'make'
+                                     and die "Building failed" }
+}
+
+role UfoTester does Pies::Tester {
+    method test(Pies::Project $a) { run 'make test'
+                                    and die "Tests failed" }
+}
+
+role UfoInstaller does Pies::Installer {
+    method install(Pies::Project $a) { run 'make install' }
+}
+
+sub MAIN($url = '.') {
+    my $eco = UfoEco.new;
+    my $pwd = cwd;
+    $eco.add-project(Pies::Project.new(name => $url));
+    try {
+        Pies.new(
+            ecosystem => $eco,
+            fetcher   => UfoFetcher.new,
+            builder   => UfoBuilder.new,
+            tester    => UfoTester.new,
+            installer => UfoInstaller.new,
+        ).resolve($url);
+    }
+    chdir $pwd;
+    run "rm -rf $workdir";
+    say $! if $!;
+}
+
+# vim: ft=perl6
