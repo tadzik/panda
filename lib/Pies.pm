@@ -41,14 +41,26 @@ class Pies {
     has Pies::Tester    $!tester;
     has Pies::Installer $!installer;
 
-    method resolve($proj as Str) {
-        my $bone = $.ecosystem.get-project($proj);
-
+    method resolve-helper(Pies::Project $bone) {
         $!fetcher.fetch:     $bone;
         $!builder.build:     $bone;
         $!tester.test:       $bone;
         $!installer.install: $bone;
+    }
 
+    method resolve($proj as Str) {
+        my $bone = $.ecosystem.get-project($proj);
+
+        for $bone.dependencies -> $dep {
+            my $littlebone = $.ecosystem.get-project($dep);
+            unless $littlebone {
+                die "Dependency $dep not found in the ecosystem";
+            }
+            self.resolve-helper($littlebone);
+            $.ecosystem.project-set-state($littlebone, 'installed-dep');
+        }
+
+        self.resolve-helper($bone);
         $.ecosystem.project-set-state($bone, 'installed');
     }
 }
