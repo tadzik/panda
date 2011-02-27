@@ -3,15 +3,17 @@ use Panda::Builder;
 
 plan 3;
 
-my $b = Panda::Builder.new(srcdir => 't/panda');
+my $srcdir = 'testmodules';
+
+my $b = Panda::Builder.new(srcdir => $srcdir);
 
 my $p = Pies::Project.new(name => 'dummymodule');
 
 
 lives_ok { $b.build($p) };
 
-ok 't/panda/dummymodule/blib/lib/foo.pir'.IO ~~ :f, 'module compiled';
-ok 't/panda/dummymodule/blib/lib/foo.pm'.IO ~~ :f, 'module copied to blib';
+ok "$srcdir/dummymodule/blib/lib/foo.pir".IO ~~ :f, 'module compiled';
+ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~ :f, 'module copied to blib';
 
 run "rm -rf t/panda/dummymodule/blib";
 
