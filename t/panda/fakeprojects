@@ -1,0 +1,5 @@
+[
+    { "name" : "foo", "version" : "1" },
+    { "name" : "bar", "version" : "2" },
+    { "name" : "baz", "version" : "3" }
+]
