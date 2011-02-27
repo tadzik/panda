@@ -15,6 +15,6 @@ lives_ok { $b.build($p) };
 ok "$srcdir/dummymodule/blib/lib/foo.pir".IO ~~ :f, 'module compiled';
 ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~ :f, 'module copied to blib';
 
-run "rm -rf t/panda/dummymodule/blib";
+run "rm -rf $srcdir/dummymodule/blib";
 
 # vim: ft=perl6
