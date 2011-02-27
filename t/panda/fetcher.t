@@ -1,5 +1,4 @@
 use Test;
-use Panda::Ecosystem;
 use Panda::Fetcher;
 
 plan 2;
