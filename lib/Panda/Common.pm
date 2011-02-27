@@ -9,8 +9,10 @@ sub indir (Str $where, Callable $what) is export {
     my $old = cwd;
     mkdir $where, :p;
     chdir $where;
-    $what();
+    try { $what() }
+    my $fail = $!;
     chdir $old;
+    die $fail if $fail;
 }
 
 # vim: ft=perl6
