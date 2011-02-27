@@ -1,17 +1,5 @@
 use Pies;
-use File::Mkdir;
-
-sub dirname ($mod as Str) {
-    $mod.subst(':', '_', :g);
-}
-
-sub indir (Str $where, Callable $what) {
-    my $old = cwd;
-    mkdir $where, :p;
-    chdir $where;
-    $what();
-    chdir $old;
-}
+use Panda::Common;
 
 class Panda::Fetcher does Pies::Fetcher {
     has $!srcdir;
