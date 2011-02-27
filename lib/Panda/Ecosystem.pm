@@ -1,11 +1,6 @@
 use Pies;
 use JSON::Tiny;
-
-multi sub mkdir(Str $name, $mode = 0o777, :$p!) {
-    for [\~] $name.split('/').map({"$_/"}) {
-        mkdir($_) unless .IO.d
-    }
-}
+use File::Mkdir;
 
 class Panda::Ecosystem is Pies::Ecosystem {
     has $!statefile;
