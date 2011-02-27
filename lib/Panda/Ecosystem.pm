@@ -12,7 +12,7 @@ class Panda::Ecosystem is Pies::Ecosystem {
     has $!projectsfile;
     has %!projects;
     has %!states;
-    
+
     # those two methods will be called only if needed
     # given the slowness of Rakudo and JSON it's better
     # if they aren't called ever :)
