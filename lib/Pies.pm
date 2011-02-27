@@ -4,9 +4,8 @@ subset Pies::Project::State of Str where
 class Pies::Project {
     has $.name;
     has $.version;
-    has $.description;
     has @.dependencies;
-    has $.url;
+    has %.metainfo;
 }
 
 role Pies::Ecosystem {
