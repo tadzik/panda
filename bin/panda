@@ -1,0 +1,49 @@
+#!/usr/bin/env perl6
+use v6;
+use Pies;
+use Panda::Ecosystem;
+use Panda::Fetcher;
+use Panda::Builder;
+use Panda::Tester;
+use Panda::Installer;
+
+class Panda_the_Dog is Pies {
+    has $!srcdir;
+    has $!destdir;
+    has $!statefile;
+    has $!projectsfile;
+
+    # I liked Moose and its BUILD better. Seriously, why is Perl 6
+    # more annoying to use than Moose? That doesn't make any sense
+    method init {
+        $!ecosystem = Panda::Ecosystem.new(
+            statefile    => $!statefile,
+            projectsfile => $!projectsfile,
+        );
+        $!fetcher   = Panda::Fetcher.new(srcdir => $!srcdir);
+        $!builder   = Panda::Builder.new(srcdir => $!srcdir);
+        $!tester    = Panda::Tester.new(srcdir => $!srcdir);
+        $!installer = Panda::Installer.new(
+            srcdir  => $!srcdir,
+            destdir => $!destdir
+        );
+    }
+}
+
+if %*ENV<PANDA_DEFAULT_OPTS> {
+    @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ ' ' ~ @*ARGS;
+}
+
+sub MAIN ($module) {
+    my $pandadir = %*ENV<HOME> ~ '/.panda';
+    my $panda = Panda_the_Dog.new(
+        srcdir       => "$pandadir/src",
+        destdir      => '~/.perl6',
+        statefile    => "$pandadir/state",
+        projectsfile => "$pandadir/projects.json"
+    );
+    $panda.init(); # I liked Moose and its BUILD better
+    $panda.resolve($module);
+}
+
+# vim: ft=perl6
