@@ -15,7 +15,4 @@ $p = Pies::Project.new(name => 'testme2');
 
 dies_ok { $b.test($p) }, 'what should fail, fails';
 
-unlink "$srcdir/testme1/Makefile";
-unlink "$srcdir/testme2/Makefile";
-
 # vim: ft=perl6
