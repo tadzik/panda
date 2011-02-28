@@ -6,10 +6,12 @@ class Panda::Tester does Pies::Tester {
 
     method test(Pies::Project $p) {
         indir "$!srcdir/{dirname $p.name}", {
-            unless 'Makefile'.IO ~~ :f {
-                run 'ufo' and die 'ufo failed';
+            if 't'.IO ~~ :d {
+                unless 'Makefile'.IO ~~ :f {
+                    run 'ufo' and die 'ufo failed';
+                }
+                run 'make test' and die "Testing failed";
             }
-            run 'make test' and die "Testing failed";
         };
     }
 }
