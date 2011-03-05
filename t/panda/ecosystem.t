@@ -25,8 +25,8 @@ is $a.project-get-state($b), 'installed', 'get-state 3';
 
 is $b.metainfo<repo-type>, 'git', 'metainfo ok';
 
+skip('args to constructors not there yet in Test::Mock', 2);
 try {
-    skip(2, 'args to constructors not there yet in Test::Mock');
     check-mock($a, *.called('init-projects', times => 1));
     check-mock($a, *.called('init-states',   times => 1));
 }
