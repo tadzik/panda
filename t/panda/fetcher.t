@@ -15,7 +15,6 @@ my $p = Pies::Project.new(
 );
 
 try { $f.fetch($p) }
-say $!;
 ok $! ~~ /'Failed cloning'/, 'attempts to clone';
 
 $p.metainfo<repo-type> = 'hg';
