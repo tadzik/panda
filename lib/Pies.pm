@@ -60,7 +60,8 @@ class Pies {
     }
 
     method resolve($proj as Str) {
-        my $bone = $.ecosystem.get-project($proj);
+        my $bone = $.ecosystem.get-project($proj)
+                   or die "Project $proj not found in the ecosystem";
 
         self.resolve-helper($bone, 0);
     }
