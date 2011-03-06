@@ -38,7 +38,7 @@ sub MAIN ($module) {
     my $pandadir = %*ENV<HOME> ~ '/.panda';
     my $panda = Panda_the_Dog.new(
         srcdir       => "$pandadir/src",
-        destdir      => '~/.perl6',
+        destdir      => %*ENV<HOME> ~ '/.perl6',
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json"
     );
