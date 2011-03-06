@@ -2,7 +2,7 @@
     "name"        : "Pies",
     "version"     : "*",
     "description" : "A module management solution",
-    "depends"     : [ "File::Tools", "JSON::Tiny" ],
+    "depends"     : [ "File::Tools", "JSON::Tiny", "Test::Mock" ],
     "repo-type"   : "git",
     "repo-url"    : "git://github.com/tadzik/Pies.git"
 }
