@@ -22,7 +22,7 @@ token value:sym<array>   { <array>  };
 token value:sym<string>  { <string> }
 
 token string {
-    \" ~ \" [ <str> | \\ <str_escape> ]*
+    \" ~ \" ( <str> | \\ <str_escape> )*
 }
 
 token str {

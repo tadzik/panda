@@ -23,7 +23,7 @@ method array($/) {
 }
 
 method string($/) {
-    make join '', $/.caps>>.value>>.ast
+    make join '', $0.list.map({ (.<str> || .<str_escape>).ast });
 }
 method value:sym<number>($/) { make eval $/.Str }
 method value:sym<string>($/) { make $<string>.ast }
