@@ -64,6 +64,10 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 
 sub MAIN ($module) {
     my $pandadir = %*ENV<HOME> ~ '/.panda';
+    my $projectsfile = "$pandadir/projects.json";
+    unless $projectsfile.IO ~~ :f {
+        run "wget http://feather.perl6.nl:3000/list -O $projectsfile";
+    }
     my $panda = Panda_the_Dog.new(
         srcdir       => "$pandadir/src",
         destdir      => %*ENV<HOME> ~ '/.perl6',
