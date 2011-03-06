@@ -62,7 +62,7 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
     @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ ' ' ~ @*ARGS;
 }
 
-sub MAIN ($module) {
+sub MAIN (*@modules) {
     my $pandadir = %*ENV<HOME> ~ '/.panda';
     unless $pandadir.IO ~~ :d {
         mkdir $pandadir;
@@ -78,7 +78,25 @@ sub MAIN ($module) {
         projectsfile => "$pandadir/projects.json"
     );
     $panda.init(); # I liked Moose and its BUILD better
-    $panda.resolve($module);
+    if @modules {
+        $panda.resolve($_) for @modules;
+    } else {
+        while prompt('panda> ') -> $c {
+            my ($command, @args) = $c.split(' ');
+            given $command {
+                when 'install' {
+                    for @args -> $x {
+                        try { $panda.resolve($x) };
+                        say $! if $!;
+                    }
+                }
+                default {
+                    say "Unknown command: $command";
+                }
+            }
+        }
+        say; # the newline after exiting the REPL
+    }
 }
 
 # vim: ft=perl6
