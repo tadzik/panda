@@ -42,7 +42,7 @@ multi _tj(Hash  $d) {
             ~ ' }';
 }
 
-multi _tj($d where { $d.notdef }) { 'null' }
+multi _tj($d where { !$d.defined }) { 'null' }
 multi _tj($s) {
     die "Can't serialize an object of type " ~ $s.WHAT.perl
 }
