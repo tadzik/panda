@@ -20,6 +20,7 @@ class Panda::Installer does Pies::Installer {
                 for find(dir => 'bin', type => 'file').list -> $bin {
                     mkdir "$!destdir/{$bin.dir}", :p;
                     $bin.IO.copy("$!destdir/$bin");
+                    "$!destdir/$bin".IO.chmod(0o755);
                 }
             }
         };
