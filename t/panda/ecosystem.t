@@ -1,7 +1,7 @@
 use Test;
 use Test::Mock;
 use Panda::Ecosystem;
-plan 9;
+plan 12;
 
 my $a = Panda::Ecosystem.new(
     statefile    => 't/panda/fakestate',
@@ -24,6 +24,11 @@ $a.project-set-state($b, 'installed');
 is $a.project-get-state($b), 'installed', 'get-state 3';
 
 is $b.metainfo<repo-type>, 'git', 'metainfo ok';
+
+say $b.dependencies.perl;
+is $b.dependencies[0], 'some',  'dependencies 1';
+is $b.dependencies[1], 'thing', 'dependencies 2';
+is $b.dependencies[2], 'else',  'dependencies 3';
 
 skip('args to constructors not there yet in Test::Mock', 2);
 try {

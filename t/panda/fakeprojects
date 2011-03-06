@@ -1,6 +1,8 @@
 [
     { "name" : "foo", "version" : "1", "repo-type" : "git",
-      "repo-url" : "git://github.com/tadzik/nosuchrepo.git" },
+      "repo-url" : "git://github.com/tadzik/nosuchrepo.git",
+      "depends" : [ "some", "thing", "else" ]
+    },
     { "name" : "bar", "version" : "2", "repo-type" : "hg" },
     { "name" : "baz", "version" : "3" }
 ]

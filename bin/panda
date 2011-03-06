@@ -28,6 +28,34 @@ class Panda_the_Dog is Pies {
             destdir => $!destdir
         );
     }
+
+    multi method announce(Str $what) {
+        say "==> $what"
+    }
+
+    multi method announce('fetching', Pies::Project $p) {
+        self.announce: "Fetching {$p.name}"
+    }
+
+    multi method announce('building', Pies::Project $p) {
+        self.announce: "Building {$p.name}"
+    }
+
+    multi method announce('testing', Pies::Project $p) {
+        self.announce: "Testing {$p.name}"
+    }
+
+    multi method announce('installing', Pies::Project $p) {
+        self.announce: "Installing {$p.name}"
+    }
+
+    multi method announce('success', Pies::Project $p) {
+        self.announce: "Succesfully installed {$p.name}"
+    }
+
+    multi method announce('depends', Pair $p) {
+        self.announce: "{$p.key.name} depends on {$p.value.name}"
+    }
 }
 
 if %*ENV<PANDA_DEFAULT_OPTS> {

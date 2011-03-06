@@ -4,8 +4,12 @@ subset Pies::Project::State of Str where
 class Pies::Project {
     has $.name;
     has $.version;
-    has @.dependencies;
+    has @!dependencies;
     has %.metainfo;
+
+    method dependencies {
+        @!dependencies[0].list # that's a bit weird of JSON imho
+    }
 }
 
 role Pies::Ecosystem {
@@ -40,6 +44,8 @@ class Pies {
     has Pies::Tester    $!tester;
     has Pies::Installer $!installer;
 
+    method announce(Str $what, $data) { }
+
     method resolve-helper(Pies::Project $bone, $isdep as Bool) {
         for $bone.dependencies -> $dep {
             next unless $dep;
@@ -47,16 +53,27 @@ class Pies {
             unless $littlebone {
                 die "Dependency $dep not found in the ecosystem";
             }
+            next unless $.ecosystem.project-get-state($littlebone)
+                        eq 'absent';
+            self.announce('depends', $bone => $littlebone);
             self.resolve-helper($littlebone, 1);
         }
 
-        $!fetcher.fetch:     $bone;
-        $!builder.build:     $bone;
-        $!tester.test:       $bone;
+        self.announce('fetching', $bone);
+        $!fetcher.fetch: $bone;
+
+        self.announce('building', $bone);
+        $!builder.build: $bone;
+
+        self.announce('testing',  $bone);
+        $!tester.test: $bone;
+
+        self.announce('installing', $bone);
         $!installer.install: $bone;
 
         $.ecosystem.project-set-state($bone, $isdep ?? 'installed-dep'
                                                     !! 'installed');
+        self.announce('success', $bone);
     }
 
     method resolve($proj as Str) {
