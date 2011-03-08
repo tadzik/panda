@@ -6,6 +6,7 @@ use Panda::Fetcher;
 use Panda::Builder;
 use Panda::Tester;
 use Panda::Installer;
+use File::Mkdir;
 
 class Panda_the_Dog is Pies {
     has $!srcdir;
@@ -13,9 +14,8 @@ class Panda_the_Dog is Pies {
     has $!statefile;
     has $!projectsfile;
 
-    # I liked Moose and its BUILD better. Seriously, why is Perl 6
-    # more annoying to use than Moose? That doesn't make any sense
-    method init {
+    submethod BUILD {
+        callsame; # attribute initialization
         $!ecosystem = Panda::Ecosystem.new(
             statefile    => $!statefile,
             projectsfile => $!projectsfile,
@@ -58,45 +58,75 @@ class Panda_the_Dog is Pies {
     }
 }
 
+subset Command of Str where
+    'install' | 'list' | 'update';
+
+sub installprojects($panda, @args) {
+    for @args -> $x {
+        try { $panda.resolve($x) };
+        say $! if $!;
+    }
+}
+
+sub listprojects($panda) {
+    for $panda.ecosystem.project-list -> $p {
+        my $x = $panda.ecosystem.get-project($p);
+        printf "%-20s\t%s\n", $x.name, $x.metainfo<description>;
+    }
+}
+
+sub execute(Command $c, $panda, @args) {
+    given $c {
+        when 'install' { 
+            installprojects($panda, @args);
+        }
+        when 'list' {
+            listprojects($panda);
+        }
+        when 'update' {
+            $panda.ecosystem.update;
+        }
+    }
+}
+
+# default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
     @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ ' ' ~ @*ARGS;
 }
 
-sub MAIN (*@modules) {
+my $panda;
+{
     my $pandadir = %*ENV<HOME> ~ '/.panda';
-    unless $pandadir.IO ~~ :d {
-        mkdir $pandadir;
-    }
+    mkdir $pandadir, :p unless $pandadir.IO ~~ :d;
+
     my $projectsfile = "$pandadir/projects.json";
     unless $projectsfile.IO ~~ :f {
         run "wget http://feather.perl6.nl:3000/list -O $projectsfile";
     }
-    my $panda = Panda_the_Dog.new(
+
+    $panda = Panda_the_Dog.new(
         srcdir       => "$pandadir/src",
         destdir      => %*ENV<HOME> ~ '/.perl6',
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json"
     );
-    $panda.init(); # I liked Moose and its BUILD better
-    if @modules {
-        $panda.resolve($_) for @modules;
-    } else {
-        while prompt('panda> ') -> $c {
-            my ($command, @args) = $c.split(' ');
-            given $command {
-                when 'install' {
-                    for @args -> $x {
-                        try { $panda.resolve($x) };
-                        say $! if $!;
-                    }
-                }
-                default {
-                    say "Unknown command: $command";
-                }
+}
+
+multi MAIN (Command $command, *@args) {
+    execute($command, $panda, @args);
+}
+
+multi MAIN () {
+    while prompt('panda> ') -> $c {
+        my ($command, @args) = $c.split(' ');
+        try {
+            execute($command, $panda, @args);
+            CATCH {
+                say "Unknown command: $command";
             }
         }
-        say; # the newline after exiting the REPL
     }
+    say ''; # the newline after exiting the REPL
 }
 
 # vim: ft=perl6
