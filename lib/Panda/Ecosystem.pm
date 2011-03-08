@@ -39,6 +39,11 @@ class Panda::Ecosystem is Pies::Ecosystem {
         return %!projects.keys
     }
 
+    method update {
+        unlink $!projectsfile;
+        run "wget feather.perl6.nl:3000/list -O $!projectsfile";
+    }
+
     # Pies::Ecosystem methods
 
     method add-project(Pies::Project $p) {
