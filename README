@@ -6,7 +6,7 @@ and Panda, being the actual module manager to use. The bootstrap.sh
 script should install Panda along with all its dependencies, so it can
 be used like:
 
-$ panda Acme::Meow
+$ panda install Acme::Meow
 
 More features and docs on the way.
 
