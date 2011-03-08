@@ -35,7 +35,7 @@ sub execute(Command $c, $panda, @args) {
 
 # default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
-    @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ ' ' ~ @*ARGS;
+    @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ (@*ARGS ?? ' ' ~ @*ARGS !! '');
 }
 
 # initialize the Panda object
