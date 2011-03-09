@@ -3,7 +3,7 @@ use Test;
 use Test::Mock;
 use Pies;
 
-plan 11;
+plan 18;
 
 my $dep = Pies::Project.new(
     name => 'dep',
@@ -104,14 +104,34 @@ is $p.ecosystem.project-get-state($dep), 'installed-dep',
 is $p.ecosystem.project-get-state($nesteddep), 'installed-dep',
                                          'state after resolving ok 3';
 
+$p.ecosystem.project-set-state($proj, 'absent');
+$p.ecosystem.project-set-state($dep, 'absent');
+$p.ecosystem.project-set-state($nesteddep, 'absent');
+
+$p.resolve($proj.name, :nodeps);
+
+is $p.ecosystem.project-get-state($proj), 'installed',
+                                          'state after nodeps ok 1';
+is $p.ecosystem.project-get-state($dep), 'absent',
+                                         'state after nodeps ok 2';
+is $p.ecosystem.project-get-state($nesteddep), 'absent',
+                                         'state after nodeps ok 3';
+
 # makes sure that Pies actually uses our ecosystem, not modifies its
 # own, internal copy
 is $eco.project-get-state($proj), 'installed',
                                   'same state in our object';
 
-check-mock($f, *.called('fetch',   times => 3));
-check-mock($b, *.called('build',   times => 3));
-check-mock($t, *.called('test',    times => 3));
-check-mock($i, *.called('install', times => 3));
+check-mock($f, *.called('fetch',   times => 4));
+check-mock($b, *.called('build',   times => 4));
+check-mock($t, *.called('test',    times => 4));
+check-mock($i, *.called('install', times => 4));
+
+$p.resolve($proj.name, :notests);
+
+check-mock($f, *.called('fetch',   times => 7));
+check-mock($b, *.called('build',   times => 7));
+check-mock($t, *.called('test',    times => 4));
+check-mock($i, *.called('install', times => 7));
 
 # vim: ft=perl6

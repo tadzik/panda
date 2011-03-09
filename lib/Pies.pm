@@ -46,17 +46,20 @@ class Pies {
 
     method announce(Str $what, $data) { }
 
-    method resolve-helper(Pies::Project $bone, $isdep as Bool) {
-        for $bone.dependencies -> $dep {
-            next unless $dep;
-            my $littlebone = $.ecosystem.get-project($dep);
-            unless $littlebone {
-                die "Dependency $dep not found in the ecosystem";
+    method resolve-helper(Pies::Project $bone, $nodeps,
+                          $notests, $isdep as Bool) {
+        unless $nodeps {
+            for $bone.dependencies -> $dep {
+                next unless $dep;
+                my $littlebone = $.ecosystem.get-project($dep);
+                unless $littlebone {
+                    die "Dependency $dep not found in the ecosystem";
+                }
+                next unless $.ecosystem.project-get-state($littlebone)
+                            eq 'absent';
+                self.announce('depends', $bone => $littlebone);
+                self.resolve-helper($littlebone, $nodeps, $notests, 1);
             }
-            next unless $.ecosystem.project-get-state($littlebone)
-                        eq 'absent';
-            self.announce('depends', $bone => $littlebone);
-            self.resolve-helper($littlebone, 1);
         }
 
         self.announce('fetching', $bone);
@@ -65,8 +68,10 @@ class Pies {
         self.announce('building', $bone);
         $!builder.build: $bone;
 
-        self.announce('testing',  $bone);
-        $!tester.test: $bone;
+        unless $notests {
+            self.announce('testing',  $bone);
+            $!tester.test: $bone;
+        }
 
         self.announce('installing', $bone);
         $!installer.install: $bone;
@@ -76,11 +81,11 @@ class Pies {
         self.announce('success', $bone);
     }
 
-    method resolve($proj as Str) {
+    method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
         my $bone = $.ecosystem.get-project($proj)
                    or die "Project $proj not found in the ecosystem";
 
-        self.resolve-helper($bone, 0);
+        self.resolve-helper($bone, $nodeps, $notests, 0);
     }
 }
 
