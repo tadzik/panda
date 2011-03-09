@@ -32,7 +32,7 @@ sub projectinfo($panda, @args) {
             }
             say '';
         } else {
-            say "Project '$x' not found"
+            say "Project '$p' not found"
         }
     }
 }
