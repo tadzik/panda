@@ -3,7 +3,7 @@ use File::Mkdir;
 use Panda;
 
 subset Command of Str where
-    'install' | 'list' | 'update';
+    'install' | 'list' | 'update' | 'info';
 
 sub installprojects($panda, @args) {
     for @args -> $x {
@@ -19,6 +19,24 @@ sub listprojects($panda) {
     }
 }
 
+sub projectinfo($panda, @args) {
+    for @args -> $p {
+        my $x = $panda.ecosystem.get-project($p);
+        if $x {
+            say $x.name => $x.version;
+            say "Depends on:" => $x.dependencies.Str;
+            for $x.metainfo.kv -> $k, $v {
+                if $k ~~ none('version', 'name', 'depends') {
+                    say $k.ucfirst => $v;
+                }
+            }
+            say '';
+        } else {
+            say "Project '$x' not found"
+        }
+    }
+}
+
 sub execute(Command $c, $panda, @args) {
     given $c {
         when 'install' { 
@@ -29,6 +47,9 @@ sub execute(Command $c, $panda, @args) {
         }
         when 'update' {
             $panda.ecosystem.update;
+        }
+        when 'info' {
+            projectinfo($panda, @args);
         }
     }
 }
@@ -64,11 +85,11 @@ multi MAIN (Command $command, *@args) {
 multi MAIN () {
     while prompt('panda> ') -> $c {
         my ($command, @args) = $c.split(' ');
-        try {
-            execute($command, $panda, @args);
-            CATCH {
-                say "Unknown command: $command";
-            }
+        if $command ~~ Command {
+            try { execute($command, $panda, @args) };
+            say $! if $!;
+        } else {
+            say "Unknown command: $command";
         }
     }
     say ''; # the newline after exiting the REPL
