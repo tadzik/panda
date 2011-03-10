@@ -22,7 +22,6 @@ class Panda::Installer does Pies::Installer {
                     mkdir "$!destdir/{$bin.dir}", :p;
                     run "cp $bin $!destdir/$bin"
                         and die "cp failed";
-                    "$!destdir/$bin".IO.chmod(0o755);
                     run "chmod 755 $!destdir/$bin"
                         and die "chmod failed";
                 }
