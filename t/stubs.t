@@ -20,7 +20,7 @@ my $proj = Pies::Project.new(
     dependencies => <dep>,
 );
 
-role DummyEco does Pies::Ecosystem {
+class DummyEco does Pies::Ecosystem {
     has %.projects;
     has %.states;
 
@@ -41,25 +41,25 @@ role DummyEco does Pies::Ecosystem {
     }
 }
 
-role DummyFetcher does Pies::Fetcher {
+class DummyFetcher does Pies::Fetcher {
     method fetch(Pies::Project $a) {
         Bool::True
     }
 }
 
-role DummyBuilder does Pies::Builder {
+class DummyBuilder does Pies::Builder {
     method build(Pies::Project $a) {
         Bool::True
     }
 }
 
-role DummyTester does Pies::Tester {
+class DummyTester does Pies::Tester {
     method test(Pies::Project $a) {
         Bool::True
     }
 }
 
-role DummyInstaller does Pies::Installer {
+class DummyInstaller does Pies::Installer {
     method install(Pies::Project $a) {
         Bool::True
     }
@@ -70,14 +70,10 @@ $eco.add-project($proj);
 $eco.add-project($dep);
 $eco.add-project($nesteddep);
 
-class F does DummyFetcher   {};
-class B does DummyBuilder   {};
-class T does DummyTester    {};
-class I does DummyInstaller {};
-my $f = mocked(F);
-my $b = mocked(B);
-my $t = mocked(T);
-my $i = mocked(I);
+my $f = mocked(DummyFetcher);
+my $b = mocked(DummyBuilder);
+my $t = mocked(DummyTester);
+my $i = mocked(DummyInstaller);
 
 my $p = Pies.new(
     ecosystem => $eco,
