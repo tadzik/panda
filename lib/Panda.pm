@@ -53,7 +53,7 @@ class Panda is Pies {
     }
 
     multi method announce('depends', Pair $p) {
-        self.announce: "{$p.key.name} depends on {$p.value.name}"
+        self.announce: "{$p.key.name} depends on {$p.value.join(", ")}"
     }
 }
 
