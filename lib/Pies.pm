@@ -46,6 +46,23 @@ class Pies {
 
     method announce(Str $what, $data) { }
 
+    method fetch-helper(Pies::Project $bone) {
+        self.announce('fetching', $bone);
+        $!fetcher.fetch($bone);
+    }
+    method build-helper(Pies::Project $bone) {
+        self.announce('building', $bone);
+        $!builder.build($bone);
+    }
+    method test-helper(Pies::Project $bone) {
+        self.announce('testing', $bone);
+        $!tester.test($bone);
+    }
+    method install-helper(Pies::Project $bone) {
+        self.announce('installing', $bone);
+        $!installer.install($bone);
+    }
+
     method resolve-helper(Pies::Project $bone, $nodeps,
                           $notests, $isdep as Bool) {
         unless $nodeps {
@@ -62,19 +79,10 @@ class Pies {
             }
         }
 
-        self.announce('fetching', $bone);
-        $!fetcher.fetch: $bone;
-
-        self.announce('building', $bone);
-        $!builder.build: $bone;
-
-        unless $notests {
-            self.announce('testing',  $bone);
-            $!tester.test: $bone;
-        }
-
-        self.announce('installing', $bone);
-        $!installer.install: $bone;
+        self.fetch-helper($bone);
+        self.build-helper($bone);
+        self.test-helper($bone) unless $notests;
+        self.install-helper($bone);
 
         $.ecosystem.project-set-state($bone, $isdep ?? 'installed-dep'
                                                     !! 'installed');
