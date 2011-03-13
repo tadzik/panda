@@ -1,5 +1,6 @@
 use v6;
 use Pies;
+use JSON::Tiny;
 
 class Panda is Pies {
     use Panda::Ecosystem;
@@ -57,6 +58,25 @@ class Panda is Pies {
 
     multi method announce('depends', Pair $p) {
         self.announce: "{$p.key.name} depends on {$p.value.join(", ")}"
+    }
+
+    method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
+        if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
+            my $mod = from-json slurp "$proj/META.info";
+            my $p = Pies::Project.new(
+                name         => $mod<name>,
+                version      => $mod<version>,
+                dependencies => $mod<depends>,
+                metainfo     => $mod,
+            );
+            if $.ecosystem.get-project($p.name) {
+                self.announce: "Installing {$p.name} "
+                               ~ "from a local directory '$proj'";
+            }
+            $.ecosystem.add-project($p);
+            nextwith($p.name, :$nodeps, :$notests);
+        }
+        nextsame;
     }
 }
 
