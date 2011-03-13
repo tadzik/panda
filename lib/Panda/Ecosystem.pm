@@ -30,7 +30,7 @@ class Panda::Ecosystem is Pies::Ecosystem {
                 dependencies => $mod<depends>,
                 metainfo     => $mod,
             );
-            %!projects{$mod<name>} = $p;
+            self.add-project($p);
         }
     }
 
@@ -47,7 +47,7 @@ class Panda::Ecosystem is Pies::Ecosystem {
     # Pies::Ecosystem methods
 
     method add-project(Pies::Project $p) {
-        %!projects.push($p.name, $p);
+        %!projects{$p.name} = $p;
     }
 
     method get-project($p as Str) {
