@@ -1,9 +1,11 @@
 use Test;
 use Panda::Fetcher;
+use Panda::Resources;
 
 plan 2;
 
-my $f = Panda::Fetcher.new(srcdir => '/tmp/whatever');
+my $r = Panda::Resources.new(srcdir => '/tmp/whatever');
+my $f = Panda::Fetcher.new(resources => $r);
 
 my $p = Pies::Project.new(
     name     => 'foobar',

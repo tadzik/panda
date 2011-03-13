@@ -7,11 +7,13 @@ class Panda is Pies {
     use Panda::Builder;
     use Panda::Tester;
     use Panda::Installer;
+    use Panda::Resources;
 
     has $!srcdir;
     has $!destdir;
     has $!statefile;
     has $!projectsfile;
+    has $!resources;
 
     submethod BUILD {
         callsame; # attribute initialization
@@ -19,12 +21,13 @@ class Panda is Pies {
             statefile    => $!statefile,
             projectsfile => $!projectsfile,
         );
-        $!fetcher   = Panda::Fetcher.new(srcdir => $!srcdir);
-        $!builder   = Panda::Builder.new(srcdir => $!srcdir);
-        $!tester    = Panda::Tester.new(srcdir => $!srcdir);
+        $!resources = Panda::Resources.new(srcdir => $!srcdir);
+        $!fetcher   = Panda::Fetcher.new(resources => $!resources);
+        $!builder   = Panda::Builder.new(resources => $!resources);
+        $!tester    = Panda::Tester.new(resources => $!resources);
         $!installer = Panda::Installer.new(
-            srcdir  => $!srcdir,
-            destdir => $!destdir
+            resources => $!resources,
+            destdir => $!destdir,
         );
     }
 

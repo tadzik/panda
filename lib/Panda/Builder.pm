@@ -4,7 +4,7 @@ use File::Find;
 use File::Mkdir;
 
 class Panda::Builder does Pies::Builder {
-    has $!srcdir;
+    has $!resources;
 
     method build-order(@list) {
         # TODO
@@ -12,8 +12,9 @@ class Panda::Builder does Pies::Builder {
     }
 
     method build(Pies::Project $p) {
-        return unless "$!srcdir/{dirname $p.name}/lib".IO ~~ :d;
-        indir "$!srcdir/{dirname $p.name}", {
+        my $workdir = $!resources.workdir($p);
+        return unless "$workdir/lib".IO ~~ :d;
+        indir $workdir, {
             if "Configure.pl".IO ~~ :f {
                 run 'perl6 Configure.pl' and die "Configure.pl failed";
             }

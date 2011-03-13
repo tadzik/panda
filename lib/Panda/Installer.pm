@@ -4,11 +4,11 @@ use File::Find;
 use File::Mkdir;
 
 class Panda::Installer does Pies::Installer {
-    has $!srcdir;
+    has $!resources;
     has $!destdir;
 
     method install(Pies::Project $p) {
-        indir "$!srcdir/{dirname $p.name}", {
+        indir $!resources.workdir($p), {
             if 'blib'.IO ~~ :d {
                 for find(dir => 'blib', type => 'file').list -> $i {
                     # .substr(5) to skip 'blib/'

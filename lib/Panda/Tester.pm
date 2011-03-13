@@ -2,10 +2,10 @@ use Pies;
 use Panda::Common;
 
 class Panda::Tester does Pies::Tester {
-    has $!srcdir;
+    has $!resources;
 
     method test(Pies::Project $p) {
-        indir "$!srcdir/{dirname $p.name}", {
+        indir $!resources.workdir($p), {
             if 'Makefile'.IO ~~ :f {
                 run 'make test'
                     and die "'make test' failed for {$p.name}";
