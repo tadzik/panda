@@ -1,5 +1,6 @@
 use v6;
 use Pies;
+use JSON::Tiny;
 
 class Panda is Pies {
     use Panda::Ecosystem;
@@ -7,11 +8,13 @@ class Panda is Pies {
     use Panda::Builder;
     use Panda::Tester;
     use Panda::Installer;
+    use Panda::Resources;
 
     has $!srcdir;
     has $!destdir;
     has $!statefile;
     has $!projectsfile;
+    has $!resources;
 
     submethod BUILD {
         callsame; # attribute initialization
@@ -19,12 +22,13 @@ class Panda is Pies {
             statefile    => $!statefile,
             projectsfile => $!projectsfile,
         );
-        $!fetcher   = Panda::Fetcher.new(srcdir => $!srcdir);
-        $!builder   = Panda::Builder.new(srcdir => $!srcdir);
-        $!tester    = Panda::Tester.new(srcdir => $!srcdir);
+        $!resources = Panda::Resources.new(srcdir => $!srcdir);
+        $!fetcher   = Panda::Fetcher.new(resources => $!resources);
+        $!builder   = Panda::Builder.new(resources => $!resources);
+        $!tester    = Panda::Tester.new(resources => $!resources);
         $!installer = Panda::Installer.new(
-            srcdir  => $!srcdir,
-            destdir => $!destdir
+            resources => $!resources,
+            destdir => $!destdir,
         );
     }
 
@@ -53,7 +57,26 @@ class Panda is Pies {
     }
 
     multi method announce('depends', Pair $p) {
-        self.announce: "{$p.key.name} depends on {$p.value.name}"
+        self.announce: "{$p.key.name} depends on {$p.value.join(", ")}"
+    }
+
+    method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
+        if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
+            my $mod = from-json slurp "$proj/META.info";
+            my $p = Pies::Project.new(
+                name         => $mod<name>,
+                version      => $mod<version>,
+                dependencies => $mod<depends>,
+                metainfo     => $mod,
+            );
+            if $.ecosystem.get-project($p.name) {
+                self.announce: "Installing {$p.name} "
+                               ~ "from a local directory '$proj'";
+            }
+            $.ecosystem.add-project($p);
+            nextwith($p.name, :$nodeps, :$notests);
+        }
+        nextsame;
     }
 }
 

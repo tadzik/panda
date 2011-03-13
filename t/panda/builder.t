@@ -1,11 +1,13 @@
 use Test;
 use Panda::Builder;
+use Panda::Resources;
 
 plan 3;
 
 my $srcdir = 'testmodules';
 
-my $b = Panda::Builder.new(srcdir => $srcdir);
+my $r = Panda::Resources.new(srcdir => $srcdir);
+my $b = Panda::Builder.new(resources => $r);
 
 my $p = Pies::Project.new(name => 'dummymodule');
 

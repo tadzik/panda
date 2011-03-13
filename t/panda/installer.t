@@ -1,12 +1,14 @@
 use Test;
 use Panda::Installer;
+use Panda::Resources;
 
 plan 4;
 
 my $srcdir  = 'testmodules';
 my $destdir = "{cwd}/removeme";
 
-my $b = Panda::Installer.new(srcdir => $srcdir, destdir => $destdir);
+my $r = Panda::Resources.new(srcdir => $srcdir);
+my $b = Panda::Installer.new(resources => $r, destdir => $destdir);
 
 my $p = Pies::Project.new(name => 'compiledmodule');
 

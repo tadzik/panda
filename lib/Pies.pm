@@ -46,35 +46,50 @@ class Pies {
 
     method announce(Str $what, $data) { }
 
+    method fetch-helper(Pies::Project $bone) {
+        self.announce('fetching', $bone);
+        $!fetcher.fetch($bone);
+    }
+    method build-helper(Pies::Project $bone) {
+        self.announce('building', $bone);
+        $!builder.build($bone);
+    }
+    method test-helper(Pies::Project $bone) {
+        self.announce('testing', $bone);
+        $!tester.test($bone);
+    }
+    method install-helper(Pies::Project $bone) {
+        self.announce('installing', $bone);
+        $!installer.install($bone);
+    }
+    method deps-helper(Pies::Project $bone) {
+        return unless $bone.dependencies[0];
+        # return a list of projects to be installed
+        my @deps = $bone.dependencies.map: {
+            my $littlebone = $.ecosystem.get-project($_)
+               or die "{$bone.name} depends on $_, "
+                      ~ "which was not found in the ecosystem";
+
+            next unless $.ecosystem.project-get-state($littlebone)
+                 eq 'absent';
+            $littlebone;
+        };
+        self.announce('depends', $bone => @deps».name) if +@deps;
+        return @deps;
+    }
+
     method resolve-helper(Pies::Project $bone, $nodeps,
                           $notests, $isdep as Bool) {
         unless $nodeps {
-            for $bone.dependencies -> $dep {
-                next unless $dep;
-                my $littlebone = $.ecosystem.get-project($dep);
-                unless $littlebone {
-                    die "Dependency $dep not found in the ecosystem";
-                }
-                next unless $.ecosystem.project-get-state($littlebone)
-                            eq 'absent';
-                self.announce('depends', $bone => $littlebone);
-                self.resolve-helper($littlebone, $nodeps, $notests, 1);
+            for self.deps-helper($bone) {
+                self.resolve-helper($_, $nodeps, $notests, 1);
             }
         }
 
-        self.announce('fetching', $bone);
-        $!fetcher.fetch: $bone;
-
-        self.announce('building', $bone);
-        $!builder.build: $bone;
-
-        unless $notests {
-            self.announce('testing',  $bone);
-            $!tester.test: $bone;
-        }
-
-        self.announce('installing', $bone);
-        $!installer.install: $bone;
+        self.fetch-helper($bone);
+        self.build-helper($bone);
+        self.test-helper($bone) unless $notests;
+        self.install-helper($bone);
 
         $.ecosystem.project-set-state($bone, $isdep ?? 'installed-dep'
                                                     !! 'installed');
