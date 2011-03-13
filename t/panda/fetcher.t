@@ -2,9 +2,10 @@ use Test;
 use Panda::Fetcher;
 use Panda::Resources;
 
-plan 2;
+plan 4;
 
-my $r = Panda::Resources.new(srcdir => '/tmp/whatever');
+my $srcdir = 'REMOVEME';
+my $r = Panda::Resources.new(srcdir => $srcdir);
 my $f = Panda::Fetcher.new(resources => $r);
 
 my $p = Pies::Project.new(
@@ -21,6 +22,14 @@ ok $! ~~ /'Failed cloning'/, 'attempts to clone';
 
 $p.metainfo<repo-type> = 'hg';
 try { $f.fetch($p) }
-ok $! ~~ /'other than git'/, 'checks repo-type';
+ok $! ~~ /'hg not supported'/, 'checks repo-type';
+
+$p.metainfo<repo-type> = 'local';
+$p.metainfo<repo-url>  = 'testmodules/dummymodule';
+
+lives_ok { $f.fetch($p) }, 'can fetch a local project';
+ok "$srcdir/foobar/lib/foo.pm".IO ~~ :f, 'fetch ok';
+
+run "rm -r $srcdir";
 
 # vim: ft=perl6
