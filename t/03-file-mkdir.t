@@ -1,6 +1,7 @@
 use v6;
 use Test;
 use File::Mkdir;
+plan 3;
 
 mkdir 't/dupa';
 ok ('t/dupa'.IO ~~ :d), 'casual mkdir still works';
@@ -10,4 +11,3 @@ ok ('t/dupa/foo/bar'.IO ~~ :d), 'mkdir :p, 1/2';
 unlink 't/dupa/foo/bar';
 unlink 't/dupa/foo';
 unlink 't/dupa/';
-done;

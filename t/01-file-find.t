@@ -1,6 +1,7 @@
 use v6;
 use Test;
 use File::Find;
+plan 7;
 
 my $res = find(:dir<t/dir1>);
 my @test = $res.map({ .Str }).sort;
@@ -32,5 +33,3 @@ $res = find(:dir<t/dir1>, :type<file>, :name(/foo/));
 @test = $res.map({ .Str }).sort;
 is @test, <t/dir1/file.foo t/dir1/foodir/not_a_dir>,
 	'types: file, combined with name';
-
-done;
