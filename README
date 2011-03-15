@@ -8,6 +8,9 @@ be used like:
 
 $ panda install Acme::Meow
 
+Note that ~/.perl6/bin has to be in your $PATH for you to be able to use
+panda from the command line.
+
 More features and docs on the way.
 
 [1] https://github.com/masak/proto/tree/pls
