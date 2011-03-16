@@ -70,6 +70,7 @@ class Panda::Ecosystem is Pies::Ecosystem {
 
     method project-set-state(Pies::Project $p,
                              Pies::Project::State $s) {
+        self!init_states unless %!states;
         %!states{$p.name} = $s;
         self!flush-states;
     }
