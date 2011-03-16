@@ -63,6 +63,8 @@ class Panda is Pies {
     method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
         if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
             my $mod = from-json slurp "$proj/META.info";
+            $mod<repo-type> = "local";
+            $mod<repo-url>  = $proj;
             my $p = Pies::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
