@@ -6,7 +6,9 @@ plan 12;
 my $a = Panda::Ecosystem.new(
     statefile    => 't/panda/fakestate',
     projectsfile => 't/panda/fakeprojects'
-);
+) but role {
+    method !flush-states { }
+};
 
 my $b = $a.get-project('foo');
 is $b.version, 1, 'get-project 1';

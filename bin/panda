@@ -15,7 +15,13 @@ sub installprojects($panda, @args) {
 sub listprojects($panda) {
     for $panda.ecosystem.project-list -> $p {
         my $x = $panda.ecosystem.get-project($p);
-        printf "%-20s\t%s\n", $x.name, $x.metainfo<description>;
+        my $s;
+        given $panda.ecosystem.project-get-state($x) {
+            when 'installed'     { $s = '[installed]' }
+            when 'installed-dep' { $s = '[installed as a dependency]' }
+            default              { $s = '' }
+        }
+        printf "%-20s\t%s\n", $x.name, $s;
     }
 }
 
@@ -24,7 +30,15 @@ sub projectinfo($panda, @args) {
         my $x = $panda.ecosystem.get-project($p);
         if $x {
             say $x.name => $x.version;
-            say "Depends on:" => $x.dependencies.Str;
+            say "Depends on:" => $x.dependencies.Str if $x.dependencies;
+            given $panda.ecosystem.project-get-state($x) {
+                when 'installed'     {
+                    say "State:\t\tinstalled";
+                }
+                when 'installed-dep' {
+                    say "State:\t\tinstalled as a dependency";
+                }
+            }
             for $x.metainfo.kv -> $k, $v {
                 if $k ~~ none('version', 'name', 'depends') {
                     say $k.ucfirst => $v;
@@ -93,6 +107,24 @@ multi MAIN () {
         }
     }
     say ''; # the newline after exiting the REPL
+}
+
+sub USAGE {
+    say "Usage: panda [command [args]]
+
+Options:
+    help
+        Display this message and quit
+    install [module1 module2]
+        Install a modules(s)
+    list
+        List the available packages
+    info [module1 module2]
+        Display information on a specific module(s)
+    update
+        Update the module database
+";
+    exit 0;
 }
 
 # vim: ft=perl6

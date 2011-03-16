@@ -8,6 +8,14 @@ class Panda::Ecosystem is Pies::Ecosystem {
     has %!projects;
     has %!states;
 
+    method !flush-states {
+        my $fh = open($!statefile, :w);
+        for %!states.kv -> $key, $val {
+            $fh.say: "$key $val";
+        }
+        $fh.close;
+    }
+
     # those two methods will be called only if needed
     # given the slowness of Rakudo and JSON it's better
     # if they aren't called ever :)
@@ -62,7 +70,9 @@ class Panda::Ecosystem is Pies::Ecosystem {
 
     method project-set-state(Pies::Project $p,
                              Pies::Project::State $s) {
+        self!init_states unless %!states;
         %!states{$p.name} = $s;
+        self!flush-states;
     }
 }
 
