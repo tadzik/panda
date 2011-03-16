@@ -109,4 +109,22 @@ multi MAIN () {
     say ''; # the newline after exiting the REPL
 }
 
+sub USAGE {
+    say "Usage: panda [command [args]]
+
+Options:
+    help
+        Display this message and quit
+    install [module1 module2]
+        Install a modules(s)
+    list
+        List the available packages
+    info [module1 module2]
+        Display information on a specific module(s)
+    update
+        Update the module database
+";
+    exit 0;
+}
+
 # vim: ft=perl6
