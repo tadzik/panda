@@ -15,7 +15,13 @@ sub installprojects($panda, @args) {
 sub listprojects($panda) {
     for $panda.ecosystem.project-list -> $p {
         my $x = $panda.ecosystem.get-project($p);
-        printf "%-20s\t%s\n", $x.name, $x.metainfo<description>;
+        my $s;
+        given $panda.ecosystem.project-get-state($x) {
+            when 'installed'     { $s = '[installed]' }
+            when 'installed-dep' { $s = '[installed as a dependency]' }
+            default              { $s = '' }
+        }
+        printf "%-20s\t%s\n", $x.name, $s;
     }
 }
 
