@@ -25,7 +25,7 @@ is $a.project-get-state($a.get-project('new')), 'absent', 'get-state 2';
 $a.project-set-state($b, 'installed');
 is $a.project-get-state($b), 'installed', 'get-state 3';
 
-is $b.metainfo<repo-type>, 'git', 'metainfo ok';
+is $b.metainfo<source-type>, 'git', 'metainfo ok';
 
 say $b.dependencies.perl;
 is $b.dependencies[0], 'some',  'dependencies 1';

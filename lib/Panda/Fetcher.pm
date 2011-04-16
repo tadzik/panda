@@ -8,8 +8,21 @@ class Panda::Fetcher does Pies::Fetcher {
     has $!resources;
     method fetch (Pies::Project $p) {
         my $dest = $!resources.workdir($p);
-        my $url  = $p.metainfo<repo-url>;
-        given $p.metainfo<repo-type> {
+        # the repo-* variants are kept for backwards compatibility only
+        my $url  = $p.metainfo<source-url> // $p.metainfo<repo-url>;
+        my $type = $p.metainfo<source-type> // $p.metainfo<repo-type>;
+        unless $type {
+            given $url {
+                when /^git:/ {
+                    $type = 'git';
+                }
+                default {
+                    die "Failed fetching {$p.name}, unable to determine "
+                      ~ "source-type with the source-url";
+                }
+            }
+        }
+        given $type {
             when 'git' {
                 if $dest.IO ~~ :d {
                     indir $dest, {
@@ -24,7 +37,7 @@ class Panda::Fetcher does Pies::Fetcher {
             when 'local' {
                 for find(dir => $url).list {
                     # that's sort of ugly, I know, but we need
-                    # <repo-url> stripped
+                    # <source-url> stripped
                     my $where = "$dest/{$_.dir.substr($url.chars)}";
                     mkdir $where, :p;
                     next if $_.IO ~~ :d;
@@ -33,7 +46,7 @@ class Panda::Fetcher does Pies::Fetcher {
             }
             default {
                 die "Failed fetching {$p.name}, "
-                    ~ "repo-type $_ not supported";
+                    ~ "source-type $_ not supported";
             }
         }
         # returns the directory where the module lies

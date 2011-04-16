@@ -12,20 +12,20 @@ my $p = Pies::Project.new(
     name     => 'foobar',
     version  => 0,
     metainfo => {
-        repo-type => 'git',
-        repo-url  => 't/',
+        source-type => 'git',
+        source-url  => 't/',
     }
 );
 
 try { $f.fetch($p) }
 ok $! ~~ /'Failed cloning'/, 'attempts to clone';
 
-$p.metainfo<repo-type> = 'hg';
+$p.metainfo<source-type> = 'hg';
 try { $f.fetch($p) }
-ok $! ~~ /'hg not supported'/, 'checks repo-type';
+ok $! ~~ /'hg not supported'/, 'checks source-type';
 
-$p.metainfo<repo-type> = 'local';
-$p.metainfo<repo-url>  = 'testmodules/dummymodule';
+$p.metainfo<source-type> = 'local';
+$p.metainfo<source-url>  = 'testmodules/dummymodule';
 
 lives_ok { $f.fetch($p) }, 'can fetch a local project';
 ok "$srcdir/foobar/lib/foo.pm".IO ~~ :f, 'fetch ok';
