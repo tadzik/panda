@@ -28,6 +28,14 @@ class Panda::Installer does Pies::Installer {
                     "$!destdir/$bin".IO.chmod(0o755);
                 }
             }
+            if 'doc'.IO ~~ :d {
+                for find(dir => 'doc', type => 'file').list -> $doc {
+                    my $path = "$!destdir/{$p.name.subst(':', '/', :g)}"
+                             ~ "/{$doc.dir}";
+                    mkdir $path, :p;
+                    $doc.IO.copy("$path/{$doc.name}");
+                }
+            }
         };
     }
 }
