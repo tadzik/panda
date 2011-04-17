@@ -9,8 +9,8 @@ sub indir (Str $where, Callable $what) is export {
     my $old = cwd;
     mkdir $where, :p;
     chdir $where;
-    try { $what() }
-    my $fail = $!;
+    my $fail;
+    try { $what(); CATCH { $fail = $! } }
     chdir $old;
     die $fail if $fail;
 }

@@ -7,8 +7,10 @@ subset Command of Str where
 
 sub installprojects($panda, @args) {
     for @args -> $x {
-        try { $panda.resolve($x) };
-        say $! if $!;
+        try {
+            $panda.resolve($x);
+            CATCH { say $! }
+        };
     }
 }
 
