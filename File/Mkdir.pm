@@ -2,6 +2,11 @@ use v6;
 
 module File::Mkdir;
 
+BEGIN {
+    warn "File::Mkdir is now deprecated, "
+       ~ "please use Shell::Command mkpath() instead";
+}
+
 multi sub mkdir(Str $name, $mode = 0o777, :$p!) is export {
     for [\~] $name.split('/').map({"$_/"}) {
         mkdir($_) unless .IO.d
