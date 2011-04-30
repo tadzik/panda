@@ -2,6 +2,11 @@ use v6;
 
 module File::Copy;
 
+BEGIN {
+    warn "File::Copy is now deprecated, "
+       ~ "please use Rakudo's IO.copy() instead";
+}
+
 sub cp(Str $from, Str $to) is export {
 	my $f1 = open $from, :r, :bin;
 	my $f2 = open $to, :w, :bin;
