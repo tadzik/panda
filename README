@@ -1,15 +1,28 @@
+DESCRIPTION
+
 Pies is a module management solution for Perl 6.
 The Pies itself is a specification (like masak's Pls[1]), and cannot
 install anything itself. The project ships two implementations:
 ufobuilder, being an extremely simple example implementation of Pies,
-and Panda, being the actual module manager to use. The bootstrap.sh
-script should install Panda along with all its dependencies, so it can
-be used like:
+and Panda, being the actual module manager to use.
+
+INSTALLATION
+
+To install Panda along with all its dependencies, simply run script
+bootstrap.sh. This works good in *NIX environment.
+However, some problems exist with installation in Windows environment
+at the moment.
+
+USAGE
+
+Panda can be used like:
 
 $ panda install Acme::Meow
 
 Note that ~/.perl6/bin has to be in your $PATH for you to be able to use
 panda from the command line.
+
+MORE
 
 More features and docs on the way.
 
