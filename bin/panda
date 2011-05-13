@@ -1,5 +1,5 @@
 #!/usr/bin/env perl6
-use File::Mkdir;
+use Shell::Command;
 use Panda;
 
 subset Command of Str where
@@ -79,7 +79,7 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 my $panda;
 {
     my $pandadir = %*ENV<HOME> ~ '/.panda';
-    mkdir $pandadir, :p unless $pandadir.IO ~~ :d;
+    mkpath $pandadir unless $pandadir.IO ~~ :d;
 
     my $projectsfile = "$pandadir/projects.json";
     unless $projectsfile.IO ~~ :f {

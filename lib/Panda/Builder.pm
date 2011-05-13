@@ -1,7 +1,7 @@
 use Pies;
 use Panda::Common;
 use File::Find;
-use File::Mkdir;
+use Shell::Command;
 
 class Panda::Builder does Pies::Builder {
     has $!resources;
@@ -27,7 +27,7 @@ class Panda::Builder does Pies::Builder {
             # list of files to compile
             my @files = find(dir => 'lib', name => /\.pm6?$/).list;
             my @dirs = @files.map(*.dir).uniq;
-            mkdir "blib/$_", :p for @dirs;
+            mkpath "blib/$_" for @dirs;
 
             my @tobuild = self.build-order(@files);
             my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB>}";

@@ -1,6 +1,6 @@
 use Pies;
 use JSON::Tiny;
-use File::Mkdir;
+use Shell::Command;
 
 class Panda::Ecosystem is Pies::Ecosystem {
     has $!statefile;
