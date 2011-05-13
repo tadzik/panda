@@ -2,7 +2,7 @@ use Pies;
 use Panda::Common;
 use Panda::Resources;
 use File::Find;
-use File::Mkdir;
+use Shell::Command;
 
 class Panda::Fetcher does Pies::Fetcher {
     has $!resources;
@@ -39,7 +39,7 @@ class Panda::Fetcher does Pies::Fetcher {
                     # that's sort of ugly, I know, but we need
                     # <source-url> stripped
                     my $where = "$dest/{$_.dir.substr($url.chars)}";
-                    mkdir $where, :p;
+                    mkpath $where;
                     next if $_.IO ~~ :d;
                     $_.IO.copy("$where/{$_.name}");
                 }

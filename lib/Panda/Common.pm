@@ -1,5 +1,5 @@
 module Panda::Common;
-use File::Mkdir;
+use Shell::Command;
 
 sub dirname ($mod as Str) is export {
     $mod.subst(':', '_', :g);
@@ -7,7 +7,7 @@ sub dirname ($mod as Str) is export {
 
 sub indir (Str $where, Callable $what) is export {
     my $old = cwd;
-    mkdir $where, :p;
+    mkpath $where;
     chdir $where;
     my $fail;
     try { $what(); CATCH { $fail = $! } }
