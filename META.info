@@ -1,7 +1,7 @@
 {
-    "name"        : "Pies",
+    "name"        : "panda",
     "version"     : "*",
     "description" : "A module management solution",
     "depends"     : [ "File::Tools", "JSON::Tiny", "Test::Mock" ],
-    "source-url"  : "git://github.com/tadzik/Pies.git"
+    "source-url"  : "git://github.com/tadzik/panda.git"
 }
