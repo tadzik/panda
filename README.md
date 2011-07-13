@@ -5,7 +5,7 @@ Panda is an implementation of a Perl 6 module manager specification.
 ## Description
 
 Pies is a module management solution for Perl 6.
-Pies itself is a specification (like masak's Pls[1]), and cannot
+Pies itself is a specification (like masak's [Pls](https://github.com/masak/proto/tree/panda), and cannot
 install anything itself. The project ships two implementations:
 ufobuilder, being an extremely simple example implementation of Pies,
 and Panda, being the actual module manager to use.
@@ -36,7 +36,7 @@ One way to run the test suite is with prove from TAP::Harness
 
 Panda can be used like:
 
-$ panda install Acme::Meow
+    panda install Acme::Meow
 
 Note that ~/.perl6/bin has to be in your $PATH for you to be able to use
 panda from the command line.
@@ -45,9 +45,5 @@ If you use bash, you can accomplish this with
 
     echo 'export PATH=$PATH:~/.perl6/bin' >> ~/.bashrc
     source ~/.bashrc
-
-MORE
-
-More features and docs on the way.
 
 [1] https://github.com/masak/proto/tree/pls
