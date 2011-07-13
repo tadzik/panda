@@ -13,8 +13,8 @@ and Panda, being the actual module manager to use.
 ## Installation
 
 To install Panda along with all its dependencies, simply run the script
-bootstrap.sh in the root of the panda git repo. This requires that a
-*perl6* binary be in your $PATH.
+bootstrap.sh in the root of the panda git repo. This requires that the
+*perl6* binary to be in your $PATH.
 
 This works good in *NIX environment.
 However, some problems exist with installation in Windows environment
