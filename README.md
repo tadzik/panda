@@ -26,11 +26,16 @@ at the moment.
 
     sh ./bootstrap.sh
 
+Since the bootstrap step currently runs tests with prove, you will need a
+recent TAP::Harness (3.x) for it to work properly.
+
 ## Running Tests
 
 One way to run the test suite is with prove from TAP::Harness
 
     prove -e perl6 -lrv t/
+
+You will need a recent TAP::Harness (3.x) to have a prove binary with an -e option.
 
 ## Usage
 
