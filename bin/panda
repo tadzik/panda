@@ -3,7 +3,7 @@ use Shell::Command;
 use Panda;
 
 subset Command of Str where
-    'install' | 'list' | 'update' | 'info';
+    'install' | 'list' | 'update' | 'info' | 'search';
 
 sub installprojects($panda, @args) {
     for @args -> $x {
@@ -24,6 +24,14 @@ sub listprojects($panda) {
             default              { $s = '' }
         }
         printf "%-20s\t%s\n", $x.name, $s;
+    }
+}
+
+sub search-projects($panda, $string) {
+    for $panda.ecosystem.project-list -> $project {
+        my $p = $panda.ecosystem.get-project($project);
+        next unless $p.name ~~ / <$string> / || $p.metainfo<description> ~~ / <$string> /;
+        printf "%-24s %-10s %s\n",$p.name,$p.version, $p.metainfo<description>;
     }
 }
 
@@ -66,6 +74,9 @@ sub execute(Command $c, $panda, @args) {
         }
         when 'info' {
             projectinfo($panda, @args);
+        }
+        when 'search' {
+            search-projects($panda, @args);
         }
     }
 }
@@ -119,6 +130,8 @@ Options:
         Display this message and quit
     install [module1 module2]
         Install a modules(s)
+    search
+        Search module name/description using regex
     list
         List the available packages
     info [module1 module2]
