@@ -27,11 +27,15 @@ sub listprojects($panda) {
     }
 }
 
+sub wrap ($str) {
+    return $str.comb(/ . ** 0..40 [ << | $ ]/).grep({ .chars > 0 }).join("\n" ~ " " x 36);
+}
+
 sub search-projects($panda, $string) {
     for $panda.ecosystem.project-list -> $project {
         my $p = $panda.ecosystem.get-project($project);
         next unless $p.name ~~ / <$string> / || $p.metainfo<description> ~~ / <$string> /;
-        printf "%-24s %-10s %s\n",$p.name,$p.version, $p.metainfo<description>;
+        printf "%-24s %-10s %s\n",$p.name,$p.version, wrap($p.metainfo<description>);
     }
 }
 
