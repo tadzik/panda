@@ -1,13 +1,13 @@
 use Test;
-use Test::Mock;
 use Panda::Ecosystem;
-plan 12;
+plan 10;
 
+'t/panda/fakestate'.IO.copy('REMOVEME');
 my $a = Panda::Ecosystem.new(
-    statefile    => 't/panda/fakestate',
+    statefile    => 'REMOVEME',
     projectsfile => 't/panda/fakeprojects'
 ) but role {
-    method !flush-states { }
+    method flush-states { }
 };
 
 my $b = $a.get-project('foo');
@@ -27,15 +27,10 @@ is $a.project-get-state($b), 'installed', 'get-state 3';
 
 is $b.metainfo<source-type>, 'git', 'metainfo ok';
 
-say $b.dependencies.perl;
 is $b.dependencies[0], 'some',  'dependencies 1';
 is $b.dependencies[1], 'thing', 'dependencies 2';
 is $b.dependencies[2], 'else',  'dependencies 3';
 
-skip('args to constructors not there yet in Test::Mock', 2);
-try {
-    check-mock($a, *.called('init-projects', times => 1));
-    check-mock($a, *.called('init-states',   times => 1));
-}
+unlink 'REMOVEME';
 
 # vim: ft=perl6

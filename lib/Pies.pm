@@ -1,15 +1,10 @@
-subset Pies::Project::State of Str where
-    'absent' | 'installed-dep' | 'installed';
-
 class Pies::Project {
     has $.name;
     has $.version;
-    has @!dependencies;
+    has @.dependencies;
     has %.metainfo;
 
-    method dependencies {
-        @!dependencies[0].list # that's a bit weird of JSON imho
-    }
+    subset State of Str where any(<absent installed-dep installed>);
 }
 
 role Pies::Ecosystem {
@@ -39,10 +34,10 @@ role Pies::Installer {
 
 class Pies {
     has Pies::Ecosystem $.ecosystem;
-    has Pies::Fetcher   $!fetcher;
-    has Pies::Builder   $!builder;
-    has Pies::Tester    $!tester;
-    has Pies::Installer $!installer;
+    has Pies::Fetcher   $.fetcher;
+    has Pies::Builder   $.builder;
+    has Pies::Tester    $.tester;
+    has Pies::Installer $.installer;
 
     method announce(Str $what, $data) { }
 

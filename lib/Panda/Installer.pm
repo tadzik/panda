@@ -4,13 +4,13 @@ use File::Find;
 use Shell::Command;
 
 class Panda::Installer does Pies::Installer {
-    has $!resources;
-    has $!destdir;
+    has $.resources;
+    has $.destdir;
 
     method install(Pies::Project $p) {
         indir $!resources.workdir($p), {
             if 'Makefile'.IO ~~ :f {
-                run 'make install'
+                shell 'make install'
                     and die "'make install' failed for {$p.name}";
                 return;
             }

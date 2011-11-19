@@ -30,6 +30,6 @@ $p.metainfo<source-url>  = 'testmodules/dummymodule';
 lives_ok { $f.fetch($p) }, 'can fetch a local project';
 ok "$srcdir/foobar/lib/foo.pm".IO ~~ :f, 'fetch ok';
 
-run "rm -r $srcdir";
+shell "rm -r $srcdir";
 
 # vim: ft=perl6

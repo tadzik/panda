@@ -1,35 +1,36 @@
 use v6;
 use Pies;
 use JSON::Tiny;
+use Panda::Ecosystem;
+use Panda::Fetcher;
+use Panda::Builder;
+use Panda::Tester;
+use Panda::Installer;
+use Panda::Resources;
 
 class Panda is Pies {
-    use Panda::Ecosystem;
-    use Panda::Fetcher;
-    use Panda::Builder;
-    use Panda::Tester;
-    use Panda::Installer;
-    use Panda::Resources;
+    has $.srcdir;
+    has $.destdir;
+    has $.statefile;
+    has $.projectsfile;
+    has $.resources;
 
-    has $!srcdir;
-    has $!destdir;
-    has $!statefile;
-    has $!projectsfile;
-    has $!resources;
-
-    submethod BUILD {
-        callsame; # attribute initialization
-        $!ecosystem = Panda::Ecosystem.new(
-            statefile    => $!statefile,
-            projectsfile => $!projectsfile,
+    method new(:$srcdir, :$destdir, :$statefile, :$projectsfile) {
+        my $ecosystem = Panda::Ecosystem.new(
+            statefile    => $statefile,
+            projectsfile => $projectsfile,
         );
-        $!resources = Panda::Resources.new(srcdir => $!srcdir);
-        $!fetcher   = Panda::Fetcher.new(resources => $!resources);
-        $!builder   = Panda::Builder.new(resources => $!resources);
-        $!tester    = Panda::Tester.new(resources => $!resources);
-        $!installer = Panda::Installer.new(
-            resources => $!resources,
-            destdir => $!destdir,
+        my $resources = Panda::Resources.new(srcdir => $srcdir);
+        my $fetcher   = Panda::Fetcher.new(resources => $resources);
+        my $builder   = Panda::Builder.new(resources => $resources);
+        my $tester    = Panda::Tester.new(resources => $resources);
+        my $installer = Panda::Installer.new(
+            resources => $resources,
+            destdir => $destdir,
         );
+        self.bless(*, :$srcdir, :$destdir, :$statefile, :$projectsfile,
+                      :$ecosystem, :$fetcher, :$builder, :$tester,
+                      :$installer);
     }
 
     multi method announce(Str $what) {

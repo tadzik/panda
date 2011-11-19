@@ -46,14 +46,14 @@ module Test::Mock {
     sub mocked($type, :%returning = {}) is export {
         # Generate a subclass that logs each method call.
         my %already-seen = :new;
-        my $mocker = ClassHOW.new;
-        $mocker.^add_parent($type.WHAT);
-        for $type, $type.^parents() -> $p {
-            last if $p === Mu;
+        my $mocker := Metamodel::ClassHOW.new_type();
+        $mocker.HOW.add_parent($mocker, $type.WHAT);
+        for $type.^mro() -> $p {
+            last unless $p.^parents(:local);
             for $p.^methods(:local) -> $m {
                 unless %already-seen{$m.name} {
-                    $mocker.^add_method($m.name, method (|$c) {
-                        $!log.log-method-call($m.name, $c);
+                    $mocker.HOW.add_method($mocker, $m.name, method (|$c) {
+                        self.'!mock-log'().log-method-call($m.name, $c);
                         %returning{$m.name} ~~ List ??
                             @(%returning{$m.name}) !!
                             %returning{$m.name}
@@ -63,16 +63,16 @@ module Test::Mock {
             }
         }
 
-        # Add log attribute and a method to access it.
-        $mocker.^add_attribute(Attribute.new( name => '$!log', has_accessor => False ));
-        $mocker.^add_method('!mock_log', method { $!log });
+        # Create a log and add a method to access it.
+        my $log := Test::Mock::Log.new();
+        $mocker.HOW.add_method($mocker, '!mock-log', method { $log });
 
-        # Return a mock object.
-        my $mocked = $mocker.^compose();
-        return $mocked.new(log => Test::Mock::Log.new());
+        # Return a mock object, setting the logger.
+        my $mocked = $mocker.HOW.compose($mocker);
+        $mocked.new()
     }
 
     sub check-mock($mock, *@checker) is export {
-        .($mock!mock_log) for @checker;
+        .($mock.'!mock-log'()) for @checker;
     }
 }

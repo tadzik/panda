@@ -4,7 +4,7 @@ use File::Find;
 use Shell::Command;
 
 class Panda::Builder does Pies::Builder {
-    has $!resources;
+    has $.resources;
 
     method build-order(@list) {
         # TODO
@@ -16,11 +16,11 @@ class Panda::Builder does Pies::Builder {
         return unless "$workdir/lib".IO ~~ :d;
         indir $workdir, {
             if "Configure.pl".IO ~~ :f {
-                run 'perl6 Configure.pl' and die "Configure.pl failed";
+                shell 'perl6 Configure.pl' and die "Configure.pl failed";
             }
 
             if "Makefile".IO ~~~ :f {
-                run 'make' and die "'make' failed";
+                shell 'make' and die "'make' failed";
                 return; # it's alredy built
             }
 
@@ -33,7 +33,7 @@ class Panda::Builder does Pies::Builder {
             my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB>}";
             for @tobuild -> $file {
                 $file.IO.copy: "blib/{$file.dir}/{$file.name}";
-                run "env PERL6LIB=$p6lib perl6 --target=pir "
+                shell "env PERL6LIB=$p6lib perl6 --target=pir "
                     ~ "--output=blib/{$file.dir}/"
                     ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
                     and die "Failed building $file";

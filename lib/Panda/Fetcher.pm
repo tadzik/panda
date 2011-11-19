@@ -5,7 +5,7 @@ use File::Find;
 use Shell::Command;
 
 class Panda::Fetcher does Pies::Fetcher {
-    has $!resources;
+    has $.resources;
     method fetch (Pies::Project $p) {
         my $dest = $!resources.workdir($p);
         # the repo-* variants are kept for backwards compatibility only
@@ -26,11 +26,11 @@ class Panda::Fetcher does Pies::Fetcher {
             when 'git' {
                 if $dest.IO ~~ :d {
                     indir $dest, {
-                        run 'git pull -q'
+                        shell 'git pull -q'
                         and die "Failed updating the {$p.name} repo";
                     };
                 } else {
-                    run "git clone -q $url $dest"
+                    shell "git clone -q $url $dest"
                         and die "Failed cloning the {$p.name} repo";
                 }
             }
@@ -45,8 +45,8 @@ class Panda::Fetcher does Pies::Fetcher {
                 }
             }
             default {
-                die "Failed fetching {$p.name}, "
-                    ~ "source-type $_ not supported";
+                die "Failed fetching {$p.name}, ",
+                    "source-type $_ not supported";
             }
         }
         # returns the directory where the module lies

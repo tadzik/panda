@@ -26,6 +26,6 @@ file_exists_ok "$destdir/compiled/module/doc/foofile",
 file_exists_ok "$destdir/compiled/module/doc/bardir/barfile",
                'docs installed 2';
 
-run "rm -rf $destdir";
+shell "rm -rf $destdir";
 
 # vim: ft=perl6
