@@ -22,7 +22,7 @@ method array($/) {
 method string($/) {
     make join '', $0.list.map({ (.<str> || .<str_escape>).ast });
 }
-method value:sym<number>($/) { make eval $/.Str }
+method value:sym<number>($/) { make +$/.Str }
 method value:sym<string>($/) { make $<string>.ast }
 method value:sym<true>($/)   { make Bool::True  }
 method value:sym<false>($/)  { make Bool::False }
