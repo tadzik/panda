@@ -26,14 +26,7 @@ token string {
 }
 
 token str {
-    [
-        <!before \t>
-        <!before \n>
-        <!before \\>
-        <!before \">
-        .
-    ]+
-#    <-["\\\t\n]>+
+    <-["\\\t\n]>+
 }
 
 token str_escape {
