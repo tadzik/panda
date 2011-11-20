@@ -4,14 +4,11 @@ method TOP($/) {
     make $/.values.[0].ast;
 };
 method object($/) {
-    # RAKUDO
-    # the .item works around RT #78510
-    make $<pairlist>.ast.hash.item ;
+    make $<pairlist>.ast.hash;
 }
 
 method pairlist($/) {
-    # the .item works around RT #78510
-    make $<pair>>>.ast.flat.item;
+    make $<pair>>>.ast.flat;
 }
 
 method pair($/) {
