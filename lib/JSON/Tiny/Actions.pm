@@ -20,7 +20,9 @@ method array($/) {
 }
 
 method string($/) {
-    make join '', $0.list.map({ (.<str> || .<str_escape>).ast });
+    make $0.elems == 1
+        ?? ($0[0].<str> || $0[0].<str_escape>).ast
+        !! join '', $0.list.map({ (.<str> || .<str_escape>).ast });
 }
 method value:sym<number>($/) { make +$/.Str }
 method value:sym<string>($/) { make $<string>.ast }
