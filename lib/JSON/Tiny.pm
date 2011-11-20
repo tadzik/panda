@@ -23,12 +23,27 @@ proto to-json($) is export {*}
 multi to-json(Real:D $d) { ~$d }
 multi to-json(Bool:D $d) { $d ?? 'true' !! 'false'; }
 multi to-json(Str:D  $d) {
+#    RAKUDO/nom doesn't do .trans yet
+#    '"'
+#    ~ (~$d).trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
+#            => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
+#            # RAKUDO: This would be nicer to write as <-[\c32..\c126]>,
+#            #         but Rakudo doesn't do \c yet. [perl #73698]
+#            .subst(/<-[\ ..~]>/, { ord(~$_).fmt('\u%04x') }, :g)
+#    ~ '"'
+    state %esc =
+        '"'     => '\"',
+        '\\'     => '\\\\',
+        '\b'     => '\b',
+        '\f'     => '\f',
+        '\n'     => '\n',
+        '\r'     => '\r',
+        '\t'     => '\t',
+        ;
+
     '"'
-    ~ (~$d).trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
-            => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
-            # RAKUDO: This would be nicer to write as <-[\c32..\c126]>,
-            #         but Rakudo doesn't do \c yet. [perl #73698]
-            .subst(/<-[\ ..~]>/, { ord(~$_).fmt('\u%04x') }, :g)
+    ~ (~$d).subst(/<["\\\b\f\n\r\t]>/, { %esc{$_} }, :g)\ 
+           .subst(/<-[# ..~]-[\ ]>/, { ord(~$_).fmt('\u%04x') }, :g)
     ~ '"'
 }
 multi to-json(Array:D $d) {
