@@ -43,7 +43,7 @@ multi to-json(Str:D  $d) {
 
     '"'
     ~ (~$d).subst(/<["\\\b\f\n\r\t]>/, { %esc{$_} }, :g)\ 
-           .subst(/<-[# ..~]-[\ ]>/, { ord(~$_).fmt('\u%04x') }, :g)
+           .subst(/<-[\ ..~]>/, { ord(~$_).fmt('\u%04x') }, :g)
     ~ '"'
 }
 multi to-json(Array:D $d) {
