@@ -10,15 +10,11 @@ install anything itself. The project ships two implementations:
 ufobuilder, being an extremely simple example implementation of Pies,
 and Panda, being the actual module manager to use.
 
-## Installation
+## Installation on Linux/UNIX/OSX
 
 To install Panda along with all its dependencies, simply run the script
 bootstrap.sh in the root of the panda git repo. You must have a
 *perl6* binary in your $PATH for bootstrap.sh to work correctly.
-
-This works good in *NIX environment.
-However, some problems exist with installation in Windows environment
-at the moment.
 
     git clone git://github.com/tadzik/panda.git
 
@@ -28,6 +24,21 @@ at the moment.
 
 Since the bootstrap step currently runs tests with prove, you will need a
 recent TAP::Harness (3.x) for it to work properly.
+
+## Installation on Windows
+
+Panda currently depends on wget; you can obtain a Windows build of wget at:
+
+    http://gnuwin32.sourceforge.net/packages/wget.htm
+    
+Once you have obtained and installed it, and have wget in your path, you
+may now do:
+
+    git clone git://github.com/tadzik/panda.git
+
+    cd panda
+
+    bootstrap
 
 ## Running Tests
 
