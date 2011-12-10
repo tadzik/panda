@@ -93,7 +93,8 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 # initialize the Panda object
 my $panda;
 {
-    my $pandadir = %*ENV<HOME> ~ '/.panda';
+    my $home = $*OS eq 'MSWin32' ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
+    my $pandadir = "$home/.panda";
     mkpath $pandadir unless $pandadir.IO ~~ :d;
 
     my $projectsfile = "$pandadir/projects.json";
@@ -103,7 +104,7 @@ my $panda;
 
     $panda = Panda.new(
         srcdir       => "$pandadir/src",
-        destdir      => %*ENV<HOME> ~ '/.perl6',
+        destdir      => "$home/.perl6",
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json"
     );
