@@ -31,8 +31,8 @@ Panda currently depends on wget; you can obtain a Windows build of wget at:
 
     http://gnuwin32.sourceforge.net/packages/wget.htm
     
-Once you have obtained and installed it, and have wget in your path, you
-may now do:
+Once you have obtained and installed it, and have both wget and perl6 in
+your path, you may now install Panda by doing:
 
     git clone git://github.com/tadzik/panda.git
 
