@@ -98,9 +98,6 @@ my $panda;
     mkpath $pandadir unless $pandadir.IO ~~ :d;
 
     my $projectsfile = "$pandadir/projects.json";
-    unless $projectsfile.IO ~~ :f {
-        shell "wget http://feather.perl6.nl:3000/list -O $projectsfile";
-    }
 
     $panda = Panda.new(
         srcdir       => "$pandadir/src",

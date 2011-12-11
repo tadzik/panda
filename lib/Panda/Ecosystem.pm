@@ -30,6 +30,7 @@ class Panda::Ecosystem is Pies::Ecosystem {
     }
 
     method init_projects {
+        self.update if not $!projectsfile.IO ~~ :f;
         my $list = from-json slurp $!projectsfile;
         for $list.list -> $mod {
             my $p = Pies::Project.new(
