@@ -31,7 +31,7 @@ multi to-json(Str:D  $d) {
 }
 multi to-json(Array:D $d) {
     return  '[ '
-            ~ (map { to-json($_) }, $d.values).join(', ')
+            ~ (map &to-json, $d.values).join(', ')
             ~ ' ]';
 }
 multi to-json(Hash:D  $d) {
