@@ -24,7 +24,7 @@ multi to-json(Real:D $d) { ~$d }
 multi to-json(Bool:D $d) { $d ?? 'true' !! 'false'; }
 multi to-json(Str:D  $d) {
     '"'
-    ~ (~$d).trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
+    ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
             => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
             .subst(/<-[\c32..\c126]>/, { ord(~$_).fmt('\u%04x') }, :g)
     ~ '"'
