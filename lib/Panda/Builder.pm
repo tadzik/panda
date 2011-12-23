@@ -33,10 +33,10 @@ class Panda::Builder does Pies::Builder {
             my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB>}";
             for @tobuild -> $file {
                 $file.IO.copy: "blib/{$file.dir}/{$file.name}";
-                shell "env PERL6LIB=$p6lib perl6 --target=pir "
-                    ~ "--output=blib/{$file.dir}/"
-                    ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
-                    and die "Failed building $file";
+#                shell "env PERL6LIB=$p6lib perl6 --target=pir "
+#                    ~ "--output=blib/{$file.dir}/"
+#                    ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
+#                    and die "Failed building $file";
             }
         };
     }
