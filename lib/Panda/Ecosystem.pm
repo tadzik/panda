@@ -2,7 +2,7 @@ use Pies;
 use JSON::Tiny;
 use Shell::Command;
 
-class Panda::Ecosystem is Pies::Ecosystem {
+class Panda::Ecosystem does Pies::Ecosystem {
     has $.statefile;
     has $.projectsfile;
     has %!projects;
