@@ -16,6 +16,10 @@ method pair($/) {
 }
 
 method array($/) {
+    make $<arraylist>.ast;
+}
+
+method arraylist($/) {
     make [$<value>>>.ast];
 }
 

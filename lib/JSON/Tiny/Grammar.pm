@@ -5,7 +5,8 @@ rule TOP        { ^[ <object> | <array> ]$ }
 rule object     { '{' ~ '}' <pairlist>     }
 rule pairlist   { [ <pair>+ % [ \, ]  ]?   }
 rule pair       { <string> ':' <value>     }
-rule array      { '[' ~ ']' [ <value>+ % [ \, ] ]?  }
+rule array      { '[' ~ ']' <arraylist>    }
+rule arraylist  { [ <value>+ % [ \, ] ]?   }
 
 proto token value {*};
 token value:sym<number> {
