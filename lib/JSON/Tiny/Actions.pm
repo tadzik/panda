@@ -36,7 +36,7 @@ method str($/)               { make ~$/ }
 
 method str_escape($/) {
     if $<xdigit> {
-        make chr(:16($<xdigit>.join));
+        make chr(eval "0x" ~ $<xdigit>.join);
     } else {
         my %h = '\\' => "\\",
                 '/'  => "/",
