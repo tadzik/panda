@@ -5,7 +5,7 @@
 ## Description
 
 Pies is a module management solution for Perl 6.
-Pies itself is a specification (like masak's [Pls](https://github.com/masak/proto/tree/panda), and cannot
+Pies itself is a specification (like masak's [Pls](https://github.com/masak/proto/tree/panda)), and cannot
 install anything itself. The project ships two implementations:
 ufobuilder, being an extremely simple example implementation of Pies,
 and Panda, being the actual module manager to use.
@@ -24,6 +24,9 @@ bootstrap.sh in the root of the panda git repo. You must have a
 
 Since the bootstrap step currently runs tests with prove, you will need a
 recent TAP::Harness (3.x) for it to work properly.
+
+If you are behind a proxy, you neet to [configure git](http://help.github.com/firewalls-and-proxies/) 
+and [configure wget](http://www.gnu.org/software/wget/manual/html_node/Proxies.html) to use the proxy.
 
 ## Installation on Windows
 
@@ -63,3 +66,5 @@ If you use bash, you can accomplish this with
     source ~/.bashrc
 
 [1] https://github.com/masak/proto/tree/pls
+[2] http://help.github.com/firewalls-and-proxies/
+[3] http://www.gnu.org/software/wget/manual/html_node/Proxies.html
