@@ -12,4 +12,4 @@ rmdir 't/dupa/';
 
 mkpath 't/a/b/c';
 rm_rf('t/a');
-ok !('t/a/b/c'.IO.d), 'rm_rf';
+ok !('t/a'.IO.d), 'rm_rf';
