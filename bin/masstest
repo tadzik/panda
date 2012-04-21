@@ -1,0 +1,101 @@
+#!/usr/bin/env perl6
+use Panda;
+use Shell::Command;
+
+my $tmpl-main = '
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>Emmentaler</title>
+     <meta name="description" content="Home page for Perl 6, the next major version of the Perl programming language" />
+    <link rel="icon" href="/favicon.ico" type="favicon.ico" />
+    <style type="text/css">
+        @import url("style.css");
+    </style>
+</head>
+<body>
+<div id="wrapper-outer">
+
+<div id="header">
+    <img src="camelia-logo.png" alt="camelia perl bug logo" />
+    <h2>Welcome to Emmentaller</h2>
+    <p>Hi, my name is tadzik and I stole this layout. LOL!</p>
+</div>
+
+%s
+
+</div> <!-- id="wrapper-outer" -->
+</body>
+</html>
+';
+
+my $tmpl-project-ok = '
+    <div id="community" class="box">
+        <h4>%s</h4>
+        Everything\'s fine \o/
+    </div>
+';
+
+my $tmpl-project-fail = '
+    <div id="specs" class="box">
+        <h4>%s</h4>
+        <p><b>%s stage has failed</b></p>
+        <p>%s</p>
+    </div>
+';
+
+
+multi gen-result(Str $m, True) {
+    sprintf $tmpl-project-ok, $m
+}
+
+multi gen-result(Str $m, X::Panda $ex) {
+    my $desc  = $ex.description;
+    my $stage = $ex.stage;
+    if $m ne $ex.module {
+        $desc = "Building dependency {$ex.module} has failed";
+        $stage = 'resolve';
+    }
+
+    sprintf $tmpl-project-fail, $m, $ex.stage, $desc
+}
+
+sub MAIN ($projectsdir = "projects.json.small") {
+    try mkdir "installlib";
+    my $panda = Panda.new(
+        srcdir       => "masstest/pandadir/src",
+        destdir      => "installlib",
+        statefile    => "masstest/pandadir/state",
+        projectsfile => $projectsdir,
+    );
+
+    my %log;
+
+    for $panda.ecosystem.project-list -> $p {
+        my $x = $panda.ecosystem.get-project($p);
+        if $panda.ecosystem.project-get-state($x) eq 'absent' {
+            try $panda.resolve($p);
+            if defined $! {
+                %log{$p} = $!;
+            } else {
+                %log{$p} = True;
+            }
+        }
+    }
+
+    shell 'rm -rf masstest';
+    shell 'rm -rf installlib/*';
+
+    my $contents;
+    for %log.keys.sort -> $m {
+        say %log{$m}.perl;
+        $contents ~= gen-result($m, %log{$m});
+    }
+
+    my $html = open('index.html', :w);
+    $html.print(sprintf $tmpl-main, $contents);
+    $html.close;
+}
