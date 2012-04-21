@@ -6,9 +6,26 @@ use Shell::Command;
 class Panda::Builder does Pies::Builder {
     has $.resources;
 
-    method build-order(@list) {
-        # TODO
-        return @list
+    method build-order(@module-files) {
+        my @modules = map { path-to-module-name($_) }, @module-files;
+        my %module-to-path = @modules Z=> @module-files;
+        my %usages_of;
+        for @module-files -> $module-file {
+            my $fh = open($module-file.Str, :r);
+            my $module = path-to-module-name($module-file);
+            %usages_of{$module} = [];
+            for $fh.lines() {
+                if /^\s* 'use' \s+ (\w+ ['::' \w+]*)/ && $0 -> $used {
+                    next if $used eq 'v6';
+                    next if $used eq 'MONKEY_TYPING';
+
+                    %usages_of{$module}.push(~$used);
+                }
+            }
+        }
+        my @order = topo-sort(@modules, %usages_of);
+
+        return map { %module-to-path{$_} }, @order;
     }
 
     method build(Pies::Project $p) {
@@ -33,12 +50,37 @@ class Panda::Builder does Pies::Builder {
             my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB>}";
             for @tobuild -> $file {
                 $file.IO.copy: "blib/{$file.dir}/{$file.name}";
-#                shell "env PERL6LIB=$p6lib perl6 --target=pir "
-#                    ~ "--output=blib/{$file.dir}/"
-#                    ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
-#                    and die "Failed building $file";
+                shell "env PERL6LIB=$p6lib perl6 --target=pir "
+                    ~ "--output=blib/{$file.dir}/"
+                    ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
+                    and die "Failed building $file";
             }
         };
+    }
+
+    sub topo-sort(@modules, %dependencies) {
+        my @order;
+        my %color_of = @modules X=> 'not yet visited';
+        sub dfs-visit($module) {
+            %color_of{$module} = 'visited';
+            for %dependencies{$module}.list -> $used {
+                if %color_of{$used} eq 'not yet visited' {
+                    dfs-visit($used);
+                }
+            }
+            push @order, $module;
+        }
+
+        for @modules -> $module {
+            if %color_of{$module} eq 'not yet visited' {
+                dfs-visit($module);
+            }
+        }
+        @order;
+    }
+
+    sub path-to-module-name($path) {
+        $path.subst(/^'lib/'/, '').subst(/^'lib6/'/, '').subst(/\.pm6?$/, '').subst('/', '::', :g);
     }
 }
 

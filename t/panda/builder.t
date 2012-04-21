@@ -14,7 +14,6 @@ my $p = Pies::Project.new(name => 'dummymodule');
 
 lives_ok { $b.build($p) };
 
-todo 'we skip that for now';
 ok "$srcdir/dummymodule/blib/lib/foo.pir".IO ~~ :f, 'module compiled';
 ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~ :f, 'module copied to blib';
 
