@@ -49,7 +49,7 @@ class Panda::Ecosystem does Pies::Ecosystem {
     }
 
     method update {
-        unlink $!projectsfile;
+        try unlink $!projectsfile;
         shell "wget 'feather.perl6.nl:3000/list' -O '$!projectsfile'";
     }
 

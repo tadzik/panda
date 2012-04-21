@@ -58,7 +58,7 @@ class Panda::Builder does Pies::Builder {
         sub dfs-visit($module) {
             %color_of{$module} = 'visited';
             for %dependencies{$module}.list -> $used {
-                if %color_of{$used} eq 'not yet visited' {
+                if (%color_of{$used} // '') eq 'not yet visited' {
                     dfs-visit($used);
                 }
             }
