@@ -6,6 +6,10 @@ use Shell::Command;
 class Panda::Builder does Pies::Builder {
     has $.resources;
 
+    sub die (Pies::Project $p, $d) is hidden_from_backtrace {
+        X::Panda.new($p.name, 'build', $d).throw
+    }
+
     method build-order(@module-files) {
         my @modules = map { path-to-module-name($_) }, @module-files;
         my %module-to-path = @modules Z=> @module-files;
@@ -33,11 +37,12 @@ class Panda::Builder does Pies::Builder {
         return unless "$workdir/lib".IO ~~ :d;
         indir $workdir, {
             if "Configure.pl".IO ~~ :f {
-                shell 'perl6 Configure.pl' and die "Configure.pl failed";
+                shell 'perl6 Configure.pl'
+                    and die $p, "Configure.pl failed";
             }
 
             if "Makefile".IO ~~~ :f {
-                shell 'make' and die "'make' failed";
+                shell 'make' and die $p, "'make' failed";
                 return; # it's alredy built
             }
 
@@ -53,7 +58,7 @@ class Panda::Builder does Pies::Builder {
                 shell "env PERL6LIB=$p6lib perl6 --target=pir "
                     ~ "--output=blib/{$file.dir}/"
                     ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
-                    and die "Failed building $file";
+                    and die $p, "Failed building $file";
             }
         };
     }

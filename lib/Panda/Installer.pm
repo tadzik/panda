@@ -4,6 +4,10 @@ use File::Find;
 use Shell::Command;
 
 class Panda::Installer does Pies::Installer {
+    sub die (Pies::Project $p, $d) is hidden_from_backtrace {
+        X::Panda.new($p.name, 'install', $d).throw
+    }
+
     has $.resources;
     has $.destdir;
 
@@ -11,7 +15,7 @@ class Panda::Installer does Pies::Installer {
         indir $!resources.workdir($p), {
             if 'Makefile'.IO ~~ :f {
                 shell 'make install'
-                    and die "'make install' failed for {$p.name}";
+                    and die $p, "'make install' failed";
                 return;
             }
             if 'blib'.IO ~~ :d {

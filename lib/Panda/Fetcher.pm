@@ -5,6 +5,10 @@ use File::Find;
 use Shell::Command;
 
 class Panda::Fetcher does Pies::Fetcher {
+    sub die (Pies::Project $p, $d) is hidden_from_backtrace {
+        X::Panda.new($p.name, 'fetch', $d).throw
+    }
+
     has $.resources;
     method fetch (Pies::Project $p) {
         my $dest = $!resources.workdir($p);
@@ -17,8 +21,7 @@ class Panda::Fetcher does Pies::Fetcher {
                     $type = 'git';
                 }
                 default {
-                    die "Failed fetching {$p.name}, unable to determine "
-                      ~ "source-type with the source-url";
+                    die $p, "Unable to determine source-type using source-url";
                 }
             }
         }
@@ -27,11 +30,11 @@ class Panda::Fetcher does Pies::Fetcher {
                 if $dest.IO ~~ :d {
                     indir $dest, {
                         shell 'git pull -q'
-                        and die "Failed updating the {$p.name} repo";
+                        and die $p, "Failed updating the repo";
                     };
                 } else {
                     shell "git clone -q $url $dest"
-                        and die "Failed cloning the {$p.name} repo";
+                        and die $p, "Failed cloning the repo";
                 }
             }
             when 'local' {
@@ -45,12 +48,9 @@ class Panda::Fetcher does Pies::Fetcher {
                 }
             }
             default {
-                die "Failed fetching {$p.name}, ",
-                    "source-type $_ not supported";
+                die $p, "source-type $_ not supported";
             }
         }
-        # returns the directory where the module lies
-        # return {$Settings::srcdir} ~ "/$name";
     }
 }
 

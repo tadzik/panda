@@ -15,4 +15,19 @@ sub indir (Str $where, Callable $what) is export {
     $!.throw if $!;
 }
 
+class X::Panda is Exception {
+    has $.module;
+    has $.stage;
+    has $.description;
+
+    method new($module, $stage, $description) {
+        self.bless(*, :$module, :$stage, :$description)
+    }
+
+    method message {
+        sprintf "%s stage failed for %s: %s",
+                $.stage, $.module, $.description
+    }
+}
+
 # vim: ft=perl6

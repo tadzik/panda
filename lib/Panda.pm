@@ -80,6 +80,19 @@ class Panda is Pies {
             nextwith($p.name, :$nodeps, :$notests);
         }
         nextsame;
+
+        CATCH {
+            if $_ !~~ X::Panda {
+                die X::Panda.new($proj, 'resolve', $_.message);
+            }
+            if $_.module ne $proj {
+                X::Panda.new($proj, 'resolve',
+                    'Dependency resolution has failed: '
+                    ~ "stage {$_.stage} failed for {$_.module}"
+                ).throw;
+            }
+            $_.rethrow;
+        }
     }
 }
 
