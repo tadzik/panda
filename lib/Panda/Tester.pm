@@ -10,9 +10,7 @@ class Panda::Tester does Pies::Tester {
 
     method test(Pies::Project $p) {
         indir $!resources.workdir($p), {
-            if 'Makefile'.IO ~~ :f {
-                shell 'make test' and die $p, "'make test' failed";
-            } elsif 't'.IO ~~ :d {
+            if 't'.IO ~~ :d {
                 my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB>}";
                 my $c = "env PERL6LIB=$p6lib prove -e perl6 -r t/";
                 shell $c and die $p, "Tests failed";

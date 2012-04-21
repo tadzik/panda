@@ -36,17 +36,6 @@ class Panda::Builder does Pies::Builder {
         my $workdir = $!resources.workdir($p);
         return unless "$workdir/lib".IO ~~ :d;
         indir $workdir, {
-            if "Configure.pl".IO ~~ :f {
-                shell 'perl6 Configure.pl'
-                    and die $p, "Configure.pl failed";
-            }
-
-            if "Makefile".IO ~~~ :f {
-                shell 'make' and die $p, "'make' failed";
-                return; # it's alredy built
-            }
-
-            # list of files to compile
             my @files = find(dir => 'lib', name => /\.pm6?$/).list;
             my @dirs = @files.map(*.dir).uniq;
             mkpath "blib/$_" for @dirs;

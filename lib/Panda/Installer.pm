@@ -13,11 +13,6 @@ class Panda::Installer does Pies::Installer {
 
     method install(Pies::Project $p) {
         indir $!resources.workdir($p), {
-            if 'Makefile'.IO ~~ :f {
-                shell 'make install'
-                    and die $p, "'make install' failed";
-                return;
-            }
             if 'blib'.IO ~~ :d {
                 for find(dir => 'blib', type => 'file').list -> $i {
                     # .substr(5) to skip 'blib/'
