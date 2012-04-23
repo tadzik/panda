@@ -1,0 +1,2 @@
+* Keep track of the installed files so they can be removed later
+  - it's tricky if they're installed to some DESTDIR
