@@ -83,6 +83,8 @@ my $tmpl-main = '
          </tbody>
     </table>
 
+    <p>%s modules OK, %s not</p>
+
 </body>
 </html>
 ';
@@ -137,6 +139,9 @@ multi gen-result(Pies::Project $p, X::Panda $ex) {
 }
 
 sub MAIN ($projectsdir = "projects.json.small") {
+    my $good-count = 0;
+    my $bad-count  = 0;
+
     try mkdir "installlib";
     my $panda = Panda.new(
         srcdir       => "masstest/pandadir/src",
@@ -152,11 +157,13 @@ sub MAIN ($projectsdir = "projects.json.small") {
         # don't waste time if it has already been installed once
         if $panda.ecosystem.project-get-state($x) ne 'absent'
         or $p eq "panda" {
+            $good-count++;
             %log{$p} = True;
             next;
         }
         try $panda.resolve($p);
         if defined $! {
+            $bad-count++;
             %log{$p} = $!;
         } else {
             %log{$p} = True;
@@ -172,6 +179,6 @@ sub MAIN ($projectsdir = "projects.json.small") {
     }
 
     my $html = open('index.html', :w);
-    $html.print(sprintf $tmpl-main, $contents);
+    $html.print(sprintf $tmpl-main, $contents, $good-count, $bad-count);
     $html.close;
 }
