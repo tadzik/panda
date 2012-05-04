@@ -41,7 +41,7 @@ class Panda::Builder does Pies::Builder {
             mkpath "blib/$_" for @dirs;
 
             my @tobuild = self.build-order(@files);
-            my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB>}";
+            my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB> // ''}";
             for @tobuild -> $file {
                 $file.IO.copy: "blib/{$file.dir}/{$file.name}";
                 shell "env PERL6LIB=$p6lib perl6 --target=pir "
