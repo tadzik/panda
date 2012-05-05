@@ -2,9 +2,6 @@
 use Shell::Command;
 use Panda;
 
-subset Command of Str where
-    'install' | 'list' | 'update' | 'info' | 'search';
-
 sub installprojects($panda, @args) {
     for @args -> $x {
         try {
@@ -65,26 +62,6 @@ sub projectinfo($panda, @args) {
     }
 }
 
-sub execute(Command $c, $panda, @args) {
-    given $c {
-        when 'install' { 
-            installprojects($panda, @args);
-        }
-        when 'list' {
-            listprojects($panda);
-        }
-        when 'update' {
-            $panda.ecosystem.update;
-        }
-        when 'info' {
-            projectinfo($panda, @args);
-        }
-        when 'search' {
-            search-projects($panda, @args);
-        }
-    }
-}
-
 # default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
     @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ (@*ARGS ?? ' ' ~ @*ARGS !! '');
@@ -107,41 +84,29 @@ my $panda;
     );
 }
 
-multi MAIN (Command $command, *@args) {
-    execute($command, $panda, @args);
+#= Install the specified modules
+multi MAIN ('install', *@modules) {
+    installprojects($panda, @modules);
 }
 
-multi MAIN () {
-    while prompt('panda> ') -> $c {
-        my ($command, @args) = $c.split(' ');
-        if $command ~~ Command {
-            try { execute($command, $panda, @args) };
-            say $! if $!;
-        } else {
-            say "Unknown command: $command";
-        }
-    }
-    say ''; # the newline after exiting the REPL
+#= List all available modules
+multi MAIN ('list') {
+    listprojects($panda);
 }
 
-sub USAGE {
-    say "Usage: panda [command [args]]
+#= Update the module database
+multi MAIN ('update') {
+    $panda.ecosystem.update;
+}
 
-Options:
-    help
-        Display this message and quit
-    install [module1 module2]
-        Install a modules(s)
-    search
-        Search module name/description using regex
-    list
-        List the available packages
-    info [module1 module2]
-        Display information on a specific module(s)
-    update
-        Update the module database
-";
-    exit 0;
+#= Display information about specified modules
+multi MAIN ('info', *@modules) {
+    projectinfo($panda, @modules);
+}
+
+#= Search the name/description using a regular expression
+multi MAIN ('search', $pattern) {
+    search-projects($panda, $pattern);
 }
 
 # vim: ft=perl6
