@@ -2,15 +2,6 @@
 use Shell::Command;
 use Panda;
 
-sub installprojects($panda, @args) {
-    for @args -> $x {
-        try {
-            $panda.resolve($x);
-            CATCH { say $! }
-        };
-    }
-}
-
 sub listprojects($panda) {
     for $panda.ecosystem.project-list -> $p {
         my $x = $panda.ecosystem.get-project($p);
@@ -84,9 +75,17 @@ my $panda;
     );
 }
 
+# allow switches after positionals
+@*ARGS = @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
+
 #= Install the specified modules
-multi MAIN ('install', *@modules) {
-    installprojects($panda, @modules);
+multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
+    for @modules -> $x {
+        try {
+            $panda.resolve($x, :$notests, :$nodeps);
+            CATCH { say $! }
+        };
+    }
 }
 
 #= List all available modules
