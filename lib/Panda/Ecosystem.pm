@@ -16,10 +16,7 @@ class Panda::Ecosystem does Pies::Ecosystem {
         $fh.close;
     }
 
-    # those two methods will be called only if needed
-    # given the slowness of Rakudo and JSON it's better
-    # if they aren't called ever :)
-    method init_states {
+    submethod BUILD(:$!statefile, :$!projectsfile) {
         if $!statefile.IO ~~ :f {
             my $fh = open($!statefile);
             for $fh.lines -> $line {
@@ -27,9 +24,7 @@ class Panda::Ecosystem does Pies::Ecosystem {
                 %!states{$mod} = $state;
             }
         }
-    }
 
-    method init_projects {
         self.update if not $!projectsfile.IO ~~ :f;
         my $list = from-json slurp $!projectsfile;
         for $list.list -> $mod {
@@ -44,7 +39,6 @@ class Panda::Ecosystem does Pies::Ecosystem {
     }
 
     method project-list {
-        self.init_projects unless %!projects;
         return %!projects.keys
     }
 
@@ -60,18 +54,15 @@ class Panda::Ecosystem does Pies::Ecosystem {
     }
 
     method get-project($p as Str) {
-        self.init_projects unless %!projects;
         %!projects{$p}
     }
 
     method project-get-state(Pies::Project $p) {
-        self.init_states unless %!states;
         %!states{$p.name} // 'absent'
     }
 
     method project-set-state(Pies::Project $p,
                              Pies::Project::State $s) {
-        self.init_states unless %!states;
         %!states{$p.name} = $s;
         self.flush-states;
     }
