@@ -18,32 +18,30 @@ module JSON::Tiny;
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
 
-proto to-json($d) is export { _tj($d) }
+proto to-json($) is export {*}
 
-multi _tj(Real $d) { ~$d }
-multi _tj(Bool $d) { $d ?? 'true' !! 'false'; }
-multi _tj(Str  $d) {
+multi to-json(Real:D $d) { ~$d }
+multi to-json(Bool:D $d) { $d ?? 'true' !! 'false'; }
+multi to-json(Str:D  $d) {
     '"'
-    ~ (~$d).trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
+    ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
             => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
-            # RAKUDO: This would be nicer to write as <-[\c32..\c126]>,
-            #         but Rakudo doesn't do \c yet. [perl #73698]
-            .subst(/<-[\ ..~]>/, { ord(~$_).fmt('\u%04x') }, :g)
+            .subst(/<-[\c32..\c126]>/, { ord(~$_).fmt('\u%04x') }, :g)
     ~ '"'
 }
-multi _tj(Array $d) {
+multi to-json(Array:D $d) {
     return  '[ '
-            ~ (map { _tj($_) }, $d.values).join(', ')
+            ~ $d.map(&to-json).join(', ')
             ~ ' ]';
 }
-multi _tj(Hash  $d) {
+multi to-json(Hash:D  $d) {
     return '{ '
-            ~ (map { _tj(.key) ~ ' : ' ~ _tj(.value) }, $d.pairs).join(', ')
+            ~ $d.map({ to-json(.key) ~ ' : ' ~ to-json(.value) }).join(', ')
             ~ ' }';
 }
 
-multi _tj($d where { $d.notdef }) { 'null' }
-multi _tj($s) {
+multi to-json(Any:U $) { 'null' }
+multi to-json(Any:D $s) {
     die "Can't serialize an object of type " ~ $s.WHAT.perl
 }
 

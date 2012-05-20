@@ -4,14 +4,11 @@ method TOP($/) {
     make $/.values.[0].ast;
 };
 method object($/) {
-    # RAKUDO
-    # the .item works around RT #78510
-    make $<pairlist>.ast.hash.item ;
+    make $<pairlist>.ast.hash;
 }
 
 method pairlist($/) {
-    # the .item works around RT #78510
-    make $<pair>>>.ast.flat.item;
+    make $<pair>>>.ast.flat;
 }
 
 method pair($/) {
@@ -19,13 +16,19 @@ method pair($/) {
 }
 
 method array($/) {
+    make $<arraylist>.ast;
+}
+
+method arraylist($/) {
     make [$<value>>>.ast];
 }
 
 method string($/) {
-    make join '', $/.caps>>.value>>.ast
+    make $0.elems == 1
+        ?? ($0[0].<str> || $0[0].<str_escape>).ast
+        !! join '', $0.list.map({ (.<str> || .<str_escape>).ast });
 }
-method value:sym<number>($/) { make eval $/.Str }
+method value:sym<number>($/) { make +$/.Str }
 method value:sym<string>($/) { make $<string>.ast }
 method value:sym<true>($/)   { make Bool::True  }
 method value:sym<false>($/)  { make Bool::False }
@@ -37,7 +40,8 @@ method str($/)               { make ~$/ }
 
 method str_escape($/) {
     if $<xdigit> {
-        make chr(:16($<xdigit>.join));
+        # make chr(:16($<xdigit>.join));  # preferred version of next line, but it doesn't work on Niecza yet
+        make chr(eval "0x" ~ $<xdigit>.join);
     } else {
         my %h = '\\' => "\\",
                 '/'  => "/",
