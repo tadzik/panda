@@ -3,7 +3,7 @@ use Shell::Command;
 use Panda;
 
 sub listprojects($panda) {
-    for $panda.ecosystem.project-list -> $p {
+    for $panda.ecosystem.project-list.sort -> $p {
         my $x = $panda.ecosystem.get-project($p);
         my $s;
         given $panda.ecosystem.project-get-state($x) {
