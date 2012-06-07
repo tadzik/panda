@@ -19,7 +19,7 @@ class Panda::Builder does Pies::Builder {
             my $module = path-to-module-name($module-file);
             %usages_of{$module} = [];
             for $fh.lines() {
-                if /^\s* 'use' \s+ (\w+ ['::' \w+]*)/ && $0 -> $used {
+                if /^\s* ['use'||'need'||'require'] \s+ (\w+ ['::' \w+]*)/ && $0 -> $used {
                     next if $used eq 'v6';
                     next if $used eq 'MONKEY_TYPING';
 
@@ -44,6 +44,7 @@ class Panda::Builder does Pies::Builder {
             my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB> // ''}";
             for @tobuild -> $file {
                 $file.IO.copy: "blib/{$file.dir}/{$file.name}";
+                say "Compiling $file";
                 shell "env PERL6LIB=$p6lib perl6 --target=pir "
                     ~ "--output=blib/{$file.dir}/"
                     ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
