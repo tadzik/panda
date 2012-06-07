@@ -3,6 +3,5 @@
     "version"     : "*",
     "description" : "Various modules for file operations",
     "depends"     : [],
-    "repo-type"   : "git",
-    "repo-url"    : "git://github.com/tadzik/perl6-File-Tools.git"
+    "source-url"  : "git://github.com/tadzik/perl6-File-Tools.git"
 }
