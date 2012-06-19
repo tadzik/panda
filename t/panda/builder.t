@@ -2,7 +2,7 @@ use Test;
 use Panda::Builder;
 use Panda::Resources;
 
-plan 3;
+plan 5;
 
 my $srcdir = 'testmodules';
 
@@ -14,9 +14,11 @@ my $p = Pies::Project.new(name => 'dummymodule');
 
 lives_ok { $b.build($p) };
 
-ok "$srcdir/dummymodule/blib/lib/foo.pir".IO ~~ :f, 'module compiled';
-ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~ :f, 'module copied to blib';
+ok "$srcdir/dummymodule/blib/lib/foo.pir".IO ~~  :f, 'module compiled';
+ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~   :f, 'and opied to blib';
+ok "$srcdir/dummymodule/blib/lib/bar.pod".IO ~~  :f, 'pod copied too';
+ok "$srcdir/dummymodule/blib/lib/bar.pir".IO !~~ :f, 'pod not compiled';
 
-shell "rm -rf $srcdir/dummymodule/blib $srcdir/dummymodule/Makefile";
+shell "rm -rf $srcdir/dummymodule/blib";
 
 # vim: ft=perl6

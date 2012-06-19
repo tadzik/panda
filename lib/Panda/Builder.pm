@@ -36,7 +36,8 @@ class Panda::Builder does Pies::Builder {
         my $workdir = $!resources.workdir($p);
         return unless "$workdir/lib".IO ~~ :d;
         indir $workdir, {
-            my @files = find(dir => 'lib', name => /\.pm6?$/).list;
+            my @files = find(dir => 'lib',
+                             name => /\.p(m6?)|(od)$/).list;
             my @dirs = @files.map(*.dir).uniq;
             mkpath "blib/$_" for @dirs;
 
@@ -44,6 +45,7 @@ class Panda::Builder does Pies::Builder {
             my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB> // ''}";
             for @tobuild -> $file {
                 $file.IO.copy: "blib/{$file.dir}/{$file.name}";
+                next if $file ~~ /\.pod$/;
                 say "Compiling $file";
                 shell "env PERL6LIB=$p6lib perl6 --target=pir "
                     ~ "--output=blib/{$file.dir}/"
