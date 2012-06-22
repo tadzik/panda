@@ -5,12 +5,16 @@ use JSON::Tiny::Grammar;
 use Test;
 
 my @t =
+    '{}',
     '{  }',
     '{ "a" : "b" }',
     '{ "a" : null }',
     '{ "a" : true }',
     '{ "a" : false }',
     '{ "a" : { } }',
+    '[]',
+    '[ ]',
+    ' [ ] ',
     # stolen from JSON::XS, 18_json_checker.t, and adapted a bit
     Q<<[
     "JSON Test Pattern pass1",
