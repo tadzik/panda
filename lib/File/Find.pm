@@ -44,13 +44,9 @@ sub checkrules ($elem, %opts) {
 	return True
 }
 
-sub file-from-path($path) {
-    $path.split('/')[*-1];
-}
-
 sub find (:$dir!, :$name, :$type) is export {
 	my @targets = dir($dir).map: {
-		File::Find::Result.new(dir => $dir, name => file-from-path(.path));
+		File::Find::Result.new(dir => $dir, name => .basename);
 	};
 	my $list = gather while @targets {
 		my $elem = @targets.shift;
@@ -58,7 +54,7 @@ sub find (:$dir!, :$name, :$type) is export {
 		if $elem.IO ~~ :d {
 			for dir($elem) -> $file {
 				@targets.push(
-					File::Find::Result.new(dir => $elem, name => file-from-path($file.path))
+					File::Find::Result.new(dir => $elem, name => $file.basename)
 				);
 			}
 		}
