@@ -25,7 +25,7 @@ class Panda::Ecosystem does Pies::Ecosystem {
             }
         }
 
-        self.update if not $!projectsfile.IO ~~ :f;
+        self.update if ! $!projectsfile.IO ~~ :f || $!projectsfile.IO ~~ :z;
         my $list = from-json slurp $!projectsfile;
         for $list.list -> $mod {
             my $p = Pies::Project.new(
