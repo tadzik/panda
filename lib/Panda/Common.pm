@@ -15,6 +15,24 @@ sub indir (Str $where, Callable $what) is export {
     $!.throw if $!;
 }
 
+sub withp6lib(&what) is export {
+    my $oldp6lib = %*ENV<PERL6LIB>;
+    LEAVE {
+        if $oldp6lib.defined {
+            %*ENV<PERL6LIB> = $oldp6lib;
+        }
+        else {
+            %*ENV.delete('PERL6LIB');
+        }
+    }
+    my $sep = $*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
+    %*ENV<PERL6LIB> = join $sep,
+        cwd() ~ '/blib/lib',
+        cwd() ~ '/lib',
+        %*ENV<PERL6LIB> // '';
+    what();
+}
+
 class X::Panda is Exception {
     has $.module;
     has $.stage;
