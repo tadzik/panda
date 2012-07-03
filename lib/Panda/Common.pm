@@ -7,12 +7,10 @@ sub dirname ($mod as Str) is export {
 
 sub indir (Str $where, Callable $what) is export {
     my $old = cwd;
+    LEAVE chdir $old;
     mkpath $where;
     chdir $where;
-    my $fail;
-    try { $what() }
-    chdir $old;
-    $!.throw if $!;
+    $what()
 }
 
 sub withp6lib(&what) is export {
