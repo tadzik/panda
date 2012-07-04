@@ -37,7 +37,7 @@ class Panda::Builder does Pies::Builder {
         return unless "$workdir/lib".IO ~~ :d;
         indir $workdir, {
             my @files = find(dir => 'lib',
-                             name => /\.p(m6?)|(od)$/).list;
+                             name => /\.p(m6?|od)$/).list;
             my @dirs = @files.map(*.dir).uniq;
             mkpath "blib/$_" for @dirs;
 
