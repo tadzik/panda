@@ -17,16 +17,16 @@ class Panda is Pies {
 
     method new(:$srcdir, :$destdir, :$statefile, :$projectsfile) {
         my $ecosystem = Panda::Ecosystem.new(
-            statefile    => $statefile,
-            projectsfile => $projectsfile,
+            :$statefile,
+            :$projectsfile,
         );
-        my $resources = Panda::Resources.new(srcdir => $srcdir);
-        my $fetcher   = Panda::Fetcher.new(resources => $resources);
-        my $builder   = Panda::Builder.new(resources => $resources);
-        my $tester    = Panda::Tester.new(resources => $resources);
+        my $resources = Panda::Resources.new(:$srcdir);
+        my $fetcher   = Panda::Fetcher.new(:$resources);
+        my $builder   = Panda::Builder.new(:$resources);
+        my $tester    = Panda::Tester.new(:$resources);
         my $installer = Panda::Installer.new(
-            resources => $resources,
-            destdir => $destdir,
+            :$resources,
+            :$destdir,
         );
         self.bless(*, :$srcdir, :$destdir, :$statefile, :$projectsfile,
                       :$ecosystem, :$fetcher, :$builder, :$tester,

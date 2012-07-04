@@ -42,15 +42,16 @@ class Panda::Builder does Pies::Builder {
             mkpath "blib/$_" for @dirs;
 
             my @tobuild = self.build-order(@files);
-            my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB> // ''}";
-            for @tobuild -> $file {
-                $file.IO.copy: "blib/{$file.dir}/{$file.name}";
-                next if $file ~~ /\.pod$/;
-                say "Compiling $file";
-                shell "env PERL6LIB=$p6lib perl6 --target=pir "
-                    ~ "--output=blib/{$file.dir}/"
-                    ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
-                    and die $p, "Failed building $file";
+            withp6lib {
+                for @tobuild -> $file {
+                    $file.IO.copy: "blib/{$file.dir}/{$file.name}";
+                    next if $file ~~ /\.pod$/;
+                    say "Compiling $file";
+                    shell "perl6 --target=pir "
+                        ~ "--output=blib/{$file.dir}/"
+                        ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
+                        and die $p, "Failed building $file";
+                }
             }
         };
     }
