@@ -54,7 +54,7 @@ module Test::Mock {
                 unless %already-seen{$m.name} {
                     $mocker.HOW.add_method($mocker, $m.name, method (|$c) {
                         self.'!mock-log'().log-method-call($m.name, $c);
-                        %returning{$m.name} ~~ List ??
+                        %returning{$m.name} ~~ Iterable || %returning{$m.name} ~~ Parcel ??
                             @(%returning{$m.name}) !!
                             %returning{$m.name}
                     });
