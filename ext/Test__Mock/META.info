@@ -1,0 +1,8 @@
+{
+    "name" : "Test::Mock",
+    "version" : "*",
+    "description" : "Simple creation of mock objects using the Act, Arrange, Assert pattern.",
+    "depends" : [ ],
+    "repo-type" : "git",
+    "repo-url" : "git://github.com/jnthn/test-mock.git"
+}
