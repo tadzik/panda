@@ -13,14 +13,14 @@ and Panda, being the actual module manager to use.
 ## Installation on Linux/UNIX/OSX
 
 To install Panda along with all its dependencies, simply run the script
-bootstrap.sh in the root of the panda git repo. You must have a
-*perl6* binary in your $PATH for bootstrap.sh to work correctly.
+bootstrap.pl in the root of the panda git repo. You must have
+perl6 installed in order to run bootstrap.pl
 
     git clone git://github.com/tadzik/panda.git
 
     cd panda
 
-    sh ./bootstrap.sh
+    perl6 bootstrap.pl
 
 Since the bootstrap step currently runs tests with prove, you will need a
 recent TAP::Harness (3.x) for it to work properly.
@@ -41,7 +41,7 @@ your path, you may now install Panda by doing:
 
     cd panda
 
-    bootstrap
+    perl6 bootstrap.pl
 
 ## Running Tests
 
