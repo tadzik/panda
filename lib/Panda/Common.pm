@@ -7,12 +7,28 @@ sub dirname ($mod as Str) is export {
 
 sub indir (Str $where, Callable $what) is export {
     my $old = cwd;
+    LEAVE chdir $old;
     mkpath $where;
     chdir $where;
-    my $fail;
-    try { $what() }
-    chdir $old;
-    $!.throw if $!;
+    $what()
+}
+
+sub withp6lib(&what) is export {
+    my $oldp6lib = %*ENV<PERL6LIB>;
+    LEAVE {
+        if $oldp6lib.defined {
+            %*ENV<PERL6LIB> = $oldp6lib;
+        }
+        else {
+            %*ENV.delete('PERL6LIB');
+        }
+    }
+    my $sep = $*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
+    %*ENV<PERL6LIB> = join $sep,
+        cwd() ~ '/blib/lib',
+        cwd() ~ '/lib',
+        %*ENV<PERL6LIB> // '';
+    what();
 }
 
 class X::Panda is Exception {

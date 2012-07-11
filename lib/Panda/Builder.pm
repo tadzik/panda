@@ -37,20 +37,21 @@ class Panda::Builder does Pies::Builder {
         return unless "$workdir/lib".IO ~~ :d;
         indir $workdir, {
             my @files = find(dir => 'lib',
-                             name => /\.p(m6?)|(od)$/).list;
+                             name => /\.p(m6?|od)$/).list;
             my @dirs = @files.map(*.dir).uniq;
             mkpath "blib/$_" for @dirs;
 
             my @tobuild = self.build-order(@files);
-            my $p6lib = "{cwd}/blib/lib:{cwd}/lib:{%*ENV<PERL6LIB> // ''}";
-            for @tobuild -> $file {
-                $file.IO.copy: "blib/{$file.dir}/{$file.name}";
-                next if $file ~~ /\.pod$/;
-                say "Compiling $file";
-                shell "env PERL6LIB=$p6lib perl6 --target=pir "
-                    ~ "--output=blib/{$file.dir}/"
-                    ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
-                    and die $p, "Failed building $file";
+            withp6lib {
+                for @tobuild -> $file {
+                    $file.IO.copy: "blib/{$file.dir}/{$file.name}";
+                    next if $file ~~ /\.pod$/;
+                    say "Compiling $file";
+                    shell "perl6 --target=pir "
+                        ~ "--output=blib/{$file.dir}/"
+                        ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
+                        and die $p, "Failed building $file";
+                }
             }
         };
     }
