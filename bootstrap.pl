@@ -11,12 +11,15 @@ given open "$home/.panda/projects.json", :w {
     .close;
 }
 
+if %*ENV<DESTDIR> {
+    %*ENV<PERL6LIB> ~= ":{cwd}/{%*ENV<DESTDIR>}/lib"
+}
+
 %*ENV<PERL6LIB> ~= ":{cwd}/ext/File__Tools/lib";
 %*ENV<PERL6LIB> ~= ":{cwd}/ext/JSON__Tiny/lib";
 %*ENV<PERL6LIB> ~= ":{cwd}/ext/Test__Mock/lib";
 %*ENV<PERL6LIB> ~= ":{cwd}/lib";
-shell "perl6 bin/panda install File::Tools JSON::Tiny Test::Mock";
-%*ENV<PERL6LIB> = join $env_sep, $oldenv, cwd() ~ '/lib';
-shell "perl6 bin/panda install .";
+
+shell "perl6 bin/panda install File::Tools JSON::Tiny Test::Mock .";
 
 unlink "$home/.panda/projects.json";
