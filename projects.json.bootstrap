@@ -1,0 +1,27 @@
+[
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/File__Tools",
+      "version" : "*",
+      "name" : "File::Tools",
+      "description" : "Various modules for file operations",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/JSON__Tiny",
+      "version" : "*",
+      "name" : "JSON::Tiny",
+      "description" : "A minimal JSON (de)serializer",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "repo-url" : "_BASEDIR_/Test__Mock",
+      "version" : "*",
+      "name" : "Test::Mock",
+      "repo-type" : "git",
+      "description" : "Simple creation of mock ext/Test__Mockobjects using the Act, Arrange, Assert pattern.",
+      "depends" : []
+   }
+]
