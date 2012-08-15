@@ -69,7 +69,8 @@ my $panda;
 
     $panda = Panda.new(
         srcdir       => "$pandadir/src",
-        destdir      => "$home/.perl6",
+        destdir      => %*ENV<DESTDIR> ?? "{cwd}/%*ENV<DESTDIR>"
+                                       !! "$home/.perl6",
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json"
     );
