@@ -16,7 +16,7 @@ lives_ok { $b.build($p) };
 
 ok "$srcdir/dummymodule/blib/lib/foo.pir".IO ~~  :f, 'module compiled';
 ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~   :f, 'and opied to blib';
-ok "$srcdir/dummymodule/blib/lib/bar.pod".IO ~~  :f, 'pod copied too';
+ok "$srcdir/dummymodule/blib/lib/manual.pod".IO ~~  :f, 'pod copied too';
 ok "$srcdir/dummymodule/blib/lib/bar.pir".IO !~~ :f, 'pod not compiled';
 
 shell "rm -rf $srcdir/dummymodule/blib";
