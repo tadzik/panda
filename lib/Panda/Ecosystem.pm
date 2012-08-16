@@ -8,6 +8,36 @@ class Panda::Ecosystem does Pies::Ecosystem {
     has %!projects;
     has %!states;
 
+    sub getfile($src, $dest) {
+        pir::load_bytecode__vs('LWP/UserAgent.pir');
+        my $res = Q:PIR {
+            .local string what, where
+            .local pmc ua, response, outfile
+            $P0 = find_lex '$src'
+            what = repr_unbox_str $P0
+            $P0 = find_lex '$dest'
+            where = repr_unbox_str $P0
+            ua = new ['LWP';'UserAgent']
+            response = ua.'get'(what)
+            $I0 = response.'code'()
+            if $I0 == 200 goto success
+            $I0 = 1
+            goto end
+        success:
+            outfile = new ['FileHandle']
+            outfile.'open'(where, 'w')
+            $S0 = response.'content'()
+            outfile.'print'($S0)
+            $S0 = "\n"
+            outfile.'print'($S0)
+            outfile.'close'()
+            $I0 = 0
+        end:
+            %r = perl6_box_int $I0
+        };
+        $res and die "Unable to fetch $src";
+    }
+
     method flush-states {
         my $fh = open($!statefile, :w);
         for %!states.kv -> $key, $val {
@@ -47,7 +77,8 @@ class Panda::Ecosystem does Pies::Ecosystem {
 
     method update {
         try unlink $!projectsfile;
-        shell qq[wget "feather.perl6.nl:3000/list" -O "$!projectsfile"];
+        getfile 'http://feather.perl6.nl:3000/projects.json',
+                $!projectsfile
     }
 
     # Pies::Ecosystem methods
