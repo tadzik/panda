@@ -7,6 +7,7 @@ class Panda::Ecosystem does Pies::Ecosystem {
     has $.projectsfile;
     has %!projects;
     has %!states;
+    has %!saved-meta;
 
     sub getfile($src, $dest) {
         pir::load_bytecode__vs('LWP/UserAgent.pir');
@@ -41,7 +42,8 @@ class Panda::Ecosystem does Pies::Ecosystem {
     method flush-states {
         my $fh = open($!statefile, :w);
         for %!states.kv -> $key, $val {
-            $fh.say: "$key $val";
+            my $json = to-json %!saved-meta{$key};
+            $fh.say: "$key $val $json";
         }
         $fh.close;
     }
@@ -50,8 +52,9 @@ class Panda::Ecosystem does Pies::Ecosystem {
         if $!statefile.IO ~~ :f {
             my $fh = open($!statefile);
             for $fh.lines -> $line {
-                my ($mod, $state) = split ' ', $line;
+                my ($mod, $state, $json) = split ' ', $line, 3;
                 %!states{$mod} = $state;
+                %!saved-meta{$mod} = from-json $json;
             }
         }
 
@@ -95,9 +98,14 @@ class Panda::Ecosystem does Pies::Ecosystem {
         %!states{$p.name} // 'absent'
     }
 
+    method project-get-saved-meta(Pies::Project $p) {
+        %!saved-meta{$p.name};
+    }
+
     method project-set-state(Pies::Project $p,
                              Pies::Project::State $s) {
         %!states{$p.name} = $s;
+        %!saved-meta{$p.name} = $p.metainfo;
         self.flush-states;
     }
 }
