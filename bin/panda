@@ -17,9 +17,12 @@ sub listprojects($panda, :$installed) {
             default              { '' }
         }
 
-        my $url = $x.metainfo<source-url> // $x.metainfo<repo-url> // 'UNKNOWN';
+        my $meta = $s ?? $es.project-get-saved-meta($x) !! $x.metainfo;
+        my $url  = $meta<source-url> // $meta<repo-url> // 'UNKNOWN';
+        my $ver  = $meta<version>;
+
         printf "%-{$max-name}s   %-{$max-ver}s   %-27s   %s\n",
-               $x.name, $x.version, $s, $url;
+               $x.name, $ver, $s, $url;
     }
 }
 
