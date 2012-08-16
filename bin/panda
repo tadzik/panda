@@ -3,16 +3,23 @@ use Shell::Command;
 use Panda;
 
 sub listprojects($panda, :$installed) {
-    for $panda.ecosystem.project-list.sort -> $p {
-        my $x = $panda.ecosystem.get-project($p);
-        my $s;
-        given $panda.ecosystem.project-get-state($x) {
-            when 'installed'     { $s = '[installed]' }
-            when 'installed-dep' { $s = '[installed as a dependency]' }
-            default              { $s = '' }
+    my $es        = $panda.ecosystem;
+    my @projects  = $es.project-list.sort.map: { $es.get-project($_) };
+       @projects .= grep({ $es.project-get-state($_) ne 'absent' })
+                    if $installed;
+    my $max-name  = @projects».name».chars.max;
+    my $max-ver   = @projects».version».chars.max;
+
+    for @projects -> $x {
+        my $s = do given $es.project-get-state($x) {
+            when 'installed'     { '[installed]' }
+            when 'installed-dep' { '[installed as a dependency]' }
+            default              { '' }
         }
-        next if $installed and $s eq '';
-        printf "%-20s\t%s\n", $x.name, $s;
+
+        my $url = $x.metainfo<source-url> // $x.metainfo<repo-url> // 'UNKNOWN';
+        printf "%-{$max-name}s   %-{$max-ver}s   %-27s   %s\n",
+               $x.name, $x.version, $s, $url;
     }
 }
 
