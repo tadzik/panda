@@ -2,7 +2,7 @@
 use Shell::Command;
 use Panda;
 
-sub listprojects($panda) {
+sub listprojects($panda, :$installed) {
     for $panda.ecosystem.project-list.sort -> $p {
         my $x = $panda.ecosystem.get-project($p);
         my $s;
@@ -11,6 +11,7 @@ sub listprojects($panda) {
             when 'installed-dep' { $s = '[installed as a dependency]' }
             default              { $s = '' }
         }
+        next if $installed and $s eq '';
         printf "%-20s\t%s\n", $x.name, $s;
     }
 }
@@ -90,8 +91,8 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
 }
 
 #= List all available modules
-multi MAIN ('list') {
-    listprojects($panda);
+multi MAIN ('list', Bool :$installed) {
+    listprojects($panda, :$installed);
 }
 
 #= Update the module database
