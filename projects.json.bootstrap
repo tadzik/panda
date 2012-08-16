@@ -21,7 +21,7 @@
       "version" : "*",
       "name" : "Test::Mock",
       "repo-type" : "git",
-      "description" : "Simple creation of mock ext/Test__Mockobjects using the Act, Arrange, Assert pattern.",
+      "description" : "Simple creation of mock objects using the Act, Arrange, Assert pattern.",
       "depends" : []
    }
 ]
