@@ -1,2 +1,19 @@
+* Change bootstrap/rebootstrap to install panda from a full directory path
+  rather than from '.', so that the statefile can track the source dir
+* Fix DESTDIR to know the difference between absolute and relative paths
+* Support DESTDIR as way to build deployable package
+  - don't modify statefile when DESTDIR is set unless DESTDIR is ~/.perl6/
+  - envvar to use a different statefile?
+* Finish verbose-list branch
+  - save 'git describe --always --dirty' result in saved-meta
+  - make 'panda list' output narrower by default
+    . with a --verbose option for more?
+  - show both installed and available version in 'panda list' or 'panda info'
+  - merge branch back
 * Keep track of the installed files so they can be removed later
   - it's tricky if they're installed to some DESTDIR
+* Retain --notests and --nodeps setting in statefile, so that rebootstrap
+  can survive rebuilding projects that require these settings
+* Get to full Windows compatibility
+* Merge with panda-niecza?
+* Update README.md to represent current reality
