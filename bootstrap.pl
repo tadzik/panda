@@ -6,6 +6,11 @@ mkdir $home unless $home.IO.d;
 mkdir "$home/.panda" unless "$home/.panda".IO.d;
 my $projects = slurp 'projects.json.bootstrap';
 $projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
+
+if $*OS eq 'MSWin32' {
+	$projects.=subst('\\', '/', :g);
+}
+
 given open "$home/.panda/projects.json", :w {
     .say: $projects;
     .close;

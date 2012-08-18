@@ -1,6 +1,7 @@
 use Test;
 use Panda::Installer;
 use Panda::Resources;
+use Shell::Command;
 
 plan 7;
 
@@ -27,6 +28,6 @@ file_exists_ok "$destdir/compiled/module/doc/foofile",
 file_exists_ok "$destdir/compiled/module/doc/bardir/barfile",
                'docs installed 2';
 
-shell "rm -rf $destdir";
+rm_rf $destdir;
 
 # vim: ft=perl6

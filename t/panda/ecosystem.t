@@ -4,7 +4,7 @@ plan 10;
 
 't/panda/fakestate'.IO.copy('REMOVEME');
 my $a = Panda::Ecosystem.new(
-    statefile    => 'REMOVEME',
+    statefile    => "{cwd}/REMOVEME",
     projectsfile => 't/panda/fakeprojects'
 ) but role {
     method flush-states { }
@@ -31,6 +31,6 @@ is $b.dependencies[0], 'some',  'dependencies 1';
 is $b.dependencies[1], 'thing', 'dependencies 2';
 is $b.dependencies[2], 'else',  'dependencies 3';
 
-unlink 'REMOVEME';
+unlink "{cwd}/REMOVEME";
 
 # vim: ft=perl6

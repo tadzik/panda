@@ -1,6 +1,7 @@
 use Test;
 use Panda::Fetcher;
 use Panda::Resources;
+use Shell::Command;
 
 plan 4;
 
@@ -30,6 +31,6 @@ $p.metainfo<source-url>  = 'testmodules/dummymodule';
 lives_ok { $f.fetch($p) }, 'can fetch a local project';
 ok "$srcdir/foobar/lib/foo.pm".IO ~~ :f, 'fetch ok';
 
-shell "rm -r $srcdir";
+rm_rf $srcdir;
 
 # vim: ft=perl6
