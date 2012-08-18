@@ -1,4 +1,5 @@
 module Shell::Command;
+use File::Find;
 
 sub cat(*@files) is export {
     for @files -> $f {
@@ -17,12 +18,17 @@ sub eqtime($source, $dest) is export {
 
 sub rm_f(*@files) is export {
     for @files -> $f {
-        unlink $f if $f.IO ~~ :e;
+        unlink $f if $f.IO.e;
     }
 }
 
 sub rm_rf(*@files) is export {
-    ???
+    for @files -> $path {
+        for find(dir => $path).map({ .Str }).reverse -> $f {
+            $f.IO.d ?? rmdir($f) !! unlink($f);
+        }
+        rmdir $path;
+    }
 }
 
 sub touch(*@files) is export {
