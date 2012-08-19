@@ -33,6 +33,6 @@ shell "perl6 bin/panda install File::Tools JSON::Tiny Test::Mock";
 
 %*ENV<PERL6LIB> = join $env_sep, $oldenv, cwd() ~ '/lib';
 
-shell "perl6 bin/panda install .";
+shell "perl6 bin/panda install {cwd}";
 
 unlink "$home/.panda/projects.json";
