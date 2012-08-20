@@ -1,6 +1,7 @@
 use Test;
 use Panda::Builder;
 use Panda::Resources;
+use Shell::Command;
 
 plan 5;
 
@@ -19,6 +20,6 @@ ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~   :f, 'and opied to blib';
 ok "$srcdir/dummymodule/blib/lib/manual.pod".IO ~~  :f, 'pod copied too';
 ok "$srcdir/dummymodule/blib/lib/bar.pir".IO !~~ :f, 'pod not compiled';
 
-shell "rm -rf $srcdir/dummymodule/blib";
+rm_rf "$srcdir/dummymodule/blib";
 
 # vim: ft=perl6

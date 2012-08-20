@@ -1,5 +1,7 @@
 #!/usr/bin/env perl6
 use v6;
+use lib 'ext/File__Tools/lib';
+use Shell::Command;
 
 # Find old state file
 my $home = $*OS eq 'MSWin32' ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
@@ -7,7 +9,8 @@ my $state-file = "$home/.panda/state";
 
 if not $state-file.IO.e {
     say "No need to rebootstrap, running normal bootstrap";
-    run 'perl6 bootstrap.pl';
+    shell 'perl6 bootstrap.pl';
+    exit 0;
 }
 
 # Save a copy of the old state file to be written *after* bootstrapping again
@@ -29,9 +32,8 @@ given open($state-file) {
 
 # Clean old directories, boostrap a fresh panda,
 # and reinstall all manually-installed modules
-# TODO: Make me cross-platform
-shell 'rm -rf ~/.perl6/lib';
-shell 'rm -rf ~/.panda';
+rm_rf "$home/.perl6/lib";
+rm_rf "$home/.panda";
 shell 'perl6 bootstrap.pl';
 shell "panda install @modules[]";
 

@@ -26,7 +26,7 @@ class Panda::Installer does Pies::Installer {
                 for find(dir => 'bin', type => 'file').list -> $bin {
                     mkpath "$!destdir/{$bin.dir}";
                     $bin.IO.copy("$!destdir/$bin");
-                    "$!destdir/$bin".IO.chmod(0o755);
+                    "$!destdir/$bin".IO.chmod(0o755) unless $*OS eq 'MSWin32';
                 }
             }
             if 'doc'.IO ~~ :d {
