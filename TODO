@@ -8,6 +8,11 @@
     . with a --verbose option for more?
   - show both installed and available version in 'panda list' or 'panda info'
   - merge branch back
+* Open GitHub issues:
+  - #4:  Fix fetcher.t to silence (expected) Git error message
+  - #12: Error checking for Ecosystem::update
+  - #16: Fuzzy match misspelled modules (wrong case, small edit distance, etc.)
+    . Always try exact match first
 * Keep track of the installed files so they can be removed later
   - it's tricky if they're installed to some DESTDIR
 * Retain --notests and --nodeps setting in statefile, so that rebootstrap
