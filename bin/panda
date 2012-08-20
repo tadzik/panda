@@ -13,12 +13,12 @@ sub listprojects($panda, :$installed) {
     for @projects -> $x {
         my $s = do given $es.project-get-state($x) {
             when 'installed'     { '[installed]' }
-            when 'installed-dep' { '[installed as a dependency]' }
+            when 'installed-dep' { '-dependency-' }
             default              { '' }
         }
 
         my $url = $x.metainfo<source-url> // $x.metainfo<repo-url> // 'UNKNOWN';
-        printf "%-{$max-name}s   %-{$max-ver}s   %-27s   %s\n",
+        printf "%-{$max-name}s   %-{$max-ver}s   %-12s   %s\n",
                $x.name, $x.version, $s, $url;
     }
 }
