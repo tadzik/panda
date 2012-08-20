@@ -1,5 +1,7 @@
 use v6;
 
+say '==> Bootstrapping Panda';
+
 my $home = $*OS eq 'MSWin32' ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
 
 mkdir $home unless $home.IO.d;
