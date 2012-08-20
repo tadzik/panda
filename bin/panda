@@ -73,12 +73,12 @@ my $panda;
     my $pandadir = "$home/.panda";
     mkpath $pandadir unless $pandadir.IO ~~ :d;
 
-    my $projectsfile = "$pandadir/projects.json";
+    my $destdir = %*ENV<DESTDIR> || "$home/.perl6";
+       $destdir = "{cwd}/$destdir" unless $destdir ~~ /^ '/' /;
 
     $panda = Panda.new(
         srcdir       => "$pandadir/src",
-        destdir      => %*ENV<DESTDIR> ?? "{cwd}/%*ENV<DESTDIR>"
-                                       !! "$home/.perl6",
+        destdir      =>  $destdir,
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json"
     );
