@@ -1,4 +1,3 @@
-* Fix DESTDIR to know the difference between absolute and relative paths
 * Support DESTDIR as way to build deployable package
   - don't modify statefile when DESTDIR is set unless DESTDIR is ~/.perl6/
   - envvar to use a different statefile?
