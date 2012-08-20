@@ -5,14 +5,12 @@ say '==> Bootstrapping Panda';
 
 my $home = $*OS eq 'MSWin32' ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
 
-mkdir $home unless $home.IO.d;
+mkdir  $home         unless  $home.IO.d;
 mkdir "$home/.panda" unless "$home/.panda".IO.d;
-my $projects = slurp 'projects.json.bootstrap';
-$projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
 
-if $*OS eq 'MSWin32' {
-	$projects.=subst('\\', '/', :g);
-}
+my $projects  = slurp 'projects.json.bootstrap';
+   $projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
+   $projects .= subst('\\', '/', :g) if $*OS eq 'MSWin32';
 
 given open "$home/.panda/projects.json", :w {
     .say: $projects;
