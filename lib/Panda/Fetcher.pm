@@ -13,7 +13,7 @@ class Panda::Fetcher does Pies::Fetcher {
     method fetch (Pies::Project $p) {
         my $dest = $!resources.workdir($p);
         # the repo-* variants are kept for backwards compatibility only
-        my $url  = $p.metainfo<source-url> // $p.metainfo<repo-url>;
+        my $url  = $p.metainfo<source-url>  // $p.metainfo<repo-url>;
         my $type = $p.metainfo<source-type> // $p.metainfo<repo-type>;
         unless $type {
             given $url {
