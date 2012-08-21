@@ -51,20 +51,26 @@ sub projectinfo($panda, @args) {
     for @args -> $p {
         my $x = $panda.ecosystem.get-project($p);
         if $x {
+            my $state = $panda.ecosystem.project-get-state($x);
+            say 'PROJECT LIST:';
             say $x.name => $x.version;
-            say "Depends on:" => $x.dependencies.Str if $x.dependencies;
-            given $panda.ecosystem.project-get-state($x) {
+            say 'Depends on:' => $x.dependencies.Str if $x.dependencies;
+            given $state {
                 when 'installed'     {
-                    say "State:\t\tinstalled";
+                    say 'State' => 'installed';
                 }
                 when 'installed-dep' {
-                    say "State:\t\tinstalled as a dependency";
+                    say 'State' => 'installed as a dependency';
                 }
             }
             for $x.metainfo.kv -> $k, $v {
                 if $k ~~ none('version', 'name', 'depends') {
                     say $k.ucfirst => $v;
                 }
+            }
+            if $state ~~ /^ 'installed' / {
+                say 'INSTALLED VERSION:';
+                .say for $panda.ecosystem.project-get-saved-meta($x).pairs.sort;
             }
             say '';
         } else {
