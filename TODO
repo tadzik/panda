@@ -2,12 +2,6 @@
 * Support DESTDIR as way to build deployable package
   - don't modify statefile when DESTDIR is set unless DESTDIR is ~/.perl6/
   - envvar to use a different statefile?
-* Finish verbose-list branch
-  - save 'git describe --always --dirty' result in saved-meta
-  - make 'panda list' output narrower by default
-    . with a --verbose option for more?
-  - show both installed and available version in 'panda list' or 'panda info'
-  - merge branch back
 * Open GitHub issues:
   - #4:  Fix fetcher.t to silence (expected) Git error message
   - #12: Error checking for Ecosystem::update
