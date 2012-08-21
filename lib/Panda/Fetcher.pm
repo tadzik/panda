@@ -17,7 +17,7 @@ class Panda::Fetcher does Pies::Fetcher {
         my $type = $p.metainfo<source-type> // $p.metainfo<repo-type>;
         unless $type {
             given $url {
-                when /^git:/ {
+                when /^ [ 'git:' | 'http' 's'? '://github.com/' ] / {
                     $type = 'git';
                 }
                 default {
