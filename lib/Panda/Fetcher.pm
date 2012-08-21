@@ -13,17 +13,18 @@ class Panda::Fetcher does Pies::Fetcher {
     method fetch (Pies::Project $p) {
         my $dest = $!resources.workdir($p);
         # the repo-* variants are kept for backwards compatibility only
-        my $url  = $p.metainfo<source-url> // $p.metainfo<repo-url>;
+        my $url  = $p.metainfo<source-url>  // $p.metainfo<repo-url>;
         my $type = $p.metainfo<source-type> // $p.metainfo<repo-type>;
         unless $type {
             given $url {
-                when /^git:/ {
+                when /^ [ 'git:' | 'http' 's'? '://github.com/' ] / {
                     $type = 'git';
                 }
                 default {
                     die $p, "Unable to determine source-type using source-url";
                 }
             }
+            $p.metainfo<source-type> = $type;
         }
         given $type {
             when 'git' {
@@ -36,6 +37,11 @@ class Panda::Fetcher does Pies::Fetcher {
                     shell "git clone -q $url $dest"
                         and die $p, "Failed cloning the repo";
                 }
+
+                indir $dest, {
+                    my $desc = qx{git describe --always --dirty}.chomp;
+                    $p.metainfo<source-revision> = $desc;
+                };
             }
             when 'local' {
                 for find(dir => $url).list {
