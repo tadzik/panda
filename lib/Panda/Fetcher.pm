@@ -36,6 +36,11 @@ class Panda::Fetcher does Pies::Fetcher {
                     shell "git clone -q $url $dest"
                         and die $p, "Failed cloning the repo";
                 }
+
+                indir $dest, {
+                    my $desc = qx{git describe --always --dirty}.chomp;
+                    $p.metainfo<source-revision> = $desc;
+                };
             }
             when 'local' {
                 for find(dir => $url).list {
