@@ -2,13 +2,15 @@
 use Shell::Command;
 use Panda;
 
-sub listprojects($panda, :$installed) {
+sub listprojects($panda, :$installed, :$verbose) {
     my $es        = $panda.ecosystem;
     my @projects  = $es.project-list.sort.map: { $es.get-project($_) };
        @projects .= grep({ $es.project-get-state($_) ne 'absent' })
                     if $installed;
+    my @saved     = @projects.map({ $es.project-get-saved-meta($_) || {} });
     my $max-name  = @projects».name».chars.max;
     my $max-ver   = @projects».version».chars.max;
+    my $max-rev   = @saved.map({ $_<source-revision> // '?'})».chars.max;
 
     for @projects -> $x {
         my $s = do given $es.project-get-state($x) {
@@ -19,10 +21,17 @@ sub listprojects($panda, :$installed) {
 
         my $meta = $s ?? $es.project-get-saved-meta($x) !! $x.metainfo;
         my $url  = $meta<source-url> // $meta<repo-url> // 'UNKNOWN';
+        my $rev  = $meta<source-revision> // '?';
         my $ver  = $meta<version>;
 
-        printf "%-{$max-name}s   %-{$max-ver}s   %-12s   %s\n",
-               $x.name, $ver, $s, $url;
+        if ($verbose) {
+            printf "%-{$max-name}s  %-12s  %-{$max-ver}s  %-{$max-rev}s  %s\n",
+               $x.name, $s, $ver, $rev, $url;
+        }
+        else {
+            printf "%-{$max-name}s  %-12s\n",
+               $x.name, $s;
+        }
     }
 }
 
@@ -101,8 +110,8 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
 }
 
 #= List all available modules
-multi MAIN ('list', Bool :$installed) {
-    listprojects($panda, :$installed);
+multi MAIN ('list', Bool :$installed, Bool :$verbose) {
+    listprojects($panda, :$installed, :$verbose);
 }
 
 #= Update the module database
