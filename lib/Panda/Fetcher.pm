@@ -24,6 +24,7 @@ class Panda::Fetcher does Pies::Fetcher {
                     die $p, "Unable to determine source-type using source-url";
                 }
             }
+            $p.metainfo<source-type> = $type;
         }
         given $type {
             when 'git' {
