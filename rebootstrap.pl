@@ -35,6 +35,7 @@ given open($state-file) {
 rm_rf "$home/.perl6/lib";
 rm_rf "$home/.panda";
 shell 'perl6 bootstrap.pl';
+say "==> Reinstalling @modules[]";
 shell "panda install @modules[]";
 
 # Save the backup state file back to ~/.panda/
