@@ -1,12 +1,12 @@
 use v6;
 grammar JSON::Tiny::Grammar;
 
-rule TOP        { ^[ <object> | <array> ]$ }
+rule TOP        { ^ [ <object> | <array> ] $ }
 rule object     { '{' ~ '}' <pairlist>     }
-rule pairlist   { <pair>* % \,             }
-rule pair       { <string> ':' <value>     }
+rule pairlist   { <?> <pair> * % \,             }
+rule pair       { <?> <string> ':' <value>     }
 rule array      { '[' ~ ']' <arraylist>    }
-rule arraylist  { <value>* % [ \, ]        }
+rule arraylist  { <?> <value>* % [ \, ]        }
 
 proto token value {*};
 token value:sym<number> {

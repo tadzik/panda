@@ -29,7 +29,7 @@ multi to-json(Str:D  $d) {
             .subst(/<-[\c32..\c126]>/, { ord(~$_).fmt('\u%04x') }, :g)
     ~ '"'
 }
-multi to-json(Array:D $d) {
+multi to-json(Positional:D $d) {
     return  '[ '
             ~ $d.map(&to-json).join(', ')
             ~ ' ]';
