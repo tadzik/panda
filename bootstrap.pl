@@ -3,23 +3,25 @@ use v6;
 
 say '==> Bootstrapping Panda';
 
-my $home = $*OS eq 'MSWin32' ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
+my $is_win = $*OS eq 'MSWin32';
+my $home   = $is_win ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
 
 mkdir  $home         unless  $home.IO.d;
 mkdir "$home/.panda" unless "$home/.panda".IO.d;
 
 my $projects  = slurp 'projects.json.bootstrap';
    $projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
-   $projects .= subst('\\', '/', :g) if $*OS eq 'MSWin32';
+   $projects .= subst('\\', '/', :g) if $is_win;
 
 given open "$home/.panda/projects.json", :w {
     .say: $projects;
     .close;
 }
 
-my $env_sep = $*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
+my $env_sep = $is_win ?? ';' !! ':';
 my $destdir = %*ENV<DESTDIR> || "$home/.perl6";
-   $destdir = "{cwd}/$destdir" unless $destdir ~~ /^ [ '/' | <[a..zA..Z]> ':' ] /;
+   $destdir = "{cwd}/$destdir" unless $destdir ~~ /^ '/' /
+                                   || $is_win && $destdir ~~ /^ [ '\\' | <[a..zA..Z]> ':' ] /;
 
 %*ENV<PERL6LIB> ~= "{$env_sep}$destdir/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Tools/lib";
