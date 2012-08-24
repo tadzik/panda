@@ -19,7 +19,7 @@ given open "$home/.panda/projects.json", :w {
 
 my $env_sep = $*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
 my $destdir = %*ENV<DESTDIR> || "$home/.perl6";
-   $destdir = "{cwd}/$destdir" unless $destdir ~~ /^ '/' /;
+   $destdir = "{cwd}/$destdir" unless $destdir ~~ /^ [ '/' | <[a..zA..Z]> ':' ] /;
 
 %*ENV<PERL6LIB> ~= "{$env_sep}$destdir/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Tools/lib";
