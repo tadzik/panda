@@ -34,7 +34,7 @@ class Panda::Fetcher does Pies::Fetcher {
                         and die $p, "Failed updating the repo";
                     };
                 } else {
-                    shell "git clone -q $url $dest"
+                    shell "git clone -q $url \"$dest\""
                         and die $p, "Failed cloning the repo";
                 }
 
