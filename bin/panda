@@ -92,7 +92,7 @@ my $panda;
     mkpath $pandadir unless $pandadir.IO ~~ :d;
 
     my $destdir = %*ENV<DESTDIR> || "$home/.perl6";
-       $destdir = "{cwd}/$destdir" unless $destdir ~~ /^ '/' /;
+       $destdir = "{cwd}/$destdir" if $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
 
     $panda = Panda.new(
         srcdir       => "$pandadir/src",
