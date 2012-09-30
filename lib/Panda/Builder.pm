@@ -47,7 +47,7 @@ class Panda::Builder does Pies::Builder {
                     $file.IO.copy: "blib/{$file.dir}/{$file.name}";
                     next if $file ~~ /\.pod$/;
                     say "Compiling $file";
-                    shell "perl6 --target=pir "
+                    shell "$*EXECUTABLE_NAME --target=pir "
                         ~ "--output=blib/{$file.dir}/"
                         ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
                         and die $p, "Failed building $file";
