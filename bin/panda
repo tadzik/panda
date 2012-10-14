@@ -87,11 +87,10 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 # initialize the Panda object
 my $panda;
 {
-    my $home = $*OS eq 'MSWin32' ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
-    my $pandadir = "$home/.panda";
+    my $pandadir = "$*CUSTOM-LIB/panda";
     mkpath $pandadir unless $pandadir.IO ~~ :d;
 
-    my $destdir = %*ENV<DESTDIR> || "$home/.perl6";
+    my $destdir = %*ENV<DESTDIR> || $*CUSTOM-LIB;
        $destdir = "{cwd}/$destdir" if $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
 
     $panda = Panda.new(

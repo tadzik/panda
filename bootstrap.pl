@@ -4,22 +4,21 @@ use v6;
 say '==> Bootstrapping Panda';
 
 my $is_win = $*OS eq 'MSWin32';
-my $home   = $is_win ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
-
-mkdir  $home         unless  $home.IO.d;
-mkdir "$home/.panda" unless "$home/.panda".IO.d;
+my $panda-base = "$*CUSTOM-LIB/panda";
+mkdir $*CUSTOM-LIB unless $*CUSTOM-LIB.path.d;
+mkdir $panda-base  unless $panda-base.path.d;
 
 my $projects  = slurp 'projects.json.bootstrap';
    $projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
    $projects .= subst('\\', '/', :g) if $is_win;
 
-given open "$home/.panda/projects.json", :w {
+given open "$panda-base/projects.json", :w {
     .say: $projects;
     .close;
 }
 
 my $env_sep = $is_win ?? ';' !! ':';
-my $destdir = %*ENV<DESTDIR> || "$home/.perl6";
+my $destdir = %*ENV<DESTDIR> || $*CUSTOM-LIB;
    $destdir = "{cwd}/$destdir" unless $destdir ~~ /^ '/' /
                                    || $is_win && $destdir ~~ /^ [ '\\' | <[a..zA..Z]> ':' ] /;
 
@@ -31,4 +30,4 @@ my $destdir = %*ENV<DESTDIR> || "$home/.perl6";
 
 shell "perl6 bin/panda install File::Tools JSON::Tiny Test::Mock {cwd}";
 
-unlink "$home/.panda/projects.json";
+unlink "$panda-base/projects.json";
