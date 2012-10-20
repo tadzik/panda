@@ -199,8 +199,8 @@ for @t -> $t {
     }
     my $parsed = 0;
     try {
-        JSON::Tiny::Grammar.parse($t);
-        $parsed = 1;
+        JSON::Tiny::Grammar.parse($t)
+            and $parsed = 1;
     }
     ok $parsed, "JSON string «$desc» parsed";
     $i++;
