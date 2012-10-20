@@ -47,7 +47,7 @@ multi to-json(Any:D $s) {
 
 sub from-json($text) is export {
     my $a = JSON::Tiny::Actions.new();
-    my $o = JSON::Tiny::Grammar.parse($text, :actions($a));
+    my $o = JSON::Tiny::Grammar.parse($text.trim, :actions($a));
     return $o.ast;
 }
 # vim: ft=perl6
