@@ -25,7 +25,7 @@ perl6 installed in order to run bootstrap.pl
 Since the bootstrap step currently runs tests with prove, you will need a
 recent TAP::Harness (3.x) for it to work properly.
 
-If you are behind a proxy, you neet to [configure git](http://help.github.com/firewalls-and-proxies/) 
+If you are behind a proxy, you need to [configure git](http://help.github.com/firewalls-and-proxies/)
 and [configure wget](http://www.gnu.org/software/wget/manual/html_node/Proxies.html) to use the proxy.
 
 ## Installation on Windows
@@ -33,7 +33,7 @@ and [configure wget](http://www.gnu.org/software/wget/manual/html_node/Proxies.h
 Panda currently depends on wget; you can obtain a Windows build of wget at:
 
     http://gnuwin32.sourceforge.net/packages/wget.htm
-    
+
 Once you have obtained and installed it, and have both wget and perl6 in
 your path, you may now install Panda by doing:
 
