@@ -87,11 +87,18 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 # initialize the Panda object
 my $panda;
 {
-    my $pandadir = "$*CUSTOM-LIB/panda";
-    mkpath $pandadir unless $pandadir.IO ~~ :d;
-
-    my $destdir = %*ENV<DESTDIR> || $*CUSTOM-LIB;
-       $destdir = "{cwd}/$destdir" if $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
+    my $pandadir;
+    my $destdir = %*ENV<DESTDIR>;
+    $destdir = "{cwd}/$destdir" if defined($destdir) &&  $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
+    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
+        $destdir  = $prefix;
+        $pandadir = "$prefix/panda";
+        try mkpath $pandadir unless $pandadir.IO ~~ :d;
+        last if $pandadir.path.w
+    }
+    unless $pandadir.path.w {
+        die "Found no writable directory into which panda could be installed";
+    }
 
     $panda = Panda.new(
         srcdir       => "$pandadir/src",
