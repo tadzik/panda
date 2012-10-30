@@ -3,7 +3,7 @@ use Panda::Fetcher;
 use Panda::Resources;
 use Shell::Command;
 
-plan 4;
+plan 3;
 
 my $srcdir = 'REMOVEME';
 my $r = Panda::Resources.new(srcdir => $srcdir);
@@ -17,9 +17,6 @@ my $p = Pies::Project.new(
         source-url  => 't/',
     }
 );
-
-try { $f.fetch($p) }
-ok $! ~~ /'Failed cloning'/, 'attempts to clone';
 
 $p.metainfo<source-type> = 'hg';
 try { $f.fetch($p) }
