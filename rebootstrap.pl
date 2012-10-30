@@ -4,10 +4,15 @@ use lib 'ext/File__Tools/lib';
 use Shell::Command;
 
 # Find old state file
-my $home = $*OS eq 'MSWin32' ?? %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH> !! %*ENV<HOME>;
-my $state-file = "$home/.panda/state";
+my ($prefix, $state-file);
+for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) {
+    if "$_/panda/state".path.e {
+        $prefix = $_;
+        $state-file = "$_/panda/state";
+    }
+}
 
-if not $state-file.IO.e {
+if not $state-file.defined {
     say "No need to rebootstrap, running normal bootstrap";
     shell 'perl6 bootstrap.pl';
     exit 0;
@@ -32,11 +37,11 @@ given open($state-file) {
 
 # Clean old directories, boostrap a fresh panda,
 # and reinstall all manually-installed modules
-rm_rf "$home/.perl6/lib";
-rm_rf "$home/.panda";
+rm_rf "$prefix/lib";
+rm_rf "$prefix/panda";
 shell 'perl6 bootstrap.pl';
 say "==> Reinstalling @modules[]";
 shell "panda install @modules[]";
 
-# Save the backup state file back to ~/.panda/
+# Save the backup state file back to $prefix/panda/
 spurt "$state-file.bak", $old-state if $old-state;
