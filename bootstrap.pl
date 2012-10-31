@@ -38,4 +38,6 @@ my $env_sep = $is_win ?? ';' !! ':';
 
 shell "perl6 bin/panda install File::Tools JSON::Tiny Test::Mock {cwd}";
 
+say "==> Please make sure that $destdir/bin is in your PATH";
+
 unlink "$panda-base/projects.json";
