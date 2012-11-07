@@ -3,7 +3,7 @@ use Panda::Installer;
 use Panda::Resources;
 use Shell::Command;
 
-plan 7;
+plan 8;
 
 my $srcdir  = 'testmodules';
 my $destdir = "{cwd}/removeme";
@@ -22,6 +22,8 @@ sub file_exists_ok($a as Str, $msg as Str) {
 file_exists_ok "$destdir/lib/foo.pm", 'module installed';
 file_exists_ok "$destdir/lib/foo.pir", 'pir installed';
 file_exists_ok "$destdir/lib/bar.pod", 'pod installed';
+todo 1;
+file_exists_ok "$destdir/lib/baz.js", 'random files installed';
 file_exists_ok "$destdir/bin/bar", 'bin installed';
 file_exists_ok "$destdir/compiled/module/doc/foofile",
                'docs installed 1';
