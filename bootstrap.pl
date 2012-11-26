@@ -1,5 +1,6 @@
 #!/usr/bin/env perl6
 use v6;
+use Shell::Command;
 
 say '==> Bootstrapping Panda';
 
@@ -12,10 +13,11 @@ for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
     $destdir  = $prefix;
     $panda-base = "$prefix/panda";
     try mkdir $destdir;
-    try mkdir $panda-base unless $panda-base.IO ~~ :d;
+    try mkpath $panda-base unless $panda-base.IO ~~ :d;
     last if $panda-base.path.w
 }
 unless $panda-base.path.w {
+    warn "panda-base: { $panda-base.perl }";
     die "Found no writable directory into which panda could be installed";
 }
 
