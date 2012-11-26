@@ -14,9 +14,7 @@ class Panda::Installer does Pies::Installer {
     method install(Pies::Project $p) {
         indir $!resources.workdir($p), {
             if 'blib'.IO ~~ :d {
-                for find(dir => 'blib', name => /\.p[od|m6?]$/).list,
-                    find(dir => 'blib', name => /\.pir$/).list
-                        -> $i {
+                for find(dir => 'blib', type => 'file').list -> $i {
                     # .substr(5) to skip 'blib/'
                     mkpath "$!destdir/{$i.dir.substr(5)}";
                     $i.IO.copy("$!destdir/{$i.Str.substr(5)}");
