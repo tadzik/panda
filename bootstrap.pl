@@ -1,5 +1,6 @@
 #!/usr/bin/env perl6
 use v6;
+use lib 'ext/File__Tools/lib/';
 use Shell::Command;
 
 say '==> Bootstrapping Panda';
