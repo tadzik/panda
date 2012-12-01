@@ -54,7 +54,7 @@ class Panda is Pies {
     }
 
     multi method announce('success', Pies::Project $p) {
-        self.announce: "Succesfully installed {$p.name}"
+        self.announce: "Successfully installed {$p.name}"
     }
 
     multi method announce('depends', Pair $p) {
