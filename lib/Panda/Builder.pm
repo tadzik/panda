@@ -37,6 +37,14 @@ class Panda::Builder does Pies::Builder {
         return unless "$workdir/lib".IO ~~ :d;
         indir $workdir, {
             my @files = find(dir => 'lib', type => 'file').list;
+            if "Build.pm".IO.f {
+                @*INC.push('.');
+                require 'Build';
+                if ::('Build').isa(Panda::Builder) {
+                    ::('Build').new(resources => $!resources).build($p);
+                }
+                @*INC.pop;
+            }
             my @dirs = @files.map(*.dir).uniq;
             mkpath "blib/$_" for @dirs;
 
