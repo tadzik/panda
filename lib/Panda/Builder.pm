@@ -59,7 +59,9 @@ class Panda::Builder does Pies::Builder {
                         ~ "{$file.name.subst(/\.pm6?$/, '.pir')} $file"
                         and die $p, "Failed building $file";
                 }
+                1;
             }
+            1;
         };
     }
 

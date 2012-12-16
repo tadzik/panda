@@ -35,6 +35,7 @@ class Panda::Installer does Pies::Installer {
                     $doc.IO.copy("$path/{$doc.name}");
                 }
             }
+            1;
         };
     }
 }
