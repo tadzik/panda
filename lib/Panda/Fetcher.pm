@@ -57,6 +57,7 @@ class Panda::Fetcher does Pies::Fetcher {
                 die $p, "source-type $_ not supported";
             }
         }
+        return;
     }
 }
 
