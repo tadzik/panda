@@ -57,6 +57,10 @@ Panda can be used like:
 
     panda install Acme::Meow
 
+Alternatively, you can install a package from the local disk by supplying its path:
+
+    panda install ./perl6-Acme-Meow
+
 Note that ~/.perl6/bin has to be in your $PATH for you to be able to use
 panda from the command line.
 
