@@ -5,7 +5,7 @@
 ## Description
 
 Pies is a module management solution for Perl 6.
-Pies itself is a specification (like masak's [Pls](https://github.com/masak/proto/tree/panda)), and cannot
+Pies itself is a specification (like masak's [Pls](https://github.com/masak/proto/tree/pls)), and cannot
 install anything itself. The project ships two implementations:
 ufobuilder, being an extremely simple example implementation of Pies,
 and Panda, being the actual module manager to use.
