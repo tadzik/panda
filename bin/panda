@@ -50,6 +50,7 @@ sub search-projects($panda, $string) {
 sub projectinfo($panda, @args) {
     for @args -> $p {
         my $x = $panda.ecosystem.get-project($p);
+        $x = $panda.project-from-local($p) unless $x;
         if $x {
             my $state = $panda.ecosystem.project-get-state($x);
             say 'PROJECT LIST:';

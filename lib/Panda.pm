@@ -61,17 +61,24 @@ class Panda is Pies {
         self.announce: "{$p.key.name} depends on {$p.value.join(", ")}"
     }
 
-    method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
+    method project-from-local($proj as Str) {
         if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
             my $mod = from-json slurp "$proj/META.info";
             $mod<source-type> = "local";
             $mod<source-url>  = $proj;
-            my $p = Pies::Project.new(
+            return Pies::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
                 dependencies => $mod<depends>,
                 metainfo     => $mod,
             );
+        }
+        return False;
+    }
+
+    method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
+        my $p = self.project-from-local($proj);
+        if $p {
             if $.ecosystem.get-project($p.name) {
                 self.announce: "Installing {$p.name} "
                                ~ "from a local directory '$proj'";
