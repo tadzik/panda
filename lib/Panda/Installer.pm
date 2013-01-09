@@ -11,10 +11,17 @@ class Panda::Installer does Pies::Installer {
     has $.resources;
     has $.destdir;
 
+    method sort-lib-contents(@lib) {
+        my @pirs = @lib.grep({ $_ ~~  /\.pir$/});
+        my @rest = @lib.grep({ $_ !~~ /\.pir$/});
+        return @rest, @pirs;
+    }
+
     method install(Pies::Project $p) {
         indir $!resources.workdir($p), {
             if 'blib'.IO ~~ :d {
-                for find(dir => 'blib', type => 'file').list -> $i {
+                my @lib = find(dir => 'blib', type => 'file').list;
+                for @.sort-lib-contents(@lib) -> $i {
                     # .substr(5) to skip 'blib/'
                     mkpath "$!destdir/{$i.dir.substr(5)}";
                     $i.IO.copy("$!destdir/{$i.Str.substr(5)}");

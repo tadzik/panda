@@ -3,7 +3,7 @@ use Panda::Installer;
 use Panda::Resources;
 use Shell::Command;
 
-plan 8;
+plan 9;
 
 my $srcdir  = 'testmodules';
 my $destdir = "{cwd}/removeme";
@@ -30,5 +30,11 @@ file_exists_ok "$destdir/compiled/module/doc/bardir/barfile",
                'docs installed 2';
 
 rm_rf $destdir;
+
+my @lib = <foo.pm foo.pir bam.pir bam.pm blaz.pm blaz.pir shazam.js>;
+my @order = $b.sort-lib-contents(@lib);
+is_deeply @order,
+          [<foo.pm bam.pm blaz.pm shazam.js foo.pir bam.pir blaz.pir>],
+          'pirs will get installed after rest of the things';
 
 # vim: ft=perl6
