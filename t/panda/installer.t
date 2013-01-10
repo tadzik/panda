@@ -3,7 +3,7 @@ use Panda::Installer;
 use Panda::Resources;
 use Shell::Command;
 
-plan 9;
+plan 10;
 
 my $srcdir  = 'testmodules';
 my $destdir = "{cwd}/removeme";
@@ -24,6 +24,7 @@ file_exists_ok "$destdir/lib/foo.pir", 'pir installed';
 file_exists_ok "$destdir/lib/bar.pod", 'pod installed';
 file_exists_ok "$destdir/lib/baz.js", 'random files installed';
 file_exists_ok "$destdir/bin/bar", 'bin installed';
+ok "$destdir/.git".IO !~~ :e, 'git files not copied';
 file_exists_ok "$destdir/compiled/module/doc/foofile",
                'docs installed 1';
 file_exists_ok "$destdir/compiled/module/doc/bardir/barfile",

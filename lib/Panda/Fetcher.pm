@@ -47,7 +47,9 @@ class Panda::Fetcher does Pies::Fetcher {
                 for find(dir => $url).list {
                     # that's sort of ugly, I know, but we need
                     # <source-url> stripped
-                    my $where = "$dest/{$_.dir.substr($url.chars)}";
+                    my $d = $_.dir.substr($url.chars);
+                    next if $d ~~ /^ '/'? '.git'/; # skip VCS files
+                    my $where = "$dest/$d";
                     mkpath $where;
                     next if $_.IO ~~ :d;
                     $_.IO.copy("$where/{$_.name}");
