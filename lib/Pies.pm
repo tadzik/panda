@@ -77,6 +77,8 @@ class Pies {
                           $notests, $isdep as Bool) {
         unless $nodeps {
             for self.deps-helper($bone) {
+                next unless $.ecosystem.project-get-state($bone)
+                    eq 'absent';
                 self.resolve-helper($_, $nodeps, $notests, 1);
             }
         }

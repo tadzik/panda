@@ -125,9 +125,9 @@ check-mock($i, *.called('install', times => 4));
 
 $p.resolve($proj.name, :notests);
 
-check-mock($f, *.called('fetch',   times => 7));
-check-mock($b, *.called('build',   times => 7));
+check-mock($f, *.called('fetch',   times => 5));
+check-mock($b, *.called('build',   times => 5));
 check-mock($t, *.called('test',    times => 4));
-check-mock($i, *.called('install', times => 7));
+check-mock($i, *.called('install', times => 5));
 
 # vim: ft=perl6
