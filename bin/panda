@@ -117,7 +117,7 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     for @modules -> $x {
         try {
             $panda.resolve($x, :$notests, :$nodeps);
-            CATCH { say $! }
+            CATCH { when X::Panda { say $_.message } }
         };
     }
 }
