@@ -44,18 +44,20 @@ sub checkrules ($elem, %opts) {
 	return True
 }
 
-sub find (:$dir!, :$name, :$type) is export {
+sub find (:$dir!, :$name, :$type, Bool :$recursive = True) is export {
 	my @targets = dir($dir).map: {
 		File::Find::Result.new(dir => $dir, name => .basename);
 	};
 	my $list = gather while @targets {
 		my $elem = @targets.shift;
 		take $elem if checkrules($elem, { :$name, :$type });
-		if $elem.IO ~~ :d {
-			for dir($elem) -> $file {
-				@targets.push(
-					File::Find::Result.new(dir => $elem, name => $file.basename)
-				);
+		if $recursive {
+			if $elem.IO ~~ :d {
+				for dir($elem) -> $file {
+					@targets.push(
+						File::Find::Result.new(dir => $elem, name => $file.basename)
+						);
+				}
 			}
 		}
 	}

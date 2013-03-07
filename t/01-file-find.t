@@ -1,11 +1,11 @@
 use v6;
 use Test;
 use File::Find;
-plan 7;
+plan 8;
 
 my $res = find(:dir<t/dir1>);
 my @test = $res.map({ .Str }).sort;
-is @test, <t/dir1/another_dir t/dir1/another_dir/empty_file t/dir1/file.bar t/dir1/file.foo t/dir1/foodir t/dir1/foodir/not_a_dir>, 'just a dir';
+is @test, <t/dir1/another_dir t/dir1/another_dir/empty_file t/dir1/another_dir/file.bar t/dir1/file.bar t/dir1/file.foo t/dir1/foodir t/dir1/foodir/not_a_dir>, 'just a dir';
 
 # names
 
@@ -13,7 +13,14 @@ $res = find(:dir<t/dir1>, :name(/foo/));
 @test = $res.map({ .Str }).sort;
 is @test, <t/dir1/file.foo t/dir1/foodir t/dir1/foodir/not_a_dir>, 'name with regex';
 
+# (default) recursive find
+
 $res = find(:dir<t/dir1>, :name<file.bar>);
+is $res.elems, 2, 'two files with name and string';
+
+# with forced find to Not work recursive
+
+$res = find(:dir<t/dir1>, :name<file.bar>, :recursive(False));
 is $res.elems, 1, 'name with a string';
 
 $res = find(:dir<t/dir1>, :name<notexisting>);
