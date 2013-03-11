@@ -3,65 +3,65 @@ use v6;
 module File::Find;
 
 class File::Find::Result is Cool {
-	has $.dir;
-	has $.name;
+    has $.dir;
+    has $.name;
 
-	method Str {
-		$.dir ~ '/' ~ $.name
-	}
+    method Str {
+        $.dir ~ '/' ~ $.name
+    }
 }
 
 sub checkrules ($elem, %opts) {
-	if %opts<name>.defined {
-		given %opts<name> {
-			when Regex {
-				return False unless $elem ~~ %opts<name>
-			}
-			when Str {
-				return False unless $elem.name ~~ %opts<name>
-			}
-			default {
-				die "name attribute has to be either Regex or Str"
-			}
-		}
-	}
-	if %opts<type>.defined {
-		given %opts<type> {
-			when 'dir' {
-				return False unless $elem.IO ~~ :d
-			}
-			when 'file' {
-				return False unless $elem.IO ~~ :f
-			}
-			when 'symlink' {
-				return False unless $elem.IO ~~ :l
-			}
-			default {
-				die "type attribute has to be dir, file or symlink";
-			}
-		}
-	}
-	return True
+    if %opts<name>.defined {
+        given %opts<name> {
+            when Regex {
+                return False unless $elem ~~ %opts<name>
+            }
+            when Str {
+                return False unless $elem.name ~~ %opts<name>
+            }
+            default {
+                die "name attribute has to be either Regex or Str"
+            }
+        }
+    }
+    if %opts<type>.defined {
+        given %opts<type> {
+            when 'dir' {
+                return False unless $elem.IO ~~ :d
+            }
+            when 'file' {
+                return False unless $elem.IO ~~ :f
+            }
+            when 'symlink' {
+                return False unless $elem.IO ~~ :l
+            }
+            default {
+                die "type attribute has to be dir, file or symlink";
+            }
+        }
+    }
+    return True
 }
 
 sub find (:$dir!, :$name, :$type, Bool :$recursive = True) is export {
-	my @targets = dir($dir).map: {
-		File::Find::Result.new(dir => $dir, name => .basename);
-	};
-	my $list = gather while @targets {
-		my $elem = @targets.shift;
-		take $elem if checkrules($elem, { :$name, :$type });
-		if $recursive {
-			if $elem.IO ~~ :d {
-				for dir($elem) -> $file {
-					@targets.push(
-						File::Find::Result.new(dir => $elem, name => $file.basename)
-						);
-				}
-			}
-		}
-	}
-	return $list;
+    my @targets = dir($dir).map: {
+        File::Find::Result.new(dir => $dir, name => .basename);
+    };
+    my $list = gather while @targets {
+        my $elem = @targets.shift;
+        take $elem if checkrules($elem, { :$name, :$type });
+        if $recursive {
+            if $elem.IO ~~ :d {
+                for dir($elem) -> $file {
+                    @targets.push(
+                        File::Find::Result.new(dir => $elem, name => $file.basename)
+                        );
+                }
+            }
+        }
+    }
+    return $list;
 }
 
 =begin pod
@@ -72,13 +72,13 @@ File::Find - Get a lazy list of a directory tree
 
 =head1 SYNOPSIS
 
-	use File::Find;
+    use File::Find;
 
-	my @list := find(dir => 'foo');
-	say @list[0..3];
+    my @list := find(dir => 'foo');
+    say @list[0..3];
 
-	my $list = find(dir => 'foo');
-	say $list[0..3];
+    my $list = find(dir => 'foo');
+    say $list[0..3];
 
 =head1 DESCRIPTION
 
