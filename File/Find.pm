@@ -83,7 +83,8 @@ File::Find - Get a lazy list of a directory tree
 =head1 DESCRIPTION
 
 C<File::Find> allows you to get the contents of the given directory,
-recursively. The only exported function, C<find()>, generates a lazy
+recursively, depth first.
+The only exported function, C<find()>, generates a lazy
 list of files in given directory. Every element of the list is a
 C<File::Find::Result> object, described below.
 C<find()> takes one (or more) named arguments. The C<dir> argument
