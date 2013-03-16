@@ -12,7 +12,7 @@ class Panda::Tester does Pies::Tester {
         indir $!resources.workdir($p), {
             if 't'.IO ~~ :d {
                 withp6lib {
-                    my $c = "prove -e $*EXECUTABLE_NAME -r t/";
+                    my $c = "p6prove -e $*EXECUTABLE_NAME -r t/";
                     shell $c and die $p, "Tests failed";
                 }
             }

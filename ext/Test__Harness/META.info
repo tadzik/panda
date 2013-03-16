@@ -1,0 +1,7 @@
+{
+    "name"        : "Test::Harness",
+    "version"     : "*",
+    "description" : "Read TAP output",
+    "depends"     : [],
+    "source-url"  : "git://github.com/tadzik/Test-Harness.git"
+}

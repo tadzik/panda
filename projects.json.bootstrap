@@ -17,6 +17,14 @@
    },
    {
       "source-type" : "local",
+      "source-url" : "_BASEDIR_/Test__Harness",
+      "version" : "*",
+      "name" : "Test::Harness",
+      "description" : "Read TAP output",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
       "repo-url" : "_BASEDIR_/Test__Mock",
       "version" : "*",
       "name" : "Test::Mock",

@@ -1,0 +1,53 @@
+#!/usr/bin/env perl6
+use lib 'blib/lib';
+use Test::Harness;
+
+sub MAIN(*@files is copy, :$e = 'perl6', Bool :$Q) {
+    my %results;
+    my $start = time;
+    +@files or @files = 't';
+
+    sub summary {
+        my $files  = +%results.keys;
+        my $tests  = [+] %results.values.map({ .tests-ran });
+        my $passes = [+] %results.values.map({ .tests-passed });
+        my $result = $tests == $passes ?? 'PASS' !! 'FAIL';
+        my $secs   = time - $start;
+        say "Files=$files, Tests=$tests, $secs wallclock secs";
+        say "Result: $result";
+    }
+
+    while +@files {
+        my $f = @files.shift;
+        if $f.IO.d {
+            @files.push(dir($f).grep({ ~$_ !~~ /^ '.'/})\
+                               .map({ $_.path }));
+            next;
+        }
+        next unless $f ~~ /'.t' $/;
+        my $th = Test::Harness::File.new;
+        print "$f ... " unless $Q;
+        my @lines = lines(qqx[$e $f]);
+        for @lines {
+            $th.line($_)
+        }
+        %results{$f} = $th;
+        say $th.short-summary unless $Q;
+    }
+
+    unless $Q {
+        if all(%results.values.map({ .successful })) {
+            say "All tests successful."
+        } else {
+            say "\nTest Summary Report";
+            say '-------------------';
+        }
+        summary();
+    }
+
+    if all(%results.values.map({ .successful })) {
+        exit 0;
+    } else {
+        exit 1;
+    }
+}
