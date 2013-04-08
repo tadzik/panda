@@ -1,49 +1,19 @@
-use Pies;
-use JSON::Tiny;
-use Shell::Command;
+class Panda::Ecosystem {
+    use Panda::Project;
+    use JSON::Tiny;
+    use Shell::Command;
 
-class Panda::Ecosystem does Pies::Ecosystem {
     has $.statefile;
     has $.projectsfile;
     has %!projects;
     has %!states;
     has %!saved-meta;
 
-    sub getfile($src, $dest) {
-        pir::load_bytecode__vs('LWP/UserAgent.pir');
-        my $res = Q:PIR {
-            .local string what, where
-            .local pmc ua, response, outfile
-            $P0 = find_lex '$src'
-            what = repr_unbox_str $P0
-            $P0 = find_lex '$dest'
-            where = repr_unbox_str $P0
-            ua = new ['LWP';'UserAgent']
-            response = ua.'get'(what)
-            $I0 = response.'code'()
-            if $I0 == 200 goto success
-            $I0 = 1
-            goto end
-        success:
-            outfile = new ['FileHandle']
-            outfile.'open'(where, 'w')
-            $S0 = response.'content'()
-            outfile.'print'($S0)
-            $S0 = "\n"
-            outfile.'print'($S0)
-            outfile.'close'()
-            $I0 = 0
-        end:
-            %r = perl6_box_int $I0
-        };
-        $res and die "Unable to fetch $src";
-    }
-
     method flush-states {
         my $fh = open($!statefile, :w);
         for %!states.kv -> $key, $val {
             my $json = to-json %!saved-meta{$key};
-            $fh.say: "$key $val $json";
+            $fh.say: "$key {$val.Int} $json";
         }
         $fh.close;
     }
@@ -53,7 +23,7 @@ class Panda::Ecosystem does Pies::Ecosystem {
             my $fh = open($!statefile);
             for $fh.lines -> $line {
                 my ($mod, $state, $json) = split ' ', $line, 3;
-                %!states{$mod} = $state;
+                %!states{$mod} = Panda::Project::State($state);
                 %!saved-meta{$mod} = from-json $json;
             }
         }
@@ -64,7 +34,7 @@ class Panda::Ecosystem does Pies::Ecosystem {
             die "An unknown error occured while reading the projects file";
         }
         for $list.list -> $mod {
-            my $p = Pies::Project.new(
+            my $p = Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
                 dependencies => $mod<depends>,
@@ -80,13 +50,22 @@ class Panda::Ecosystem does Pies::Ecosystem {
 
     method update {
         try unlink $!projectsfile;
-        getfile 'http://feather.perl6.nl:3000/projects.json',
-                $!projectsfile
+        my $s = IO::Socket::INET.new(:host<feather.perl6.nl>, :port(3000));
+        $s.send("GET /projects.json HTTP/1.0\n\n");
+        my ($buf, $g) = '';
+        $buf ~= $g while $g = $s.get;
+        
+        given open($!projectsfile, :w) {
+            .say: $buf.split(/\r?\n\r?\n/, 2)[1];
+            .close;
+        }
+
+        CATCH {
+            die "Could not download module metadata: {$_.message}"
+        }
     }
 
-    # Pies::Ecosystem methods
-
-    method add-project(Pies::Project $p) {
+    method add-project(Panda::Project $p) {
         %!projects{$p.name} = $p;
     }
 
@@ -94,16 +73,16 @@ class Panda::Ecosystem does Pies::Ecosystem {
         %!projects{$p}
     }
 
-    method project-get-state(Pies::Project $p) {
-        %!states{$p.name} // 'absent'
+    method project-get-state(Panda::Project $p) {
+        %!states{$p.name} // Panda::Project::absent
     }
 
-    method project-get-saved-meta(Pies::Project $p) {
+    method project-get-saved-meta(Panda::Project $p) {
         %!saved-meta{$p.name};
     }
 
-    method project-set-state(Pies::Project $p,
-                             Pies::Project::State $s) {
+    method project-set-state(Panda::Project $p,
+                             Panda::Project::State $s) {
         %!states{$p.name} = $s;
         %!saved-meta{$p.name} = $p.metainfo;
         self.flush-states;

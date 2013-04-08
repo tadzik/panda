@@ -1,0 +1,48 @@
+use Panda::Ecosystem;
+use Panda::Fetcher;
+use Panda::Builder;
+use Panda::Tester;
+use Panda::Installer;
+use Shell::Command;
+use JSON::Tiny;
+
+sub get-meta($module is copy) {
+    $module ~~ s:g/'::'/;/;
+    my $s = IO::Socket::INET.new(:host<feather.perl6.nl>, :port(3000));
+    $s.send("GET /module/$module HTTP/1.0\n\n");
+    my ($buf, $g) = '';
+    $buf ~= $g while $g = $s.get;
+    my $body = $buf.split(/\r?\n\r?\n/, 2)[1];
+    unless $body {
+        return Failure.new("Did not get a proper API response");
+    }
+    return from-json($body)
+        or Failure.new("Could not parse JSON API response");
+
+    CATCH {
+        return Failure.new(
+            "Could not download module metadata: {$_.message}"
+        );
+    }
+}
+
+sub MAIN($url) {
+    my $dir = '.work';
+    rm_rf $dir;
+    try {
+        Panda::Fetcher::fetch($url, $dir);
+        CATCH {
+            default {
+                my $meta = get-meta($url);
+                Panda::Fetcher::fetch($meta<source-url>, $dir);
+            }
+        }
+    }
+    Panda::Builder::build($dir);
+    Panda::Tester::test($dir);
+    Panda::Installer::install($dir);
+    note "Done";
+    rm_rf $dir;
+}
+
+# vim: ft=perl6

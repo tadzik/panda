@@ -1,19 +1,12 @@
 use Test;
 use Panda::Builder;
-use Panda::Resources;
 use Shell::Command;
 
 plan 6;
 
 my $srcdir = 'testmodules';
 
-my $r = Panda::Resources.new(srcdir => $srcdir);
-my $b = Panda::Builder.new(resources => $r);
-
-my $p = Pies::Project.new(name => 'dummymodule');
-
-
-lives_ok { $b.build($p) };
+lives_ok { Panda::Builder.build("$srcdir/dummymodule") };
 
 ok "$srcdir/dummymodule/blib/lib/foo.pir".IO ~~  :f, 'module compiled';
 ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~   :f, 'and opied to blib';

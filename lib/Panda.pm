@@ -1,59 +1,45 @@
 use v6;
-use Pies;
-use JSON::Tiny;
 use Panda::Ecosystem;
 use Panda::Fetcher;
 use Panda::Builder;
 use Panda::Tester;
 use Panda::Installer;
-use Panda::Resources;
+use Shell::Command;
+use JSON::Tiny;
 
-class Panda is Pies {
-    has $.srcdir;
-    has $.destdir;
-    has $.statefile;
-    has $.projectsfile;
-    has $.resources;
+sub tmpdir {
+    state $i = 0;
+    ".work/{time}_{$i++}"
+}
 
-    method new(:$srcdir, :$destdir, :$statefile, :$projectsfile) {
-        my $ecosystem = Panda::Ecosystem.new(
-            :$statefile,
-            :$projectsfile,
-        );
-        my $resources = Panda::Resources.new(:$srcdir);
-        my $fetcher   = Panda::Fetcher.new(:$resources);
-        my $builder   = Panda::Builder.new(:$resources);
-        my $tester    = Panda::Tester.new(:$resources);
-        my $installer = Panda::Installer.new(
-            :$resources,
-            :$destdir,
-        );
-        self.bless(*, :$srcdir, :$destdir, :$statefile, :$projectsfile,
-                      :$ecosystem, :$fetcher, :$builder, :$tester,
-                      :$installer);
-    }
+class Panda {
+    has $.ecosystem;
+    has $.fetcher   = Panda::Fetcher;
+    has $.builder   = Panda::Builder;
+    has $.tester    = Panda::Tester;
+    has $.installer = Panda::Installer;
 
     multi method announce(Str $what) {
         say "==> $what"
     }
 
-    multi method announce('fetching', Pies::Project $p) {
+    multi method announce('fetching', Panda::Project $p) {
         self.announce: "Fetching {$p.name}"
     }
 
-    multi method announce('building', Pies::Project $p) {
+    multi method announce('building', Panda::Project $p) {
         self.announce: "Building {$p.name}"
     }
 
-    multi method announce('testing', Pies::Project $p) {
+    multi method announce('testing', Panda::Project $p) {
         self.announce: "Testing {$p.name}"
     }
 
-    multi method announce('installing', Pies::Project $p) {
+    multi method announce('installing', Panda::Project $p) {
         self.announce: "Installing {$p.name}"
     }
 
-    multi method announce('success', Pies::Project $p) {
+    multi method announce('success', Panda::Project $p) {
         self.announce: "Successfully installed {$p.name}"
     }
 
@@ -64,9 +50,8 @@ class Panda is Pies {
     method project-from-local($proj as Str) {
         if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
             my $mod = from-json slurp "$proj/META.info";
-            $mod<source-type> = "local";
             $mod<source-url>  = $proj;
-            return Pies::Project.new(
+            return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
                 dependencies => $mod<depends>,
@@ -76,30 +61,53 @@ class Panda is Pies {
         return False;
     }
 
-    method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
-        my $p = self.project-from-local($proj);
-        if $p {
-            if $.ecosystem.get-project($p.name) {
-                self.announce: "Installing {$p.name} "
-                               ~ "from a local directory '$proj'";
-            }
-            $.ecosystem.add-project($p);
-            nextwith($p.name, :$nodeps, :$notests);
+    method install(Panda::Project $bone, $nodeps,
+                   $notests, $isdep as Bool) {
+        my $dir = tmpdir();
+        self.announce('fetching', $bone);
+        $.fetcher.fetch($bone.metainfo<source-url>, $dir);
+        self.announce('building', $bone);
+        $.builder.build($dir);
+        unless $notests {
+            self.announce('testing', $bone);
+            $.tester.test($dir) unless $notests;
         }
-        nextsame;
+        self.announce('installing', $bone);
+        $.installer.install($dir);
 
-        CATCH {
-            if $_ !~~ X::Panda {
-                die X::Panda.new($proj, 'resolve', $_.message);
-            }
-            if $_.module ne $proj {
-                X::Panda.new($proj, 'resolve',
-                    'Dependency resolution has failed: '
-                    ~ "stage {$_.stage} failed for {$_.module}"
-                ).throw;
-            }
-            $_.rethrow;
+        $.ecosystem.project-set-state(
+            $bone,
+            $isdep ?? Panda::Project::installed-dep
+                   !! Panda::Project::installed);
+        self.announce('success', $bone);
+
+        rm_rf $dir;
+    }
+
+    method get-deps(Panda::Project $bone) {
+        my @bonedeps = $bone.dependencies.grep(*.defined);
+        return () unless +@bonedeps;
+        self.announce('depends', $bone => @bonedeps);
+        my @deps;
+        for @bonedeps -> $dep {
+            my $p = $.ecosystem.get-project($dep);
+            @deps.push: self.get-deps($p), $p;
         }
+        return @deps;
+    }
+
+    method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
+        my $bone = $.ecosystem.get-project($proj)
+                   or die "Project $proj not found in the ecosystem";
+        unless $nodeps {
+            my @deps = self.get-deps($bone).uniq;
+            @deps.=grep: {
+                $.ecosystem.project-get-state($_)
+                    == Panda::Project::absent
+            };
+            self.install($_, $nodeps, $notests, 1) for @deps;
+        }
+        self.install($bone, $nodeps, $notests, 0);
     }
 }
 

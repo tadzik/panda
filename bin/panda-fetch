@@ -1,0 +1,10 @@
+#!/usr/bin/env perl6
+use Panda::Fetcher;
+
+sub MAIN($from, $to? is copy) {
+    unless $to {
+        note "Fetching to ./work";
+        $to = 'work';
+    }
+    Panda::Fetcher.fetch($from, $to);
+}

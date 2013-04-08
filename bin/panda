@@ -1,6 +1,7 @@
 #!/usr/bin/env perl6
 use Shell::Command;
 use Panda;
+use Panda::Ecosystem;
 
 sub listprojects($panda, :$installed, :$verbose) {
     my $es        = $panda.ecosystem;
@@ -101,12 +102,12 @@ my $panda;
         die "Found no writable directory into which panda could be installed";
     }
 
-    $panda = Panda.new(
-        srcdir       => "$pandadir/src",
-        destdir      =>  $destdir,
+    my $ecosystem = Panda::Ecosystem.new(
         statefile    => "$pandadir/state",
-        projectsfile => "$pandadir/projects.json"
+        projectsfile => "$pandadir/projects.json",
     );
+
+    $panda = Panda.new(:$ecosystem);
 }
 
 # allow switches after positionals
@@ -115,10 +116,10 @@ my $panda;
 #= Install the specified modules
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     for @modules -> $x {
-        try {
+        #try {
             $panda.resolve($x, :$notests, :$nodeps);
-            CATCH { when X::Panda { say $_.message } }
-        };
+        #    CATCH { when X::Panda { say $_.message } }
+        #};
     }
 }
 

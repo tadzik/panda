@@ -1,0 +1,6 @@
+#!/usr/bin/env perl6
+use Panda::Builder;
+
+sub MAIN($where = '.') {
+    Panda::Builder.build($where);
+}
