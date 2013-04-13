@@ -7,6 +7,7 @@ use Test;
 my @t =
     '{}',
     '{  }',
+    ' { } ',
     '{ "a" : "b" }',
     '{ "a" : null }',
     '{ "a" : true }',
@@ -199,8 +200,8 @@ for @t -> $t {
     }
     my $parsed = 0;
     try {
-        JSON::Tiny::Grammar.parse($t);
-        $parsed = 1;
+        JSON::Tiny::Grammar.parse($t)
+            and $parsed = 1;
     }
     ok $parsed, "JSON string «$desc» parsed";
     $i++;
@@ -212,7 +213,7 @@ for @n -> $t {
         $desc .= subst(/\n.*$/, "\\n...[$i]");
     }
     my $parsed = 0;
-    try { JSON::Tiny::Grammar.parse($t) && $parsed = 1 };
+    try { JSON::Tiny::Grammar.parse($t) and $parsed = 1 };
     nok $parsed, "NOT parsed «$desc»";
     $i++;
 }
