@@ -1,7 +1,7 @@
 An initial Perl 6 grammar for JSON.
 
 This is a work in progress. For more information please join #perl6 on
-irc.freenode.net, and talk to moritz_ or viklund, or write a mail to
+irc.freenode.net, and talk to moritz or viklund, or write a mail to
 perl6-users@perl.org.
 
 All files (unless noted otherwise) can be used, modified and redistributed
@@ -9,8 +9,8 @@ under the terms of the Artistic License Version 2. Examples (in the
 documentation, in tests or distributed as separate files) can be considered
 public domain.
 
-To build and test this module, plese get 'ufo' from
-http://github.com/masak/ufo and run
+To build and test this module, please get 'ufo' from
+http://github.com/masak/ufo and run:
 
     ufo
     make
