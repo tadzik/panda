@@ -1,8 +1,4 @@
-An initial Perl 6 grammar for JSON.
-
-This is a work in progress. For more information please join #perl6 on
-irc.freenode.net, and talk to moritz or viklund, or write a mail to
-perl6-users@perl.org.
+A simple Perl 6 module for serializing and deserializing JSON.
 
 All files (unless noted otherwise) can be used, modified and redistributed
 under the terms of the Artistic License Version 2. Examples (in the
@@ -24,12 +20,12 @@ in ext/JSON__Tiny/, and panda's reboostrap.pl run.)
 
 State:
 
-    The parser is pretty complete, if you find anything that it should
-    parse and doesn't, or the other way round, please let me know.
+    Works.
 
-    The emitter works.
+Missing features:
 
-    Both currently ignore possible surrogate pairs.
+ * Correct handling and tests for surrogate pairs
+ * Detection of cycles in input data structures (might never be fixed)
 
 Credits
     Moritz Lenz <moritz@faui2k3.org>
