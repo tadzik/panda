@@ -3,6 +3,8 @@ use Panda::Common;
 use File::Find;
 use Shell::Command;
 
+has $.destdir = self.destdir();
+
 method sort-lib-contents(@lib) {
     my @pirs = @lib.grep({ $_ ~~  /\.pir$/});
     my @rest = @lib.grep({ $_ !~~ /\.pir$/});
@@ -27,8 +29,7 @@ sub copy($src, $dest) {
     $src.IO.copy($dest);
 }
 
-method install($from, $to? is copy) {
-    $to //= self.destdir();
+method install($from, $to = $!destdir) {
     indir $from, {
         if 'blib'.IO ~~ :d {
             my @lib = find(dir => 'blib', type => 'file').list;

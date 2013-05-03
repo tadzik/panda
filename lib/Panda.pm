@@ -14,10 +14,10 @@ sub tmpdir {
 
 class Panda {
     has $.ecosystem;
-    has $.fetcher   = Panda::Fetcher;
-    has $.builder   = Panda::Builder;
-    has $.tester    = Panda::Tester;
-    has $.installer = Panda::Installer;
+    has $.fetcher   = Panda::Fetcher.new;
+    has $.builder   = Panda::Builder.new;
+    has $.tester    = Panda::Tester.new;
+    has $.installer = Panda::Installer.new;
 
     multi method announce(Str $what) {
         say "==> $what"
