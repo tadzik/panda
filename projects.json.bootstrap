@@ -14,14 +14,5 @@
       "name" : "JSON::Tiny",
       "description" : "A minimal JSON (de)serializer",
       "depends" : []
-   },
-   {
-      "source-type" : "local",
-      "repo-url" : "_BASEDIR_/Test__Mock",
-      "version" : "*",
-      "name" : "Test::Mock",
-      "repo-type" : "git",
-      "description" : "Simple creation of mock objects using the Act, Arrange, Assert pattern.",
-      "depends" : []
    }
 ]

@@ -2,6 +2,6 @@
     "name"        : "panda",
     "version"     : "*",
     "description" : "A module management solution",
-    "depends"     : [ "File::Tools", "JSON::Tiny", "Test::Mock" ],
+    "depends"     : [ "File::Tools", "JSON::Tiny" ],
     "source-url"  : "git://github.com/tadzik/panda.git"
 }

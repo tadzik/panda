@@ -13,7 +13,7 @@ class Panda::Ecosystem {
         my $fh = open($!statefile, :w);
         for %!states.kv -> $key, $val {
             my $json = to-json %!saved-meta{$key};
-            $fh.say: "$key {$val.Int} $json";
+            $fh.say: "$key {$val.Str} $json";
         }
         $fh.close;
     }
@@ -23,7 +23,7 @@ class Panda::Ecosystem {
             my $fh = open($!statefile);
             for $fh.lines -> $line {
                 my ($mod, $state, $json) = split ' ', $line, 3;
-                %!states{$mod} = Panda::Project::State($state);
+                %!states{$mod} = ::("Panda::Project::State::$state");
                 %!saved-meta{$mod} = from-json $json;
             }
         }

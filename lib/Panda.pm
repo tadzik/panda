@@ -74,29 +74,47 @@ class Panda {
         }
         self.announce('installing', $bone);
         $.installer.install($dir);
-
-        $.ecosystem.project-set-state(
-            $bone,
-            $isdep ?? Panda::Project::installed-dep
-                   !! Panda::Project::installed);
+        my $s = $isdep ?? Panda::Project::State::installed-dep
+                       !! Panda::Project::State::installed;
+        $.ecosystem.project-set-state($bone, $s);
         self.announce('success', $bone);
 
         rm_rf $dir;
+
+        CATCH {
+            when X::Panda {
+                $_.module = $bone.name;
+                rm_rf $dir;
+                $_.throw;
+            }
+        }
     }
 
     method get-deps(Panda::Project $bone) {
-        my @bonedeps = $bone.dependencies.grep(*.defined);
+        my @bonedeps = $bone.dependencies.grep(*.defined).map({
+            $.ecosystem.get-project($_)
+        }).grep({
+            $.ecosystem.project-get-state($_) == Panda::Project::State::absent
+        });
         return () unless +@bonedeps;
-        self.announce('depends', $bone => @bonedeps);
+        self.announce('depends', $bone => @bonedeps».name);
         my @deps;
-        for @bonedeps -> $dep {
-            my $p = $.ecosystem.get-project($dep);
+        for @bonedeps -> $p {
             @deps.push: self.get-deps($p), $p;
         }
         return @deps;
     }
 
-    method resolve($proj as Str, Bool :$nodeps, Bool :$notests) {
+    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests) {
+        my $p = self.project-from-local($proj);
+        if $p {
+            if $.ecosystem.get-project($p.name) {
+                self.announce: "Installing {$p.name} "
+                               ~ "from a local directory '$proj'";
+            }
+            $.ecosystem.add-project($p);
+            $proj = $p.name;
+        }
         my $bone = $.ecosystem.get-project($proj)
                    or die "Project $proj not found in the ecosystem";
         unless $nodeps {

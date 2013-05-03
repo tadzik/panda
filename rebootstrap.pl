@@ -41,7 +41,7 @@ rm_rf "$prefix/lib";
 rm_rf "$prefix/panda";
 shell 'perl6 bootstrap.pl';
 say "==> Reinstalling @modules[]";
-shell "panda install @modules[]";
+shell "perl6 bin/panda install @modules[]";
 
 # Save the backup state file back to $prefix/panda/
 spurt "$state-file.bak", $old-state if $old-state;
