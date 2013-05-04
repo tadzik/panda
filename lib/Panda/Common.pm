@@ -32,7 +32,7 @@ sub withp6lib(&what) is export {
 }
 
 class X::Panda is Exception {
-    has $.module;
+    has $.module is rw;
     has $.stage;
     has $.description;
 

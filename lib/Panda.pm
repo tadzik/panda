@@ -65,6 +65,9 @@ class Panda {
                    $notests, $isdep as Bool) {
         my $dir = tmpdir();
         self.announce('fetching', $bone);
+        unless $bone.metainfo<source-url> {
+            die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
+        }
         $.fetcher.fetch($bone.metainfo<source-url>, $dir);
         self.announce('building', $bone);
         $.builder.build($dir);

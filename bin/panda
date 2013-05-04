@@ -66,4 +66,8 @@ multi MAIN ('search', $pattern) {
     search-projects($panda, $pattern);
 }
 
+END {
+    rm_rf '.work';
+}
+
 # vim: ft=perl6
