@@ -44,7 +44,9 @@ sub checkrules ($elem, %opts) {
     return True
 }
 
-sub find (:$dir!, :$name, :$type, Bool :$recursive = True) is export {
+sub find (:$dir!, :$name, :$type, Bool :$recursive = True,
+    Bool :$keep-going = False) is export {
+
     my @targets = dir($dir).map: {
         File::Find::Result.new(dir => $dir, name => .basename);
     };
@@ -58,6 +60,10 @@ sub find (:$dir!, :$name, :$type, Bool :$recursive = True) is export {
                         File::Find::Result.new(dir => $elem, name => $file.basename)
                         );
                 }
+		CATCH { when X::IO::Dir {
+		    $_.throw unless $keep-going;
+		    next;
+		}}
             }
         }
     }
@@ -103,6 +109,12 @@ pattern will be returned.
 
 Given a type, C<find()> will only return files being the given type.
 The available types are C<file>, C<dir> or C<symlink>.
+
+=head2 keep-going
+
+Parameter C<keep-going> tells C<find()> to not stop finding files
+on errors such as 'Access is denied', but rather ignore the errors
+and keep going.
 
 =head1 File::Find::Result
 
