@@ -45,7 +45,7 @@ sub checkrules ($elem, %opts) {
 }
 
 sub find (:$dir!, :$name, :$type, Bool :$recursive = True,
-    Bool :$keep-going = False) is export {
+    Bool :$keep-going = False, Callable :$dir-call = &dir) is export {
 
     my @targets = dir($dir).map: {
         File::Find::Result.new(dir => $dir, name => .basename);
@@ -55,7 +55,7 @@ sub find (:$dir!, :$name, :$type, Bool :$recursive = True,
         take $elem if checkrules($elem, { :$name, :$type });
         if $recursive {
             if $elem.IO ~~ :d {
-                for dir($elem) -> $file {
+                for $dir-call($elem) -> $file {
                     @targets.push(
                         File::Find::Result.new(dir => $elem, name => $file.basename)
                         );

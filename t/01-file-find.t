@@ -1,7 +1,7 @@
 use v6;
 use Test;
 use File::Find;
-plan 8;
+plan 10;
 
 my $res = find(:dir<t/dir1>);
 my @test = $res.map({ .Str }).sort;
@@ -20,7 +20,7 @@ is $res.elems, 2, 'two files with name and string';
 
 # with forced find to Not work recursive
 
-$res = find(:dir<t/dir1>, :name<file.bar>, :recursive(False));
+$res = find(:dir<t/dir1>, :name<file.bar>, recursive => False);
 is $res.elems, 1, 'name with a string';
 
 $res = find(:dir<t/dir1>, :name<notexisting>);
@@ -40,3 +40,20 @@ $res = find(:dir<t/dir1>, :type<file>, :name(/foo/));
 @test = $res.map({ .Str }).sort;
 is @test, <t/dir1/file.foo t/dir1/foodir/not_a_dir>,
 	'types: file, combined with name';
+
+#keep-going
+{
+    my $i = 0;
+    my $dir = sub ($d) {
+        X::IO::Dir.new(path => "dummy", os-error => "dummy").throw
+            if $i++ == 0;
+        dir($d);
+    }
+
+    dies_ok(sub { find(:dir<t/dir1>, dir-call => $dir) },
+        "dies due to X::IO::Dir");
+
+    $i = 0;
+    $res = find(:dir<t/dir1>, :name<file.bar>, keep-going => True, dir-call => $dir);
+    is $res.elems, 1, 'found one of two files due to X::IO::Dir';
+}
