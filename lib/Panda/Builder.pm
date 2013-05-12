@@ -33,9 +33,10 @@ sub build-order(@module-files) {
     my %module-to-path = @modules Z=> @module-files;
     my %usages_of;
     for @module-files -> $module-file {
-        my $fh = open($module-file.Str, :r);
         my $module = path-to-module-name($module-file);
         %usages_of{$module} = [];
+        next unless $module-file.Str ~~ /\.pm6?$/; # don't try to "parse" non-perl files
+        my $fh = open($module-file.Str, :r);
         for $fh.lines() {
             if /^\s* ['use'||'need'||'require'] \s+ (\w+ ['::' \w+]*)/ && $0 -> $used {
                 next if $used eq 'v6';
