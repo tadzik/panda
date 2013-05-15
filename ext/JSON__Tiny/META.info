@@ -1,8 +1,0 @@
-{
-    "name"        : "JSON::Tiny",
-    "version"     : "*",
-    "description" : "A minimal JSON (de)serializer",
-    "depends"     : [ ],
-    "source-url"  : "git://github.com/moritz/json.git"
-}
-
