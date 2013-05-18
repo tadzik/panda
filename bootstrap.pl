@@ -42,11 +42,12 @@ my $env_sep = $is_win ?? ';' !! ':';
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/lib";
 
 shell "perl6 bin/panda install File::Tools JSON::Tiny Test::Mock {cwd}";
-rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
-                            # that src should not be kept at all, but
-                            # I figure out how to do that nicely, let's
-                            # at least free boostrap from it
-
+if "$destdir/panda/src".IO ~~ :d {
+    rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
+                                # that src should not be kept at all, but
+                                # I figure out how to do that nicely, let's
+                                # at least free boostrap from it
+}
 say "==> Please make sure that $destdir/bin is in your PATH";
 
 unlink "$panda-base/projects.json";
