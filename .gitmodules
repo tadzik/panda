@@ -1,6 +1,3 @@
-[submodule "ext/Test__Mock"]
-	path = ext/Test__Mock
-	url = git://github.com/jnthn/test-mock.git
 [submodule "ext/JSON__Tiny"]
 	path = ext/JSON__Tiny
 	url = git://github.com/moritz/json.git
