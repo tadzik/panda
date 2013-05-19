@@ -5,6 +5,8 @@ use Shell::Command;
 
 say '==> Bootstrapping Panda';
 
+run 'git submodule update';
+
 my $is_win = $*OS eq 'MSWin32';
 
 my $panda-base;

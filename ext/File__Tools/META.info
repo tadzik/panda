@@ -1,7 +1,0 @@
-{
-    "name"        : "File::Tools",
-    "version"     : "*",
-    "description" : "Various modules for file operations",
-    "depends"     : [],
-    "source-url"  : "git://github.com/tadzik/perl6-File-Tools.git"
-}

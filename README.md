@@ -16,7 +16,7 @@ To install Panda along with all its dependencies, simply run the script
 bootstrap.pl in the root of the panda git repo. You must have
 perl6 installed in order to run bootstrap.pl
 
-    git clone git://github.com/tadzik/panda.git
+    git clone --recursive git://github.com/tadzik/panda.git
 
     cd panda
 
@@ -37,7 +37,7 @@ Panda currently depends on wget; you can obtain a Windows build of wget at:
 Once you have obtained and installed it, and have both wget and perl6 in
 your path, you may now install Panda by doing:
 
-    git clone git://github.com/tadzik/panda.git
+    git clone --recursive git://github.com/tadzik/panda.git
 
     cd panda
 
