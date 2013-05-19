@@ -1,12 +1,13 @@
 #!/usr/bin/env perl6
 use v6;
+BEGIN {
+    say shell 'git submodule init';
+    say shell 'git submodule update';
+}
 use lib 'ext/File__Tools/lib/';
 use Shell::Command;
 
 say '==> Bootstrapping Panda';
-
-run 'git submodule init';
-run 'git submodule update';
 
 my $is_win = $*OS eq 'MSWin32';
 
