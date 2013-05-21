@@ -30,7 +30,7 @@ sub rm_rf(*@files) is export {
             }
             rmdir $path;
         }
-        elsif $path.e {
+        elsif $path.IO.e {
             unlink($path);
         }
     }
