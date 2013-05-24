@@ -67,7 +67,7 @@ multi MAIN ('search', $pattern) {
 }
 
 END {
-    rm_rf '.work';
+    rm_rf '.work' if '.work'.IO.e;
 }
 
 # vim: ft=perl6
