@@ -2,5 +2,5 @@
 use Panda::Installer;
 
 sub MAIN($from = '.', $to?) {
-    Panda::Installer.install($from, $to);
+    Panda::Installer.new.install($from, $to);
 }

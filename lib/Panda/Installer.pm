@@ -29,7 +29,10 @@ sub copy($src, $dest) {
     $src.IO.copy($dest);
 }
 
-method install($from, $to = $!destdir) {
+method install($from, $to? is copy) {
+    unless $to {
+        $to = $.destdir
+    }
     indir $from, {
         if 'blib'.IO ~~ :d {
             my @lib = find(dir => 'blib', type => 'file').list;
