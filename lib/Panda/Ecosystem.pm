@@ -73,6 +73,15 @@ class Panda::Ecosystem {
         %!projects{$p}
     }
 
+    method suggest-project($p as Str) {
+        my &canonical = *.subst(/ <[\- _ :]>+ /, "", :g);
+        my $cpname = canonical($p);
+        for %!projects.keys {
+            return $_ if canonical($_) eq $cpname;
+        }
+        return Nil;
+    }
+
     method project-get-state(Panda::Project $p) {
         %!states{$p.name} // Panda::Project::absent
     }

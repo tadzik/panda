@@ -118,8 +118,12 @@ class Panda {
             $.ecosystem.add-project($p);
             $proj = $p.name;
         }
-        my $bone = $.ecosystem.get-project($proj)
-                   or die "Project $proj not found in the ecosystem";
+        my $bone = $.ecosystem.get-project($proj);
+        if not $bone {
+            my $suggestion = $.ecosystem.suggest-project($proj);
+            die "Project $proj not found in the ecosystem. Maybe you meant $suggestion?" if $suggestion;
+            die "Project $proj not found in the ecosystem";
+        }
         unless $nodeps {
             my @deps = self.get-deps($bone).uniq;
             @deps.=grep: {
