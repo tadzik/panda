@@ -1,0 +1,21 @@
+#!/usr/bin/env perl6
+
+open('Build.PL', :w).close;
+
+# it needs to be Perl 5, 'cos cpanm runs 'perl Build' rather than './Build' for some reason
+my $build_tmpl = q[
+    my $arg = shift;
+    
+    if ($arg eq 'test') {
+        system "panda-test"
+    } elsif ($arg eq 'install') {
+        system "panda-install";
+    } else {
+        system "panda-build";
+    }
+];
+
+given open('Build', :w) {
+    .say: $build_tmpl;
+    .close;
+}
