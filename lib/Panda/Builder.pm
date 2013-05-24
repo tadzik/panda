@@ -52,20 +52,18 @@ sub build-order(@module-files) {
 }
 
 method build($where) {
-    return unless "$where/lib".IO ~~ :d;
     indir $where, {
         my @files = find(dir => 'lib', type => 'file').grep({
             $_.name.substr(0, 1) ne '.'
         });
-        # FIXME
-        #if "Build.pm".IO.f {
-        #    @*INC.push('.');
-        #    require 'Build';
-        #    if ::('Build').isa(Panda::Builder) {
-        #        ::('Build').new(resources => $!resources).build($p);
-        #    }
-        #    @*INC.pop;
-        #}
+        if "Build.pm".IO.f {
+            @*INC.push('.');
+            require 'Build.pm';
+            if ::('Build').isa(Panda::Builder) {
+                ::('Build').new.build($where);
+            }
+            @*INC.pop;
+        }
         my @dirs = @files.map(*.dir).uniq;
         mkpath "blib/$_" for @dirs;
 
