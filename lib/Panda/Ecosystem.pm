@@ -74,7 +74,7 @@ class Panda::Ecosystem {
     }
 
     method suggest-project($p as Str) {
-        my &canonical = *.subst(/ <[\- _ :]>+ /, "", :g);
+        my &canonical = *.subst(/ <[\- _ :]>+ /, "", :g).lc;
         my $cpname = canonical($p);
         for %!projects.keys {
             return $_ if canonical($_) eq $cpname;
