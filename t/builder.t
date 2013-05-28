@@ -2,7 +2,7 @@ use Test;
 use Panda::Builder;
 use Shell::Command;
 
-plan 6;
+plan 7;
 
 my $srcdir = 'testmodules';
 
@@ -14,6 +14,8 @@ ok "$srcdir/dummymodule/blib/lib/manual.pod".IO ~~  :f, 'pod copied too';
 ok "$srcdir/dummymodule/blib/lib/bar.pir".IO !~~ :f, 'pod not compiled';
 ok "$srcdir/dummymodule/blib/lib/foo.js".IO ~~ :f,
    'random files also copied to blib';
+
+lives_ok { Panda::Builder.build("$srcdir/testme1") };
 
 rm_rf "$srcdir/dummymodule/blib";
 

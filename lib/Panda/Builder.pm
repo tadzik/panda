@@ -53,9 +53,12 @@ sub build-order(@module-files) {
 
 method build($where) {
     indir $where, {
-        my @files = find(dir => 'lib', type => 'file').grep({
-            $_.name.substr(0, 1) ne '.'
-        });
+        my @files;
+        if 'lib'.IO.d { 
+            @files = find(dir => 'lib', type => 'file').grep({
+                $_.name.substr(0, 1) ne '.'
+            });
+        }
         if "Build.pm".IO.f {
             @*INC.push('.');
             require 'Build.pm';
