@@ -61,6 +61,22 @@ class Panda {
         return False;
     }
 
+    method project-from-git($proj as Str, $tmpdir) {
+        if $proj ~~ m{^git\:\/\/} {
+            mkpath $tmpdir;
+            $.fetcher.fetch($proj, $tmpdir);
+            my $mod = from-json slurp "$tmpdir/META.info";
+            $mod<source-url>  = $tmpdir;
+            return Panda::Project.new(
+                name         => $mod<name>,
+                version      => $mod<version>,
+                dependencies => $mod<depends>,
+                metainfo     => $mod,
+            );
+        }
+        return False;
+    }
+
     method install(Panda::Project $bone, $nodeps,
                    $notests, $isdep as Bool) {
         my $dir = tmpdir();
@@ -109,7 +125,10 @@ class Panda {
     }
 
     method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests) {
+        my $tmpdir = tmpdir();
+        LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         my $p = self.project-from-local($proj);
+        $p ||= self.project-from-git($proj, $tmpdir);
         if $p {
             if $.ecosystem.get-project($p.name) {
                 self.announce: "Installing {$p.name} "
