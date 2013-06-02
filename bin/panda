@@ -1,4 +1,11 @@
 #!/usr/bin/env perl6
+BEGIN {
+    # we want to load those versions which were built along with panda
+    # so when there's site/lib and site/panda/lib, we load modules from the latter
+    # (because this file will end up in site/panda/bin)
+    my $pandalib = $?FILE.IO.path.parent.parent.child('lib').Str;
+    @*INC.unshift: $pandalib;
+}
 use Shell::Command;
 use Panda;
 use Panda::Ecosystem;

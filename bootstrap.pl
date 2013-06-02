@@ -7,49 +7,55 @@ BEGIN {
 use lib 'ext/File__Tools/lib/';
 use Shell::Command;
 
-say '==> Bootstrapping Panda';
-
-my $is_win = $*OS eq 'MSWin32';
-
-my $panda-base;
-my $destdir = %*ENV<DESTDIR>;
-$destdir = "{cwd}/$destdir" if defined($destdir) && $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
-for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-    $destdir  = $prefix;
-    $panda-base = "$prefix/panda";
-    try mkdir $destdir;
-    try mkpath $panda-base unless $panda-base.IO ~~ :d;
-    last if $panda-base.path.w
-}
-unless $panda-base.path.w {
-    warn "panda-base: { $panda-base.perl }";
-    die "Found no writable directory into which panda could be installed";
+sub default-prefix {
+    my $destdir = %*ENV<DESTDIR>;
+    $destdir = "{cwd}/$destdir" if defined($destdir) && $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
+    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
+        $destdir  = "$prefix/panda";
+        try mkpath $destdir;
+        last if $destdir.path.w
+    }
+    unless $destdir.path.w {
+        warn "destdir: { $destdir.perl }";
+        die "Found no writable directory into which panda could be installed";
+    }
+    return $destdir;
 }
 
-my $projects  = slurp 'projects.json.bootstrap';
-   $projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
-   $projects .= subst('\\', '/', :g) if $is_win;
+sub MAIN(:$prefix = default-prefix()) {
+    say "==> Bootstrapping Panda to $prefix";
 
-given open "$panda-base/projects.json", :w {
-    .say: $projects;
-    .close;
+    my $is_win = $*OS eq 'MSWin32';
+
+    my $projects  = slurp 'projects.json.bootstrap';
+       $projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
+       $projects .= subst('\\', '/', :g) if $is_win;
+
+    mkpath $prefix;
+    given open "$prefix/projects.json", :w {
+        .say: $projects;
+        .close;
+    }
+
+    my $env_sep = $is_win ?? ';' !! ':';
+
+    %*ENV<PERL6LIB> ~= "{$env_sep}$prefix/lib";
+    %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Tools/lib";
+    %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/JSON__Tiny/lib";
+    %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Test__Mock/lib";
+    %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/lib";
+    %*ENV<DESTDIR> = "$prefix";
+
+    my $pandapath;
+    {
+        my $pandabin = $prefix.IO.path.child('bin');
+        mkpath $pandabin.Str;
+        $pandapath = $pandabin.child('panda');
+        'bin/panda'.IO.copy($pandapath);
+    }
+
+    shell "perl6 $pandapath install File::Tools JSON::Tiny {cwd}" and exit;
+    say "==> Please make sure that $prefix/bin is in your PATH";
+
+    unlink "$prefix/projects.json";
 }
-
-my $env_sep = $is_win ?? ';' !! ':';
-
-%*ENV<PERL6LIB> ~= "{$env_sep}$destdir/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Tools/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/JSON__Tiny/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Test__Mock/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/lib";
-
-shell "perl6 bin/panda install File::Tools JSON::Tiny {cwd}";
-if "$destdir/panda/src".IO ~~ :d {
-    rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
-                                # that src should not be kept at all, but
-                                # I figure out how to do that nicely, let's
-                                # at least free boostrap from it
-}
-say "==> Please make sure that $destdir/bin is in your PATH";
-
-unlink "$panda-base/projects.json";
