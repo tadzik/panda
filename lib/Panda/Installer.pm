@@ -46,6 +46,7 @@ method install($from, $to? is copy) {
         if 'bin'.IO ~~ :d {
             for find(dir => 'bin', type => 'file').list -> $bin {
                 next if $bin.name.substr(0, 1) eq '.';
+                next if $*OS ne 'MSWin32' and $bin.name ~~ /\.bat$/;
                 mkpath "$to/{$bin.dir}";
                 copy($bin, "$to/$bin");
                 "$to/$bin".IO.chmod(0o755) unless $*OS eq 'MSWin32';
