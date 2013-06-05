@@ -3,10 +3,10 @@ grammar JSON::Tiny::Grammar;
 
 token TOP       { ^ \s* [ <object> | <array> ] \s* $ }
 rule object     { '{' ~ '}' <pairlist>     }
-rule pairlist   { <?> <pair> * % \,             }
-rule pair       { <?> <string> ':' <value>     }
+rule pairlist   { <pair> * % \,            }
+rule pair       { <string> ':' <value>     }
 rule array      { '[' ~ ']' <arraylist>    }
-rule arraylist  { <?> <value>* % [ \, ]        }
+rule arraylist  { <value>* % [ \, ]        }
 
 proto token value {*};
 token value:sym<number> {
