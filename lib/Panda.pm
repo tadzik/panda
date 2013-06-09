@@ -79,17 +79,24 @@ class Panda {
 
     method install(Panda::Project $bone, $nodeps,
                    $notests, $isdep as Bool) {
+        my $cwd = cwd;
         my $dir = tmpdir();
         self.announce('fetching', $bone);
         unless $bone.metainfo<source-url> {
             die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
         }
-        $.fetcher.fetch($bone.metainfo<source-url>, $dir);
+        unless $_ = $.fetcher.fetch($bone.metainfo<source-url>, $dir) {
+            die X::Panda.new($bone.name, 'fetch', $_)
+        }
         self.announce('building', $bone);
-        $.builder.build($dir);
+        unless $_ = $.builder.build($dir) {
+            die X::Panda.new($bone.name, 'build', $_)
+        }
         unless $notests {
             self.announce('testing', $bone);
-            $.tester.test($dir) unless $notests;
+            unless $_ = $.tester.test($dir) {
+                die X::Panda.new($bone.name, 'test', $_)
+            }
         }
         self.announce('installing', $bone);
         $.installer.install($dir);
@@ -98,20 +105,20 @@ class Panda {
         $.ecosystem.project-set-state($bone, $s);
         self.announce('success', $bone);
 
+        chdir $cwd;
         rm_rf $dir;
 
         CATCH {
-            when X::Panda {
-                $_.module = $bone.name;
-                rm_rf $dir;
-                $_.throw;
-            }
+            chdir $cwd;
+            rm_rf $dir;
         }
     }
 
     method get-deps(Panda::Project $bone) {
         my @bonedeps = $bone.dependencies.grep(*.defined).map({
             $.ecosystem.get-project($_)
+                or die X::Panda.new($bone.name, 'resolve',
+                                    "Dependency $_ is not present in the module ecosystem")
         }).grep({
             $.ecosystem.project-get-state($_) == Panda::Project::State::absent
         });
@@ -139,6 +146,7 @@ class Panda {
         }
         my $bone = $.ecosystem.get-project($proj);
         if not $bone {
+            sub die($m) { X::Panda.new($proj, 'resolve', $m).throw }
             my $suggestion = $.ecosystem.suggest-project($proj);
             die "Project $proj not found in the ecosystem. Maybe you meant $suggestion?" if $suggestion;
             die "Project $proj not found in the ecosystem";

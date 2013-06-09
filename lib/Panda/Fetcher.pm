@@ -5,20 +5,22 @@ use Shell::Command;
 method fetch($from, $to) {
     given $from {
         when /\.git$/ {
-            git-fetch $from, $to;
+            return git-fetch $from, $to;
         }
         when *.IO.d {
             local-fetch $from, $to;
         }
         default {
-            die "Unable to handle source '$from'"
+            fail "Unable to handle source '$from'"
         }
     }
+    return True;
 }
 
 sub git-fetch($from, $to) {
     shell "git clone -q $from \"$to\""
-          and die "Failed cloning git repository '$from'"
+          and fail "Failed cloning git repository '$from'";
+    return True;
 }
 
 sub local-fetch($from, $to) {
@@ -30,6 +32,7 @@ sub local-fetch($from, $to) {
         next if $_.IO ~~ :d;
         $_.IO.copy("$where/{$_.name}");
     }
+    return True;
 }
 
 # vim: ft=perl6
