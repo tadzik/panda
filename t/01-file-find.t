@@ -43,17 +43,30 @@ is @test, <t/dir1/file.foo t/dir1/foodir/not_a_dir>,
 
 #keep-going
 {
-    my $i = 0;
-    my $dir = sub ($d) {
-        X::IO::Dir.new(path => "dummy", os-error => "dummy").throw
-            if $i++ == 0;
-        dir($d);
-    }
+    my $skip-first = True;
+    my $throw = True;
 
-    dies_ok(sub { find(:dir<t/dir1>, dir-call => $dir) },
+    # Wrap dir to throw when we want it to.
+    my $w = &dir.wrap({
+        if $skip-first {
+	  $skip-first = False;
+          return callsame;
+	}
+
+        if $throw {
+	    $throw = False;
+            X::IO::Dir.new(path => "dummy", os-error => "dummy").throw
+        }
+	callsame;
+    });
+
+    dies_ok(sub { find(:dir<t/dir1>) },
         "dies due to X::IO::Dir");
 
-    $i = 0;
-    $res = find(:dir<t/dir1>, :name<file.bar>, keep-going => True, dir-call => $dir);
+    $throw = $skip-first = True;
+    $res = find(:dir<t/dir1>, :name<file.bar>, keep-going => True);
     is $res.elems, 1, 'found one of two files due to X::IO::Dir';
+
+    LEAVE { &dir.unwrap($w); }
 }
+
