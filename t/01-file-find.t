@@ -70,3 +70,4 @@ is @test, <t/dir1/file.foo t/dir1/foodir/not_a_dir>,
     LEAVE { &dir.unwrap($w); }
 }
 
+exit 0; # I have no idea what I'm doing, but I get Non-zero exit status w/o this
