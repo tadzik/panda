@@ -26,7 +26,7 @@ method destdir {
 
 sub copy($src, $dest) {
     note "Copying $src to $dest";
-    $src.IO.copy($dest);
+    $src.copy($dest);
 }
 
 method install($from, $to? is copy) {
@@ -37,17 +37,17 @@ method install($from, $to? is copy) {
         if 'blib'.IO ~~ :d {
             my @lib = find(dir => 'blib', type => 'file').list;
             for self.sort-lib-contents(@lib) -> $i {
-                next if $i.name.substr(0, 1) eq '.';
+                next if $i.basename.substr(0, 1) eq '.';
                 # .substr(5) to skip 'blib/'
-                mkpath "$to/{$i.dir.substr(5)}";
-                copy($i, "$to/{$i.Str.substr(5)}");
+                mkpath "$to/{$i.directory.substr(5)}";
+                copy($i, "$to/{$i.substr(5)}");
             }
         }
         if 'bin'.IO ~~ :d {
             for find(dir => 'bin', type => 'file').list -> $bin {
-                next if $bin.name.substr(0, 1) eq '.';
-                next if $*OS ne 'MSWin32' and $bin.name ~~ /\.bat$/;
-                mkpath "$to/{$bin.dir}";
+                next if $bin.basename.substr(0, 1) eq '.';
+                next if $*OS ne 'MSWin32' and $bin.basename ~~ /\.bat$/;
+                mkpath "$to/{$bin.directory}";
                 copy($bin, "$to/$bin");
                 "$to/$bin".IO.chmod(0o755) unless $*OS eq 'MSWin32';
             }

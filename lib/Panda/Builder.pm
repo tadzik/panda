@@ -56,7 +56,7 @@ method build($where) {
         my @files;
         if 'lib'.IO.d { 
             @files = find(dir => 'lib', type => 'file').grep({
-                $_.name.substr(0, 1) ne '.'
+                $_.basename.substr(0, 1) ne '.'
             });
         }
         if "Build.pm".IO.f {
@@ -67,16 +67,16 @@ method build($where) {
             }
             @*INC.pop;
         }
-        my @dirs = @files.map(*.dir).uniq;
+        my @dirs = @files.map(*.directory).uniq;
         mkpath "blib/$_" for @dirs;
 
         my @tobuild = build-order(@files);
         withp6lib {
             for @tobuild -> $file {
-                $file.IO.copy: "blib/{$file.dir}/{$file.name}";
+                $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
-                my $dest = "blib/{$file.dir}/"
-                         ~ "{$file.name.subst(/\.pm6?$/, '.pir')}";
+                my $dest = "blib/{$file.directory}/"
+                         ~ "{$file.basename.subst(/\.pm6?$/, '.pir')}";
                 #note "$dest modified: ", $dest.IO.modified;
                 #note "$file modified: ", $file.IO.modified;
                 #if $dest.IO.modified >= $file.IO.modified {

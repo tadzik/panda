@@ -25,12 +25,12 @@ sub git-fetch($from, $to) {
 
 sub local-fetch($from, $to) {
     for find(dir => $from).list {
-        my $d = $_.dir.substr($from.chars);
+        my $d = $_.directory.substr($from.chars);
         next if $d ~~ /^ '/'? '.git'/; # skip VCS files
         my $where = "$to/$d";
         mkpath $where;
         next if $_.IO ~~ :d;
-        $_.IO.copy("$where/{$_.name}");
+        $_.copy("$where/{$_.basename}");
     }
     return True;
 }
