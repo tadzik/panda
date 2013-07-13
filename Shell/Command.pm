@@ -52,7 +52,7 @@ sub cp($from as Str, $to as Str, :$r) is export {
             cp("$from/$item", "$to/$item", :r);
         }
     } else {
-        $from.IO.copy($to);
+        $from.path.copy($to);
     }
 }
 
