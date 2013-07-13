@@ -2,15 +2,6 @@ use v6;
 
 module File::Find;
 
-class File::Find::Result is Cool {
-    has $.dir;
-    has $.name;
-
-    method Str {
-        $.dir ~ '/' ~ $.name
-    }
-}
-
 sub checkrules ($elem, %opts) {
     if %opts<name>.defined {
         given %opts<name> {
@@ -18,7 +9,7 @@ sub checkrules ($elem, %opts) {
                 return False unless $elem ~~ %opts<name>
             }
             when Str {
-                return False unless $elem.name ~~ %opts<name>
+                return False unless $elem.basename ~~ %opts<name>
             }
             default {
                 die "name attribute has to be either Regex or Str"
@@ -47,23 +38,17 @@ sub checkrules ($elem, %opts) {
 sub find (:$dir!, :$name, :$type, Bool :$recursive = True,
     Bool :$keep-going = False) is export {
 
-    my @targets = dir($dir).map: {
-        File::Find::Result.new(dir => $dir, name => .basename);
-    };
+    my @targets = dir($dir);
     my $list = gather while @targets {
         my $elem = @targets.shift;
         take $elem if checkrules($elem, { :$name, :$type });
         if $recursive {
             if $elem.IO ~~ :d {
-                for dir($elem) -> $file {
-                    @targets.push(
-                        File::Find::Result.new(dir => $elem, name => $file.basename)
-                        );
-                }
-		CATCH { when X::IO::Dir {
-		    $_.throw unless $keep-going;
-		    next;
-		}}
+                @targets.push: dir($elem);
+                CATCH { when X::IO::Dir {
+                    $_.throw unless $keep-going;
+                    next;
+                }}
             }
         }
     }
@@ -91,8 +76,8 @@ File::Find - Get a lazy list of a directory tree
 C<File::Find> allows you to get the contents of the given directory,
 recursively, depth first.
 The only exported function, C<find()>, generates a lazy
-list of files in given directory. Every element of the list is a
-C<File::Find::Result> object, described below.
+list of files in given directory. Every element of the list is an
+C<IO::Path> object, described below.
 C<find()> takes one (or more) named arguments. The C<dir> argument
 is mandatory, and sets the directory C<find()> will traverse. 
 There are also few optional arguments. If more than one is passed,
@@ -115,12 +100,6 @@ The available types are C<file>, C<dir> or C<symlink>.
 Parameter C<keep-going> tells C<find()> to not stop finding files
 on errors such as 'Access is denied', but rather ignore the errors
 and keep going.
-
-=head1 File::Find::Result
-
-C<File::Find::Result> object acts like a normal string, having two
-additional accessors, C<dir> and C<name>, holding the directory
-the file is in and the filename respectively.
 
 =head1 Perl 5's File::Find
 
