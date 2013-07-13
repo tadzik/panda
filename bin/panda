@@ -46,10 +46,10 @@ my $panda;
 #= Install the specified modules
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     for @modules -> $x {
-        #try {
+        try {
             $panda.resolve($x, :$notests, :$nodeps);
-        #    CATCH { when X::Panda { say $_.message } }
-        #};
+            CATCH { when X::Panda { say $_.message } }
+        };
     }
 }
 

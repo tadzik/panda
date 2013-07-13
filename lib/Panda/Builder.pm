@@ -86,12 +86,13 @@ method build($where) {
                 say "Compiling $file";
                 shell "$*EXECUTABLE_NAME --target=pir "
                     ~ "--output=$dest $file"
-                    and die "Failed building $file";
+                    and fail "Failed building $file";
             }
             1;
         }
         1;
     };
+    return True;
 }
 
 # vim: ft=perl6

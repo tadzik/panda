@@ -36,7 +36,10 @@ class X::Panda is Exception {
     has $.stage;
     has $.description;
 
-    method new($module, $stage, $description) {
+    method new($module, $stage, $description is copy) {
+        if $description ~~ Failure {
+            $description = $description.exception.message
+        }
         self.bless(*, :$module, :$stage, :$description)
     }
 

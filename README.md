@@ -70,5 +70,7 @@ If you use bash, you can accomplish this with
     source ~/.bashrc
 
 [1] https://github.com/masak/proto/tree/pls
+
 [2] http://help.github.com/firewalls-and-proxies/
+
 [3] http://www.gnu.org/software/wget/manual/html_node/Proxies.html
