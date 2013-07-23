@@ -1,7 +1,7 @@
 {
-    "name"        : "File::Tools",
+    "name"        : "Shell::Command",
     "version"     : "*",
     "description" : "Various modules for file operations",
     "depends"     : [],
-    "source-url"  : "git://github.com/tadzik/perl6-File-Tools.git"
+    "source-url"  : "git://github.com/teodozjan/perl6-Shell-Command.git"
 }
