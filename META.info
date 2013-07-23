@@ -2,6 +2,6 @@
     "name"        : "Shell::Command",
     "version"     : "*",
     "description" : "Various modules for file operations",
-    "depends"     : [],
+    "depends"     : ["File::Tools"],
     "source-url"  : "git://github.com/teodozjan/perl6-Shell-Command.git"
 }
