@@ -1,5 +1,1 @@
-This Perl 6 distribution contains the following modules:
-
-File::Copy
-File::Find
-File::Mkdir
+A File::Find for Perl 6

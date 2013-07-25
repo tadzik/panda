@@ -1,7 +1,7 @@
 {
-    "name"        : "File::Tools",
+    "name"        : "File::Find",
     "version"     : "*",
-    "description" : "Various modules for file operations",
+    "description" : "File::Find for Perl 6",
     "depends"     : [],
-    "source-url"  : "git://github.com/tadzik/perl6-File-Tools.git"
+    "source-url"  : "git://github.com/tadzik/File-Find.git"
 }
