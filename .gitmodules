@@ -6,4 +6,4 @@
 	url = git://github.com/tadzik/File-Find.git
 [submodule "ext/Shell__Command"]
 	path = ext/Shell__Command
-	url = git://github.com/tadzik/Shell__Command.git
+	url = git://github.com/tadzik/Shell-Command.git
