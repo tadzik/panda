@@ -1,6 +1,9 @@
 [submodule "ext/JSON__Tiny"]
 	path = ext/JSON__Tiny
 	url = git://github.com/moritz/json.git
-[submodule "ext/File__Tools"]
-	path = ext/File__Tools
-	url = git://github.com/tadzik/perl6-File-Tools.git
+[submodule "ext/File__Find"]
+	path = ext/File__Find
+	url = git://github.com/tadzik/File-Find.git
+[submodule "ext/Shell__Command"]
+	path = ext/Shell__Command
+	url = git://github.com/tadzik/Shell__Command.git
