@@ -4,7 +4,8 @@ BEGIN {
     shell 'git submodule init';
     shell 'git submodule update';
 }
-use lib 'ext/File__Tools/lib/';
+use lib 'ext/File__Find/lib/';
+use lib 'ext/Shell__Command/lib/';
 use Shell::Command;
 
 say '==> Bootstrapping Panda';
@@ -38,12 +39,12 @@ given open "$panda-base/projects.json", :w {
 my $env_sep = $is_win ?? ';' !! ':';
 
 %*ENV<PERL6LIB> ~= "{$env_sep}$destdir/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Tools/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Find/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Shell__Command/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/JSON__Tiny/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Test__Mock/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/lib";
 
-shell "perl6 bin/panda install File::Tools JSON::Tiny {cwd}";
+shell "perl6 bin/panda install File::Find Shell::Command JSON::Tiny {cwd}";
 if "$destdir/panda/src".IO ~~ :d {
     rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
                                 # that src should not be kept at all, but

@@ -27,7 +27,7 @@ my @modules;
 given open($state-file) {
     for .lines() -> $line {
         my ($name, $state) = split /\s/, $line;
-        next if $name eq any(<File::Tools JSON::Tiny Test::Mock panda>);
+        next if $name eq any(<File::Tools JSON::Tiny panda>);
         if $state eq 'installed' {
             @modules.push: $name;
         }
