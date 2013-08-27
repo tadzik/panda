@@ -23,7 +23,7 @@ sub withp6lib(&what) is export {
             %*ENV.delete('PERL6LIB');
         }
     }
-    my $sep = $*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
+    my $sep = $*OS eq 'MSWin32' ?? ';' !! ':';
     %*ENV<PERL6LIB> = join $sep,
         cwd() ~ '/blib/lib',
         cwd() ~ '/lib',
