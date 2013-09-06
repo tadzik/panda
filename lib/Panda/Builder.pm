@@ -76,15 +76,15 @@ method build($where) {
                 $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
                 my $dest = "blib/{$file.directory}/"
-                         ~ "{$file.basename.subst(/\.pm6?$/, '.pir')}";
+                         ~ "{$file.basename.subst(/\.pm6?$/, ".{compsuffix}" )}";
                 #note "$dest modified: ", $dest.IO.modified;
                 #note "$file modified: ", $file.IO.modified;
                 #if $dest.IO.modified >= $file.IO.modified {
                 #    say "$file already compiled, skipping";
                 #    next;
                 #}
-                say "Compiling $file";
-                shell "$*EXECUTABLE_NAME --target=pir "
+                say "Compiling $file to {compsuffix}";
+                shell "$*EXECUTABLE_NAME --target={compsuffix} "
                     ~ "--output=$dest $file"
                     and fail "Failed building $file";
             }

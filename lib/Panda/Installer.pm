@@ -6,9 +6,9 @@ use Shell::Command;
 has $.destdir = self.destdir();
 
 method sort-lib-contents(@lib) {
-    my @pirs = @lib.grep({ $_ ~~  /\.pir$/});
-    my @rest = @lib.grep({ $_ !~~ /\.pir$/});
-    return @rest, @pirs;
+    my @generated = @lib.grep({ $_ ~~  / \. <{compsuffix}> $/});
+    my @rest = @lib.grep({ $_ !~~ / \. <{compsuffix}> $/});
+    return @rest, @generated;
 }
 
 # default install location

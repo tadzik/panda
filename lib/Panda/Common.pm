@@ -31,6 +31,20 @@ sub withp6lib(&what) is export {
     what();
 }
 
+sub compsuffix is export {
+    given $*VM<name> {
+        when 'parrot' {
+            return 'pir';
+        }
+        when 'jvm' {
+            return 'jar';
+        }
+        default {
+            die($_ ~ ' is an unsuppored backend VM.');
+        }
+    }
+}
+
 class X::Panda is Exception {
     has $.module is rw;
     has $.stage;
