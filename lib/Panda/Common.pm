@@ -6,10 +6,8 @@ sub dirname ($mod as Str) is export {
 }
 
 sub indir (Str $where, Callable $what) is export {
-    my $old = cwd;
-    LEAVE chdir $old;
     mkpath $where;
-    chdir $where;
+    temp $*CWD = IO::Spec.rel2abs($where);
     $what()
 }
 
