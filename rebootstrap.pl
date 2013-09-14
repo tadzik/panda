@@ -1,6 +1,7 @@
 #!/usr/bin/env perl6
 use v6;
-use lib 'ext/File__Tools/lib';
+use lib 'ext/File__Find/lib/';
+use lib 'ext/Shell__Command/lib';
 use Shell::Command;
 
 # Find old state file
