@@ -18,7 +18,7 @@ sub withp6lib(&what) is export {
             %*ENV<PERL6LIB> = $oldp6lib;
         }
         else {
-            %*ENV.delete('PERL6LIB');
+            %*ENV<PERL6LIB>:delete;
         }
     }
     my $sep = $*OS eq 'MSWin32' ?? ';' !! ':';
