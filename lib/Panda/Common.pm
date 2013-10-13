@@ -52,7 +52,7 @@ class X::Panda is Exception {
         if $description ~~ Failure {
             $description = $description.exception.message
         }
-        self.bless(*, :$module, :$stage, :$description)
+        self.bless(:$module, :$stage, :$description)
     }
 
     method message {
