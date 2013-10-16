@@ -25,7 +25,7 @@ sub rm_f(*@files) is export {
 sub rm_rf(*@files) is export {
     for @files -> $path {
         if $path.IO.d {
-            for find(dir => $path).map({ .Str }).reverse -> $f {
+            for find(dir => $path).map({ .Str }).sort.reverse -> $f {
                 $f.IO.d ?? rmdir($f) !! unlink($f);
             }
             rmdir $path;
