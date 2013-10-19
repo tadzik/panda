@@ -45,6 +45,7 @@ sub build-order(@module-files) {
                 %usages_of{$module}.push(~$used);
             }
         }
+        $fh.close;
     }
     my @order = topo-sort(@modules, %usages_of);
 

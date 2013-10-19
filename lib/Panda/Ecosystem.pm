@@ -26,6 +26,7 @@ class Panda::Ecosystem {
                 %!states{$mod} = ::("Panda::Project::State::$state");
                 %!saved-meta{$mod} = from-json $json;
             }
+            $fh.close;
         }
 
         self.update if $!projectsfile.IO !~~ :f || $!projectsfile.IO ~~ :z;
