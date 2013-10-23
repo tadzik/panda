@@ -65,7 +65,7 @@ sub projectinfo($panda, @args) is export {
             }
             for $x.metainfo.kv -> $k, $v {
                 if $k ~~ none('version', 'name', 'depends') {
-                    say $k.ucfirst => $v;
+                    say $k.tc => $v;
                 }
             }
             if $state ~~ /^ 'installed' / {
