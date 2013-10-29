@@ -19,7 +19,7 @@ method fetch($from, $to) {
 
 sub git-fetch($from, $to) {
     shell "git clone -q $from \"$to\""
-          and fail "Failed cloning git repository '$from'";
+        or fail "Failed cloning git repository '$from'";
     return True;
 }
 

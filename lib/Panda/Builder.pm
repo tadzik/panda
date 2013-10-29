@@ -87,7 +87,7 @@ method build($where) {
                 say "Compiling $file to {compsuffix}";
                 shell "$*EXECUTABLE_NAME --target={compsuffix} "
                     ~ "--output=$dest $file"
-                    and fail "Failed building $file";
+                        or fail "Failed building $file";
             }
             1;
         }

@@ -6,7 +6,7 @@ method test($where, :$prove-command = 'prove') {
         if 't'.IO ~~ :d {
             withp6lib {
                 my $c = "$prove-command -e $*EXECUTABLE_NAME -r t/";
-                shell $c and fail "Tests failed";
+                shell $c or fail "Tests failed";
             }
         }
     };
