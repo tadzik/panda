@@ -58,7 +58,7 @@ sub cp($from as Str, $to as Str, :$r) is export {
 
 sub mkpath(*@paths) is export {
     for @paths -> $name {
-        for [\~] $name.split('/').map({"$_/"}) {
+        for [\~] $name.split(/<[\/\\]>/).map({"$_/"}) {
             mkdir($_) unless .IO.d
         }
     }
