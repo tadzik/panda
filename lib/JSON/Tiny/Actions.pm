@@ -24,9 +24,9 @@ method arraylist($/) {
 }
 
 method string($/) {
-    make $0.elems == 1
-        ?? ($0[0].<str> || $0[0].<str_escape>).ast
-        !! join '', $0.list.map({ (.<str> || .<str_escape>).ast });
+    make +@$<str> == 1
+        ?? $<str>[0].ast
+        !! $<str>>>.ast.join;
 }
 method value:sym<number>($/) { make +$/.Str }
 method value:sym<string>($/) { make $<string>.ast }
@@ -38,19 +38,19 @@ method value:sym<array>($/)  { make $<array>.ast }
 
 method str($/)               { make ~$/ }
 
+my %h = '\\' => "\\",
+        '/'  => "/",
+        'b'  => "\b",
+        'n'  => "\n",
+        't'  => "\t",
+        'f'  => "\f",
+        'r'  => "\r",
+        '"'  => "\"";
 method str_escape($/) {
     if $<xdigit> {
         # make chr(:16($<xdigit>.join));  # preferred version of next line, but it doesn't work on Niecza yet
         make chr(eval "0x" ~ $<xdigit>.join);
     } else {
-        my %h = '\\' => "\\",
-                '/'  => "/",
-                'b'  => "\b",
-                'n'  => "\n",
-                't'  => "\t",
-                'f'  => "\f",
-                'r'  => "\r",
-                '"'  => "\"";
         make %h{~$/};
     }
 }
