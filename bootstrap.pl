@@ -44,7 +44,7 @@ my $env_sep = $is_win ?? ';' !! ':';
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/JSON__Tiny/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/lib";
 
-shell "perl6 bin/panda install File::Find Shell::Command JSON::Tiny {cwd}";
+shell "$*EXECUTABLE_NAME bin/panda install File::Find Shell::Command JSON::Tiny {cwd}";
 if "$destdir/panda/src".IO ~~ :d {
     rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
                                 # that src should not be kept at all, but
