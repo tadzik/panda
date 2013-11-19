@@ -19,7 +19,7 @@ for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) {
 
 if not $state-file.defined {
     say "No need to rebootstrap, running normal bootstrap";
-    shell 'perl6 bootstrap.pl';
+    shell "$*EXECUTABLE_NAME bootstrap.pl";
     exit 0;
 }
 
@@ -44,9 +44,9 @@ given open($state-file) {
 # and reinstall all manually-installed modules
 rm_rf "$prefix/lib";
 rm_rf "$prefix/panda";
-shell 'perl6 bootstrap.pl';
+shell "$*EXECUTABLE_NAME bootstrap.pl";
 say "==> Reinstalling @modules[]";
-shell "perl6 bin/panda install @modules[]";
+shell "$*EXECUTABLE_NAME bin/panda install @modules[]";
 
 # Save the backup state file back to $prefix/panda/
 spurt "$state-file.bak", $old-state if $old-state;
