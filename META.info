@@ -3,5 +3,16 @@
     "version"     : "*",
     "description" : "A module management solution",
     "depends"     : [ "File::Find", "Shell::Command", "JSON::Tiny" ],
-    "source-url"  : "git://github.com/tadzik/panda.git"
+    "source-url"  : "git://github.com/tadzik/panda.git",
+    "provides"    : {
+        "Panda"            : "lib/Panda.pm",
+        "Panda::App"       : "lib/Panda/App.pm",
+        "Panda::Builder"   : "lib/Panda/Builder.pm",
+        "Panda::Common"    : "lib/Panda/Common.pm",
+        "Panda::Ecosystem" : "lib/Panda/Ecosystem.pm",
+        "Panda::Fetcher"   : "lib/Panda/Fetcher.pm",
+        "Panda::Installer" : "lib/Panda/Installer.pm",
+        "Panda::Project"   : "lib/Panda/Project.pm",
+        "Panda::Tester"    : "lib/Panda/Tester.pm"
+    }
 }
