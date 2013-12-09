@@ -99,7 +99,7 @@ class Panda {
             }
         }
         self.announce('installing', $bone);
-        $.installer.install($dir);
+        $.installer.install(:$bone, $dir);
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
         $.ecosystem.project-set-state($bone, $s);
