@@ -5,7 +5,8 @@
       "version" : "*",
       "name" : "File::Find",
       "description" : "Bla bla",
-      "depends" : []
+      "depends" : [],
+      "provides" : { "File::Find" : "lib/File/Find.pm" }
    },
    {
       "source-type" : "local",
@@ -13,7 +14,8 @@
       "version" : "*",
       "name" : "Shell::Command",
       "description" : "Ble ble",
-      "depends" : ["File::Find"]
+      "depends" : ["File::Find"],
+      "provides" : { "Shell::Command" : "lib/Shell/Command.pm" }
    },
    {
       "source-type" : "local",
@@ -21,6 +23,11 @@
       "version" : "*",
       "name" : "JSON::Tiny",
       "description" : "A minimal JSON (de)serializer",
-      "depends" : []
+      "depends" : [],
+      "provides" : {
+        "JSON::Tiny" : "lib/JSON/Tiny.pm",
+        "JSON::Tiny::Actions" : "lib/JSON/Tiny/Actions.pm",
+        "JSON::Tiny::Grammar" : "lib/JSON/Tiny/Grammar.pm"
+      }
    }
 ]
