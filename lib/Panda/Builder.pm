@@ -54,12 +54,6 @@ sub build-order(@module-files) {
 
 method build($where) {
     indir $where, {
-        my @files;
-        if 'lib'.IO.d { 
-            @files = find(dir => 'lib', type => 'file').grep({
-                $_.basename.substr(0, 1) ne '.'
-            });
-        }
         if "Build.pm".IO.f {
             @*INC.push('.');
             require 'Build.pm';
@@ -67,6 +61,12 @@ method build($where) {
                 ::('Build').new.build($where);
             }
             @*INC.pop;
+        }
+        my @files;
+        if 'lib'.IO.d {
+            @files = find(dir => 'lib', type => 'file').grep({
+                $_.basename.substr(0, 1) ne '.'
+            });
         }
         my @dirs = @files.map(*.directory).uniq;
         mkpath "blib/$_" for @dirs;
