@@ -4,7 +4,7 @@ method TOP($/) {
     make $/.values.[0].ast;
 };
 method object($/) {
-    make $<pairlist>.ast.hash;
+    make $<pairlist>.ast.hash.item;
 }
 
 method pairlist($/) {
@@ -16,7 +16,7 @@ method pair($/) {
 }
 
 method array($/) {
-    make $<arraylist>.ast;
+    make $<arraylist>.ast.item;
 }
 
 method arraylist($/) {
