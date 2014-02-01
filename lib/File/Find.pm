@@ -19,13 +19,13 @@ sub checkrules ($elem, %opts) {
     if %opts<type>.defined {
         given %opts<type> {
             when 'dir' {
-                return False unless $elem.IO ~~ :d
+                return False unless $elem ~~ :d
             }
             when 'file' {
-                return False unless $elem.IO ~~ :f
+                return False unless $elem ~~ :f
             }
             when 'symlink' {
-                return False unless $elem.IO ~~ :l
+                return False unless $elem ~~ :l
             }
             default {
                 die "type attribute has to be dir, file or symlink";
