@@ -45,6 +45,7 @@ sub build-order(@module-files) {
                 %usages_of{$module}.push(~$used);
             }
         }
+        $fh.close;
     }
     my @order = topo-sort(@modules, %usages_of);
 
@@ -53,12 +54,6 @@ sub build-order(@module-files) {
 
 method build($where) {
     indir $where, {
-        my @files;
-        if 'lib'.IO.d { 
-            @files = find(dir => 'lib', type => 'file').grep({
-                $_.name.substr(0, 1) ne '.'
-            });
-        }
         if "Build.pm".IO.f {
             @*INC.push('.');
             require 'Build.pm';
@@ -67,26 +62,32 @@ method build($where) {
             }
             @*INC.pop;
         }
-        my @dirs = @files.map(*.dir).uniq;
+        my @files;
+        if 'lib'.IO.d {
+            @files = find(dir => 'lib', type => 'file').grep({
+                $_.basename.substr(0, 1) ne '.'
+            });
+        }
+        my @dirs = @files.map(*.directory).uniq;
         mkpath "blib/$_" for @dirs;
 
         my @tobuild = build-order(@files);
         withp6lib {
             for @tobuild -> $file {
-                $file.IO.copy: "blib/{$file.dir}/{$file.name}";
+                $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
-                my $dest = "blib/{$file.dir}/"
-                         ~ "{$file.name.subst(/\.pm6?$/, '.pir')}";
+                my $dest = "blib/{$file.directory}/"
+                         ~ "{$file.basename.subst(/\.pm6?$/, ".{compsuffix}" )}";
                 #note "$dest modified: ", $dest.IO.modified;
                 #note "$file modified: ", $file.IO.modified;
                 #if $dest.IO.modified >= $file.IO.modified {
                 #    say "$file already compiled, skipping";
                 #    next;
                 #}
-                say "Compiling $file";
-                shell "$*EXECUTABLE_NAME --target=pir "
+                say "Compiling $file to {compsuffix}";
+                shell "$*EXECUTABLE_NAME --target={compsuffix} "
                     ~ "--output=$dest $file"
-                    and fail "Failed building $file";
+                        or fail "Failed building $file";
             }
             1;
         }

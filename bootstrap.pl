@@ -4,7 +4,8 @@ BEGIN {
     shell 'git submodule init';
     shell 'git submodule update';
 }
-use lib 'ext/File__Tools/lib/';
+use lib 'ext/File__Find/lib/';
+use lib 'ext/Shell__Command/lib/';
 use Shell::Command;
 
 sub default-prefix {
@@ -31,8 +32,8 @@ sub MAIN(:$prefix = default-prefix()) {
        $projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
        $projects .= subst('\\', '/', :g) if $is_win;
 
-    mkpath $prefix;
-    given open "$prefix/projects.json", :w {
+    mkpath "$prefix/panda";
+    given open "$prefix/panda/projects.json", :w {
         .say: $projects;
         .close;
     }
@@ -40,9 +41,9 @@ sub MAIN(:$prefix = default-prefix()) {
     my $env_sep = $is_win ?? ';' !! ':';
 
     %*ENV<PERL6LIB> ~= "{$env_sep}$prefix/lib";
-    %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Tools/lib";
+    %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Find/lib";
+    %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Shell__Command/lib";
     %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/JSON__Tiny/lib";
-    %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Test__Mock/lib";
     %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/lib";
     %*ENV<DESTDIR> = "$prefix";
 
@@ -51,11 +52,11 @@ sub MAIN(:$prefix = default-prefix()) {
         my $pandabin = $prefix.IO.path.child('bin');
         mkpath $pandabin.Str;
         $pandapath = $pandabin.child('panda');
-        'bin/panda'.IO.copy($pandapath);
+        'bin/panda'.path.copy($pandapath);
     }
 
-    shell "perl6 $pandapath install File::Tools JSON::Tiny {cwd}" and exit;
+    shell "$*EXECUTABLE_NAME $pandapath install File::Find Shell::Command JSON::Tiny {cwd}";
     say "==> Please make sure that $prefix/bin is in your PATH";
 
-    unlink "$prefix/projects.json";
+    unlink "$prefix/panda/projects.json";
 }

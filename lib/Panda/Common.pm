@@ -6,10 +6,8 @@ sub dirname ($mod as Str) is export {
 }
 
 sub indir (Str $where, Callable $what) is export {
-    my $old = cwd;
-    LEAVE chdir $old;
     mkpath $where;
-    chdir $where;
+    temp $*CWD = IO::Spec.rel2abs($where);
     $what()
 }
 
@@ -20,15 +18,29 @@ sub withp6lib(&what) is export {
             %*ENV<PERL6LIB> = $oldp6lib;
         }
         else {
-            %*ENV.delete('PERL6LIB');
+            %*ENV<PERL6LIB>:delete;
         }
     }
-    my $sep = $*VM<config><osname> eq 'MSWin32' ?? ';' !! ':';
+    my $sep = $*OS eq 'MSWin32' ?? ';' !! ':';
     %*ENV<PERL6LIB> = join $sep,
         cwd() ~ '/blib/lib',
         cwd() ~ '/lib',
         %*ENV<PERL6LIB> // '';
     what();
+}
+
+sub compsuffix is export {
+    given $*VM<name> {
+        when 'parrot' {
+            return 'pir';
+        }
+        when 'jvm' {
+            return 'jar';
+        }
+        default {
+            die($_ ~ ' is an unsuppored backend VM.');
+        }
+    }
 }
 
 class X::Panda is Exception {
@@ -40,7 +52,7 @@ class X::Panda is Exception {
         if $description ~~ Failure {
             $description = $description.exception.message
         }
-        self.bless(*, :$module, :$stage, :$description)
+        self.bless(:$module, :$stage, :$description)
     }
 
     method message {

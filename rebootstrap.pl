@@ -1,6 +1,11 @@
 #!/usr/bin/env perl6
 use v6;
-use lib 'ext/File__Tools/lib';
+BEGIN {
+    shell 'git submodule init';
+    shell 'git submodule update';
+}
+use lib 'ext/File__Find/lib/';
+use lib 'ext/Shell__Command/lib';
 use Shell::Command;
 
 # Find old state file
@@ -14,7 +19,7 @@ for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) {
 
 if not $state-file.defined {
     say "No need to rebootstrap, running normal bootstrap";
-    shell 'perl6 bootstrap.pl';
+    shell "$*EXECUTABLE_NAME bootstrap.pl";
     exit 0;
 }
 
@@ -27,7 +32,7 @@ my @modules;
 given open($state-file) {
     for .lines() -> $line {
         my ($name, $state) = split /\s/, $line;
-        next if $name eq any(<File::Tools JSON::Tiny Test::Mock panda>);
+        next if $name eq any(<File::Find Shell::Command JSON::Tiny panda>);
         if $state eq 'installed' {
             @modules.push: $name;
         }
@@ -39,9 +44,9 @@ given open($state-file) {
 # and reinstall all manually-installed modules
 rm_rf "$prefix/lib";
 rm_rf "$prefix/panda";
-shell 'perl6 bootstrap.pl';
+shell "$*EXECUTABLE_NAME bootstrap.pl";
 say "==> Reinstalling @modules[]";
-shell "perl6 bin/panda install @modules[]";
+shell "$*EXECUTABLE_NAME bin/panda install @modules[]";
 
 # Save the backup state file back to $prefix/panda/
 spurt "$state-file.bak", $old-state if $old-state;

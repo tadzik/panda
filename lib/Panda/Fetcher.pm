@@ -19,18 +19,19 @@ method fetch($from, $to) {
 
 sub git-fetch($from, $to) {
     shell "git clone -q $from \"$to\""
-          and fail "Failed cloning git repository '$from'";
+        or fail "Failed cloning git repository '$from'";
     return True;
 }
 
 sub local-fetch($from, $to) {
     for find(dir => $from).list {
-        my $d = $_.dir.substr($from.chars);
+        # We need to cleanup the path, because the returned elems are too.
+        my $d = $_.directory.substr($from.IO.path.cleanup.chars);
         next if $d ~~ /^ '/'? '.git'/; # skip VCS files
         my $where = "$to/$d";
         mkpath $where;
         next if $_.IO ~~ :d;
-        $_.IO.copy("$where/{$_.name}");
+        $_.copy("$where/{$_.basename}");
     }
     return True;
 }

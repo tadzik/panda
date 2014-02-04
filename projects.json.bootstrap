@@ -1,11 +1,19 @@
 [
    {
       "source-type" : "local",
-      "source-url" : "_BASEDIR_/File__Tools",
+      "source-url" : "_BASEDIR_/File__Find",
       "version" : "*",
-      "name" : "File::Tools",
-      "description" : "Various modules for file operations",
+      "name" : "File::Find",
+      "description" : "Bla bla",
       "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/Shell__Command",
+      "version" : "*",
+      "name" : "Shell::Command",
+      "description" : "Ble ble",
+      "depends" : ["File::Find"]
    },
    {
       "source-type" : "local",

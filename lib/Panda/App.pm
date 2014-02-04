@@ -52,27 +52,42 @@ sub projectinfo($panda, @args) is export {
         $x = $panda.project-from-local($p) unless $x;
         if $x {
             my $state = $panda.ecosystem.project-get-state($x);
-            say 'PROJECT LIST:';
-            say $x.name => $x.version;
-            say 'Depends on:' => $x.dependencies.Str if $x.dependencies;
+            my $installed;
+            if $state ~~ 'installed' {
+                $installed = $panda.ecosystem.project-get-saved-meta($x);
+                #note $installed.perl;
+            }
+            print $x.name;
+            if $x.version ne '*' {
+                my $foo = '';
+                if $installed {
+                    $foo = " available, {$installed<version>} installed"
+                }
+                say " (version {$x.version}$foo)";
+            } else {
+                say ''
+            }
+            if my $d =$x.metainfo.<description> {
+               say $d
+            }
+            say 'Depends on: ', $x.dependencies.join(', ') if $x.dependencies;
+            print 'State: ';
             given $state {
                 when 'installed'     {
-                    say 'State' => 'installed';
+                    say 'installed';
                 }
                 when 'installed-dep' {
-                    say 'State' => 'installed as a dependency';
+                    say 'installed as a dependency';
+                }
+                default {
+                    say 'not installed'
                 }
             }
             for $x.metainfo.kv -> $k, $v {
-                if $k ~~ none('version', 'name', 'depends') {
-                    say $k.ucfirst => $v;
+                if $k ~~ none(<version name depends description>) {
+                    say "{$k.tc}: $v";
                 }
             }
-            if $state ~~ /^ 'installed' / {
-                say 'INSTALLED VERSION:';
-                .say for $panda.ecosystem.project-get-saved-meta($x).pairs.sort;
-            }
-            say '';
         } else {
             say "Project '$p' not found"
         }
