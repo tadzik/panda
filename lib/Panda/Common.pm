@@ -38,7 +38,7 @@ sub compsuffix is export {
             return 'jar';
         }
         default {
-            die($_ ~ ' is an unsuppored backend VM.');
+            die($_ ~ ' is an unsupported backend VM.');
         }
     }
 }
