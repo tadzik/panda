@@ -37,6 +37,26 @@ sub compsuffix is export {
         when 'jvm' {
             return 'jar';
         }
+        when 'moar' {
+            return 'moarvm';
+        }
+        default {
+            die($_ ~ ' is an unsupported backend VM.');
+        }
+    }
+}
+
+sub comptarget is export {
+    given $*VM<name> {
+        when 'parrot' {
+            return 'pir';
+        }
+        when 'jvm' {
+            return 'jar';
+        }
+        when 'moar' {
+            return 'mbc';
+        }
         default {
             die($_ ~ ' is an unsupported backend VM.');
         }
