@@ -25,8 +25,12 @@ sub git-fetch($from, $to) {
 
 sub local-fetch($from, $to) {
     for find(dir => $from).list {
+        my $d = $_.directory;
         # We need to cleanup the path, because the returned elems are too.
-        my $d = $_.directory.substr($from.IO.path.cleanup.chars);
+        if $d.match(/^$from.IO.path.cleanup/) {
+            my $d = $d.substr($from.IO.path.cleanup.chars)
+        }
+
         next if $d ~~ /^ '/'? '.git'/; # skip VCS files
         my $where = "$to/$d";
         mkpath $where;
