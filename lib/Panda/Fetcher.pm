@@ -28,7 +28,7 @@ sub local-fetch($from, $to) {
         my $d = $_.directory;
         # We need to cleanup the path, because the returned elems are too.
         if $d.match(/^$from.IO.path.cleanup/) {
-            my $d = $d.substr($from.IO.path.cleanup.chars)
+            $d = $d.substr($from.IO.path.cleanup.chars)
         }
 
         next if $d ~~ /^ '/'? '.git'/; # skip VCS files
