@@ -85,8 +85,8 @@ method build($where) {
                 #    next;
                 #}
                 say "Compiling $file to {comptarget}";
-                shell "$*EXECUTABLE_NAME --target={comptarget} "
-                    ~ "--output=$dest $file"
+                shell("$*EXECUTABLE_NAME --target={comptarget} "
+                    ~ "--output=$dest $file")
                         or fail "Failed building $file";
             }
             1;

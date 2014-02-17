@@ -25,10 +25,11 @@ sub git-fetch($from, $to) {
 
 sub local-fetch($from, $to) {
     for find(dir => $from).list {
-        my $d = $_.directory;
+        my $d = IO::Spec.catpath($_.volume, $_.directory, '');
         # We need to cleanup the path, because the returned elems are too.
-        if $d.match(/^$from.IO.path.cleanup/) {
-            my $d = $d.substr($from.IO.path.cleanup.chars)
+        my $cleanup = $from.IO.path.cleanup;
+        if $d.match(/^$cleanup/) {
+            $d = $d.substr($cleanup.chars)
         }
 
         next if $d ~~ /^ '/'? '.git'/; # skip VCS files
