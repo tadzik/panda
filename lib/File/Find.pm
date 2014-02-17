@@ -4,16 +4,10 @@ module File::Find;
 
 sub checkrules ($elem, %opts) {
     if %opts<name>.defined {
-        given %opts<name> {
-            when Regex {
-                return False unless $elem ~~ %opts<name>
-            }
-            when Str {
-                return False unless $elem.basename ~~ %opts<name>
-            }
-            default {
-                die "name attribute has to be either Regex or Str"
-            }
+        if %opts<name> ~~ Str {
+            return False unless $elem.basename ~~ %opts<name>
+        } else {
+            return False unless $elem ~~ %opts<name>
         }
     }
     if %opts<type>.defined {
@@ -88,7 +82,9 @@ all of them must match for a file to be returned.
 Specify a name of the file C<File::Find> is ought to look for. If you
 pass a string here, C<find()> will return only the files with the given
 name. When passing a regex, only the files with path matching the
-pattern will be returned.
+pattern will be returned. Any other type of argument passed here will
+just be smartmatched against the path (which is exactly what happens to
+regexes passed, by the way).
 
 =head2 type
 
