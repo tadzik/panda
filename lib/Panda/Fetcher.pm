@@ -24,7 +24,7 @@ sub git-fetch($from, $to) {
 }
 
 sub local-fetch($from, $to) {
-    for find(dir => $from).list {
+    for eager find(dir => $from).list {
         # We need to cleanup the path, because the returned elems are too.
         my $d = $_.directory.substr($from.IO.path.cleanup.chars);
         next if $d ~~ /^ '/'? '.git'/; # skip VCS files
