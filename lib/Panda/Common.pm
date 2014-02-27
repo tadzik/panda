@@ -5,9 +5,9 @@ sub dirname ($mod as Str) is export {
     $mod.subst(':', '_', :g);
 }
 
-sub indir (Str $where, Callable $what) is export {
+sub indir ($where, Callable $what) is export {
     mkpath $where;
-    temp $*CWD = IO::Spec.rel2abs($where);
+    temp $*CWD = $where.path.absolute;
     $what()
 }
 

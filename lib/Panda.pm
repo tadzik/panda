@@ -9,7 +9,7 @@ use JSON::Tiny;
 
 sub tmpdir {
     state $i = 0;
-    ".work/{time}_{$i++}"
+    ".work/{time}_{$i++}".path.absolute
 }
 
 class Panda {
