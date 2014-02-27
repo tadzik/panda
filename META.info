@@ -3,5 +3,6 @@
     "version"     : "*",
     "description" : "File::Find for Perl 6",
     "depends"     : [],
+    "provides"    : { "File::Find" : "lib/File/Find.pm" },
     "source-url"  : "git://github.com/tadzik/File-Find.git"
 }
