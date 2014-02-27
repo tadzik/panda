@@ -30,20 +30,9 @@ sub withp6lib(&what) is export {
 }
 
 sub compsuffix is export {
-    given $*VM<name> {
-        when 'parrot' {
-            return 'pir';
-        }
-        when 'jvm' {
-            return 'jar';
-        }
-        when 'moar' {
-            return 'moarvm';
-        }
-        default {
-            die($_ ~ ' is an unsupported backend VM.');
-        }
-    }
+    $*VM<name> eq 'moar'
+        ?? 'moarvm'
+        !! comptarget
 }
 
 sub comptarget is export {
