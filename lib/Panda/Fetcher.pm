@@ -24,6 +24,8 @@ sub git-fetch($from, $to) {
 }
 
 sub local-fetch($from, $to) {
+    # We need to eagerify this, as we'll sometimes
+    # copy files to a subdirectory of $from
     for eager find(dir => $from).list {
         # We need to cleanup the path, because the returned elems are too.
         my $d = $_.directory.substr($from.IO.path.cleanup.chars);
