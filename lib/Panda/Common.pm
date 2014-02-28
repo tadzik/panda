@@ -5,9 +5,9 @@ sub dirname ($mod as Str) is export {
     $mod.subst(':', '_', :g);
 }
 
-sub indir (Str $where, Callable $what) is export {
+sub indir ($where, Callable $what) is export {
     mkpath $where;
-    temp $*CWD = IO::Spec.rel2abs($where);
+    temp $*CWD = $where.path.absolute;
     $what()
 }
 
@@ -30,20 +30,9 @@ sub withp6lib(&what) is export {
 }
 
 sub compsuffix is export {
-    given $*VM<name> {
-        when 'parrot' {
-            return 'pir';
-        }
-        when 'jvm' {
-            return 'jar';
-        }
-        when 'moar' {
-            return 'moarvm';
-        }
-        default {
-            die($_ ~ ' is an unsupported backend VM.');
-        }
-    }
+    $*VM<name> eq 'moar'
+        ?? 'moarvm'
+        !! comptarget
 }
 
 sub comptarget is export {

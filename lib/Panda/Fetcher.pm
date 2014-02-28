@@ -24,7 +24,9 @@ sub git-fetch($from, $to) {
 }
 
 sub local-fetch($from, $to) {
-    for find(dir => $from).list {
+    # We need to eagerify this, as we'll sometimes
+    # copy files to a subdirectory of $from
+    for eager find(dir => $from).list {
         my $d = IO::Spec.catpath($_.volume, $_.directory, '');
         # We need to cleanup the path, because the returned elems are too.
         my $cleanup = $from.IO.path.cleanup;
