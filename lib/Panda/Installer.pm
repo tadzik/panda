@@ -36,11 +36,21 @@ method install($from, $to? is copy, Panda::Project :$bone) {
     }
     indir $from, {
         # check if $.destdir is under control of a CompUnitRepo
-        my @files;
-        for <blib bin> {
-            @files := (@files, find(dir => $_, type => 'file').list).flat if .IO.d
-        }
         if $to.can('install') {
+            my @files;
+            if 'blib'.IO ~~ :d {
+                @files.push: find(dir => 'blib', type => 'file').list.grep( -> $lib {
+                    next if $lib.basename.substr(0, 1) eq '.';
+                    $lib
+                } )
+            }
+            if 'bin'.IO ~~ :d {
+                @files.push: find(dir => 'bin', type => 'file').list.grep( -> $bin {
+                    next if $bin.basename.substr(0, 1) eq '.';
+                    next if $*OS ne 'MSWin32' and $bin.basename ~~ /\.bat$/;
+                    $bin
+                } )
+            }
             $to.install(:dist($bone), @files);
         }
         else {
