@@ -44,7 +44,7 @@ my $lib = "$destdir/lib"
         ~ "{$env_sep}{cwd}/ext/JSON__Tiny/lib"
         ~ "{$env_sep}{cwd}/lib";
 
-shell "$*EXECUTABLE_NAME -ICompUnitRepo::Local::File:prio[-1]=$lib bin/panda install File::Find Shell::Command JSON::Tiny {cwd}";
+shell "$*EXECUTABLE_NAME -ICompUnitRepo::Local::File:prio[10]=$lib bin/panda install File::Find Shell::Command JSON::Tiny {cwd}";
 if "$destdir/panda/src".IO ~~ :d {
     rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
                                 # that src should not be kept at all, but
