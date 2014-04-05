@@ -4,6 +4,7 @@ class Panda::Ecosystem {
     use Shell::Command;
 
     has $.statefile;
+    has @.extra-statefiles;
     has $.projectsfile;
     has %!projects;
     has %!states;
@@ -18,15 +19,17 @@ class Panda::Ecosystem {
         $fh.close;
     }
 
-    submethod BUILD(:$!statefile, :$!projectsfile) {
-        if $!statefile.IO ~~ :f {
-            my $fh = open($!statefile);
-            for $fh.lines -> $line {
-                my ($mod, $state, $json) = split ' ', $line, 3;
-                %!states{$mod} = ::("Panda::Project::State::$state");
-                %!saved-meta{$mod} = from-json $json;
+    submethod BUILD(:$!statefile, :$!projectsfile, :@!extra-statefiles) {
+        for $!statefile, @!extra-statefiles -> $file {
+            if $file.IO ~~ :f {
+                my $fh = open($file);
+                for $fh.lines -> $line {
+                    my ($mod, $state, $json) = split ' ', $line, 3;
+                    %!states{$mod} = ::("Panda::Project::State::$state");
+                    %!saved-meta{$mod} = from-json $json;
+                }
+                $fh.close;
             }
-            $fh.close;
         }
 
         self.update if $!projectsfile.IO !~~ :f || $!projectsfile.IO ~~ :z;

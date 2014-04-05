@@ -25,9 +25,17 @@ my $panda;
         die "Found no writable directory into which panda could be installed";
     }
 
+    my @extra-statefiles;
+    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
+        unless $destdir eq $prefix {
+            @extra-statefiles.push("$prefix/panda/state");
+        }
+    }
+
     my $ecosystem = Panda::Ecosystem.new(
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json",
+        extra-statefiles => @extra-statefiles
     );
 
     $panda = Panda.new(:$ecosystem);
