@@ -26,9 +26,11 @@ my $panda;
     }
 
     my @extra-statefiles;
-    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-        unless $destdir eq $prefix {
-            @extra-statefiles.push("$prefix/panda/state");
+    unless $destdir eq %*CUSTOM_LIB<site> {
+        for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
+            unless $destdir eq $prefix {
+                @extra-statefiles.push("$prefix/panda/state");
+            }
         }
     }
 
