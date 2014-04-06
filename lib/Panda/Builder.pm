@@ -56,6 +56,7 @@ method build($where) {
     indir $where, {
         if "Build.pm".IO.f {
             @*INC.push('.');
+            GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Builder) {
                 ::('Build').new.build($where);
