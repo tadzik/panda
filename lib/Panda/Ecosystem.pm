@@ -37,9 +37,20 @@ class Panda::Ecosystem {
         unless defined $list {
             die "An unknown error occured while reading the projects file";
         }
+        my %non-ecosystem = %!saved-meta;
         for $list.list -> $mod {
             my $p = Panda::Project.new(
                 name         => $mod<name>,
+                version      => $mod<version>,
+                dependencies => $mod<depends>,
+                metainfo     => $mod,
+            );
+            self.add-project($p);
+            %non-ecosystem{$mod<name>}:delete;
+        }
+        for %non-ecosystem.kv -> $name, $mod {
+            my $p = Panda::Project.new(
+                name         => $name,
                 version      => $mod<version>,
                 dependencies => $mod<depends>,
                 metainfo     => $mod,
