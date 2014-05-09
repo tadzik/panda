@@ -1,5 +1,38 @@
 module Panda::App;
+use Shell::Command;
+use Panda::Ecosystem;
 use Panda::Project;
+
+# initialize the Panda object
+sub make-default-ecosystem is export {
+    my $pandadir;
+    my $destdir = %*ENV<DESTDIR>;
+    $destdir = "{cwd}/$destdir" if defined($destdir) &&  $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
+    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
+        $destdir  = $prefix;
+        $pandadir = "$prefix/panda";
+        try mkpath $pandadir unless $pandadir.IO ~~ :d;
+        last if $pandadir.path.w
+    }
+    unless $pandadir.path.w {
+        die "Found no writable directory into which panda could be installed";
+    }
+
+    my @extra-statefiles;
+    unless $destdir eq %*CUSTOM_LIB<site> {
+        for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
+            unless $destdir eq $prefix {
+                @extra-statefiles.push("$prefix/panda/state");
+            }
+        }
+    }
+
+    return Panda::Ecosystem.new(
+        statefile    => "$pandadir/state",
+        projectsfile => "$pandadir/projects.json",
+        extra-statefiles => @extra-statefiles
+    );
+}
 
 sub listprojects($panda, :$installed, :$verbose) is export {
     my $es        = $panda.ecosystem;
