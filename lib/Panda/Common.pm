@@ -30,13 +30,13 @@ sub withp6lib(&what) is export {
 }
 
 sub compsuffix is export {
-    $*VM<name> eq 'moar'
+    $*VM.name eq 'moar'
         ?? 'moarvm'
         !! comptarget
 }
 
 sub comptarget is export {
-    given $*VM<name> {
+    given $*VM.name {
         when 'parrot' {
             return 'pir';
         }
