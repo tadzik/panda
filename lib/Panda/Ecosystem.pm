@@ -65,10 +65,22 @@ class Panda::Ecosystem {
 
     method update {
         try unlink $!projectsfile;
-        my $s = IO::Socket::INET.new(:host<feather.perl6.nl>, :port(3000));
-        $s.send("GET /projects.json HTTP/1.0\n\n");
+        my $s;
+        if  %*ENV<http_proxy> {
+          my ($host, $port) = %*ENV<http_proxy>.split('/').[2].split(':');
+          $s = IO::Socket::INET.new(host=>$host, port=>$port.Int);
+          $s.send("GET http://feather.perl6.nl:3000/projects.json HTTP/1.1\nHost: feather.perl6.nl\nAccept: */*\nConnection: Close\n\n");
+        }
+        else {
+          $s = IO::Socket::INET.new(:host<feather.perl6.nl>, :port(3000));
+          $s.send("GET /projects.json HTTP/1.0\n\n");
+        }
         my ($buf, $g) = '';
         $buf ~= $g while $g = $s.get;
+
+        if  %*ENV<http_proxy> {
+          $buf.=subst(:g,/'git://'/,'http://');
+        }
         
         given open($!projectsfile, :w) {
             .say: $buf.split(/\r?\n\r?\n/, 2)[1];
