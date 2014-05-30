@@ -4,6 +4,7 @@ class Panda::Ecosystem {
     use Shell::Command;
 
     has $.statefile;
+    has @.extra-statefiles;
     has $.projectsfile;
     has %!projects;
     has %!states;
@@ -18,15 +19,17 @@ class Panda::Ecosystem {
         $fh.close;
     }
 
-    submethod BUILD(:$!statefile, :$!projectsfile) {
-        if $!statefile.IO ~~ :f {
-            my $fh = open($!statefile);
-            for $fh.lines -> $line {
-                my ($mod, $state, $json) = split ' ', $line, 3;
-                %!states{$mod} = ::("Panda::Project::State::$state");
-                %!saved-meta{$mod} = from-json $json;
+    submethod BUILD(:$!statefile, :$!projectsfile, :@!extra-statefiles) {
+        for $!statefile, @!extra-statefiles -> $file {
+            if $file.IO ~~ :f {
+                my $fh = open($file);
+                for $fh.lines -> $line {
+                    my ($mod, $state, $json) = split ' ', $line, 3;
+                    %!states{$mod} = ::("Panda::Project::State::$state");
+                    %!saved-meta{$mod} = from-json $json;
+                }
+                $fh.close;
             }
-            $fh.close;
         }
 
         self.update if $!projectsfile.IO !~~ :f || $!projectsfile.IO ~~ :z;
@@ -34,9 +37,20 @@ class Panda::Ecosystem {
         unless defined $list {
             die "An unknown error occured while reading the projects file";
         }
+        my %non-ecosystem = %!saved-meta;
         for $list.list -> $mod {
             my $p = Panda::Project.new(
                 name         => $mod<name>,
+                version      => $mod<version>,
+                dependencies => $mod<depends>,
+                metainfo     => $mod,
+            );
+            self.add-project($p);
+            %non-ecosystem{$mod<name>}:delete;
+        }
+        for %non-ecosystem.kv -> $name, $mod {
+            my $p = Panda::Project.new(
+                name         => $name,
                 version      => $mod<version>,
                 dependencies => $mod<depends>,
                 metainfo     => $mod,
@@ -51,10 +65,22 @@ class Panda::Ecosystem {
 
     method update {
         try unlink $!projectsfile;
-        my $s = IO::Socket::INET.new(:host<feather.perl6.nl>, :port(3000));
-        $s.send("GET /projects.json HTTP/1.0\n\n");
+        my $s;
+        if  %*ENV<http_proxy> {
+          my ($host, $port) = %*ENV<http_proxy>.split('/').[2].split(':');
+          $s = IO::Socket::INET.new(host=>$host, port=>$port.Int);
+          $s.send("GET http://feather.perl6.nl:3000/projects.json HTTP/1.1\nHost: feather.perl6.nl\nAccept: */*\nConnection: Close\n\n");
+        }
+        else {
+          $s = IO::Socket::INET.new(:host<feather.perl6.nl>, :port(3000));
+          $s.send("GET /projects.json HTTP/1.0\n\n");
+        }
         my ($buf, $g) = '';
         $buf ~= $g while $g = $s.get;
+
+        if  %*ENV<http_proxy> {
+          $buf.=subst(:g,/'git://'/,'http://');
+        }
         
         given open($!projectsfile, :w) {
             .say: $buf.split(/\r?\n\r?\n/, 2)[1];

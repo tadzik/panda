@@ -56,6 +56,7 @@ method build($where) {
     indir $where, {
         if "Build.pm".IO.f {
             @*INC.push('.');
+            GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Builder) {
                 ::('Build').new.build($where);
@@ -85,7 +86,7 @@ method build($where) {
                 #    next;
                 #}
                 say "Compiling $file to {comptarget}";
-                shell("$*EXECUTABLE_NAME --target={comptarget} "
+                shell("$*EXECUTABLE --target={comptarget} "
                     ~ "--output=$dest $file")
                         or fail "Failed building $file";
             }
