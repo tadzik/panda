@@ -4,6 +4,7 @@ use Panda::Fetcher;
 use Panda::Builder;
 use Panda::Tester;
 use Panda::Installer;
+use Panda::Mirrors;
 use Shell::Command;
 use JSON::Tiny;
 
@@ -14,6 +15,7 @@ sub tmpdir {
 
 class Panda {
     has $.ecosystem;
+    has $.mirrors;
     has $.fetcher   = Panda::Fetcher.new;
     has $.builder   = Panda::Builder.new;
     has $.tester    = Panda::Tester.new;

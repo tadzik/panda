@@ -3,6 +3,7 @@ use Shell::Command;
 use Panda;
 use Panda::Ecosystem;
 use Panda::App;
+use Panda::Mirrors;
 
 # default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
@@ -40,7 +41,12 @@ my $panda;
         extra-statefiles => @extra-statefiles
     );
 
-    $panda = Panda.new(:$ecosystem);
+    my $mirrors = Panda::Mirrors.new(
+        mirrorsfile => "$pandadir/MIRRORED.BY",
+        mirrorslist => "$pandadir/mirrors.json",
+    );
+
+    $panda = Panda.new(:$ecosystem, :$mirrors);
 }
 
 # allow switches after positionals
@@ -74,6 +80,11 @@ multi MAIN ('info', *@modules) {
 #= Search the name/description
 multi MAIN ('search', $pattern) {
     search-projects($panda, $pattern);
+}
+
+#= Ping CPAN servers to get nearest neighbours
+multi MAIN ('probe-mirrors', $limit = Inf) {
+    $panda.mirrors.probe($panda);
 }
 
 END {
