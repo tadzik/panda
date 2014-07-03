@@ -3,7 +3,7 @@ use Panda::Common;
 use File::Find;
 use Shell::Command;
 
-has $.destdir = self.destdir();
+has $.destdir = self.default-destdir();
 
 method sort-lib-contents(@lib) {
     my @generated = @lib.grep({ $_ ~~  / \. <{compsuffix}> $/});
@@ -12,7 +12,7 @@ method sort-lib-contents(@lib) {
 }
 
 # default install location
-method destdir {
+method default-destdir {
     my $ret = %*ENV<DESTDIR>;
     if defined($ret) && $*OS ne 'MSWin32' && $ret !~~ /^ '/' / {
         $ret = "{cwd}/$ret" ;
