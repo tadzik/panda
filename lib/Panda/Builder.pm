@@ -25,7 +25,8 @@ sub topo-sort(@modules, %dependencies) {
 }
 
 sub path-to-module-name($path) {
-    $path.subst(/^'lib/'/, '').subst(/^'lib6/'/, '').subst(/\.pm6?$/, '').subst('/', '::', :g);
+    my $slash = / [ '/' | '\\' ]  /;
+    $path.subst(/^'lib'<$slash>/, '').subst(/^'lib6'<$slash>/, '').subst(/\.pm6?$/, '').subst($slash, '::', :g);
 }
 
 sub build-order(@module-files) {
