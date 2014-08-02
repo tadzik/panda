@@ -79,7 +79,7 @@ method build($where) {
                 $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
                 my $dest = "blib/{$file.directory}/"
-                         ~ "{$file.basename.subst(/\.pm6?$/, ".{compsuffix}" )}";
+                         ~ $file.basename ~ '.' ~ compsuffix ;
                 #note "$dest modified: ", $dest.IO.modified;
                 #note "$file modified: ", $file.IO.modified;
                 #if $dest.IO.modified >= $file.IO.modified {
