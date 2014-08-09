@@ -7,6 +7,23 @@ method fetch($from, $to) {
         when /\.git$/ {
             return git-fetch $from, $to;
         }
+        when /^ $<schema>=[<alnum><[+.-]+alnum>*] '://' / {
+            when $<schema> {
+                when /^'git://'/ {
+                    return git-fetch $from, $to;
+                }
+                when /^[http|https]'+git://'/ {
+                    return git-fetch $from.subst(/'+git'/, ''), $to;
+                }
+                when /^'file://'/ {
+                    return local-fetch $from.subst(/^'file://'/, ''), $to;
+                }
+                default {
+                    # OUTER.proceed would be nice, were it implemented!
+                    fail "Unable to handle source '$from'"
+                }
+            }
+        }
         when *.IO.d {
             local-fetch $from, $to;
         }
