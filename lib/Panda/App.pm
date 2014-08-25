@@ -27,6 +27,15 @@ sub make-default-ecosystem is export {
         }
     }
 
+    # Add the path we're installing to @*INC
+    #
+    # If we're installing to a custom destdir or we're installing to a standard
+    # dir that did not exist, it isn't in @*INC (which will make Build.pm
+    # files that depend on the modules we just installed break).
+    #
+    # If this is already in @*INC, it doesn't harm anything to re-add it.
+    @*INC.push($destdir~'/lib');
+
     return Panda::Ecosystem.new(
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json",
