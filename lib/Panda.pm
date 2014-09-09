@@ -66,7 +66,7 @@ class Panda {
             mkpath $tmpdir;
             $.fetcher.fetch($proj, $tmpdir);
             my $mod = from-json slurp "$tmpdir/META.info";
-            $mod<source-url>  = $tmpdir;
+            $mod<source-url>  = ~$tmpdir;
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
