@@ -7,7 +7,7 @@ use Panda::Project;
 sub make-default-ecosystem is export {
     my $pandadir;
     my $destdir = %*ENV<DESTDIR>;
-    $destdir = "{cwd}/$destdir" if defined($destdir) &&  $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
+    $destdir = "{cwd}/$destdir" if defined($destdir) &&  !$*DISTRO.is-win && $destdir !~~ /^ '/' /;
     for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
         $destdir  = $prefix;
         $pandadir = "$prefix/panda";
