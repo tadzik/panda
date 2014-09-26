@@ -134,6 +134,7 @@ class Panda {
     method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests) {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
+        mkpath $tmpdir;
         my $p = self.project-from-local($proj);
         $p ||= self.project-from-git($proj, $tmpdir);
         if $p {
