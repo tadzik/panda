@@ -7,3 +7,6 @@
 [submodule "ext/Shell__Command"]
 	path = ext/Shell__Command
 	url = git://github.com/tadzik/Shell-Command.git
+[submodule "ext/NativeCall"]
+	path = ext/NativeCall
+	url = git@github.com:jnthn/zavolaj
