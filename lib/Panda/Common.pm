@@ -21,7 +21,7 @@ sub withp6lib(&what) is export {
             %*ENV<PERL6LIB>:delete;
         }
     }
-    my $sep = $*OS eq 'MSWin32' ?? ';' !! ':';
+    my $sep = $*DISTRO.is-win ?? ';' !! ':';
     %*ENV<PERL6LIB> = join $sep,
         cwd() ~ '/blib/lib',
         cwd() ~ '/lib',

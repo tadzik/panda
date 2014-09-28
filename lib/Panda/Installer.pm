@@ -3,7 +3,7 @@ use Panda::Common;
 use File::Find;
 use Shell::Command;
 
-has $.destdir = self.destdir();
+has $.destdir = self.default-destdir();
 
 method sort-lib-contents(@lib) {
     my @generated = @lib.grep({ $_ ~~  / \. <{compsuffix}> $/});
@@ -12,9 +12,9 @@ method sort-lib-contents(@lib) {
 }
 
 # default install location
-method destdir {
+method default-destdir {
     my $ret = %*ENV<DESTDIR>;
-    if defined($ret) && $*OS ne 'MSWin32' && $ret !~~ /^ '/' / {
+    if defined($ret) && !$*DISTRO.is-win && $ret !~~ /^ '/' / {
         $ret = "{cwd}/$ret" ;
     }
     for grep(*.defined, $ret, %*CUSTOM_LIB<site home>) -> $prefix {
@@ -46,10 +46,10 @@ method install($from, $to? is copy) {
         if 'bin'.IO ~~ :d {
             for find(dir => 'bin', type => 'file').list -> $bin {
                 next if $bin.basename.substr(0, 1) eq '.';
-                next if $*OS ne 'MSWin32' and $bin.basename ~~ /\.bat$/;
+                next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;
                 mkpath "$to/{$bin.directory}";
                 copy($bin, "$to/$bin");
-                "$to/$bin".IO.chmod(0o755) unless $*OS eq 'MSWin32';
+                "$to/$bin".IO.chmod(0o755) unless $*DISTRO.is-win;
             }
         }
         1;

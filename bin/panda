@@ -27,21 +27,6 @@ my $panda;
         die "Found no writable directory into which panda could be installed";
     }
 
-    my @extra-statefiles;
-    unless $destdir eq %*CUSTOM_LIB<site> {
-        for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-            unless $destdir eq $prefix {
-                @extra-statefiles.push("$prefix/panda/state");
-            }
-        }
-    }
-
-    my $ecosystem = Panda::Ecosystem.new(
-        statefile    => "$pandadir/state",
-        projectsfile => "$pandadir/projects.json",
-        extra-statefiles => @extra-statefiles
-    );
-
     my $cpan = Panda::CPAN.new( :$pandadir );
 
     my $mirrors = Panda::Mirrors.new(
@@ -49,7 +34,7 @@ my $panda;
         mirrorslist => "$pandadir/mirrors.json",
     );
 
-    $panda = Panda.new(:$ecosystem, :$mirrors, :$cpan);
+    $panda = Panda.new(:ecosystem(make-default-ecosystem), :$mirrors, :$cpan);
 }
 
 # allow switches after positionals
@@ -96,7 +81,7 @@ multi MAIN ('probe-mirrors', $limit = Inf) {
 }
 
 END {
-    rm_rf '.work' if '.work'.IO.e;
+    rm_rf '.panda-work' if '.panda-work'.IO.e;
 }
 
 # vim: ft=perl6

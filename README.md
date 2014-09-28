@@ -43,6 +43,17 @@ your path, you may now install Panda by doing:
 
     perl6 bootstrap.pl
 
+After a successful bootstrap, a message will show up saying what path should be added
+to PATH env variable in order to be able to run panda from the command line. For example:
+
+==> Please make sure that /home/user/rakudo/install/languages/perl6/site/bin is in your PATH
+
+If you use bash, you can fulfill that requirement with the following:
+
+    echo 'export PATH=$PATH:/home/user/rakudo/install/languages/perl6/site/bin' >> ~/.bashrc
+    source ~/.bashrc
+
+
 ## Running Tests
 
 One way to run the test suite is with prove from TAP::Harness
@@ -60,14 +71,6 @@ Panda can be used like:
 Alternatively, you can install a package from the local disk by supplying its path:
 
     panda install ./perl6-Acme-Meow
-
-Note that ~/.perl6/bin has to be in your $PATH for you to be able to use
-panda from the command line.
-
-If you use bash, you can accomplish this with
-
-    echo 'export PATH=$PATH:~/.perl6/bin' >> ~/.bashrc
-    source ~/.bashrc
 
 [1] https://github.com/masak/proto/tree/pls
 

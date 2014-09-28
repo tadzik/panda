@@ -25,7 +25,8 @@ sub topo-sort(@modules, %dependencies) {
 }
 
 sub path-to-module-name($path) {
-    $path.subst(/^'lib/'/, '').subst(/^'lib6/'/, '').subst(/\.pm6?$/, '').subst('/', '::', :g);
+    my $slash = / [ '/' | '\\' ]  /;
+    $path.subst(/^'lib'<$slash>/, '').subst(/^'lib6'<$slash>/, '').subst(/\.pm6?$/, '').subst($slash, '::', :g);
 }
 
 sub build-order(@module-files) {
@@ -78,7 +79,7 @@ method build($where) {
                 $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
                 my $dest = "blib/{$file.directory}/"
-                         ~ "{$file.basename.subst(/\.pm6?$/, ".{compsuffix}" )}";
+                         ~ $file.basename ~ '.' ~ compsuffix ;
                 #note "$dest modified: ", $dest.IO.modified;
                 #note "$file modified: ", $file.IO.modified;
                 #if $dest.IO.modified >= $file.IO.modified {

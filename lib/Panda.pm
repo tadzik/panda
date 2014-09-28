@@ -11,7 +11,7 @@ use JSON::Tiny;
 
 sub tmpdir {
     state $i = 0;
-    ".work/{time}_{$i++}".path.absolute
+    ".panda-work/{time}_{$i++}".path.absolute
 }
 
 class Panda {
@@ -70,7 +70,7 @@ class Panda {
             mkpath $tmpdir;
             $.fetcher.fetch($proj, $tmpdir);
             my $mod = from-json slurp "$tmpdir/META.info";
-            $mod<source-url>  = $tmpdir;
+            $mod<source-url>  = ~$tmpdir;
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
@@ -139,6 +139,7 @@ class Panda {
     method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, Bool :$cpan, Bool :$github) {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
+        mkpath $tmpdir;
         my $p = self.project-from-local($proj);
         $p  ||= self.project-from-git($proj,  $tmpdir) if $github;
         if $p {
