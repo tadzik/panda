@@ -7,6 +7,33 @@
 [submodule "ext/Shell__Command"]
 	path = ext/Shell__Command
 	url = git://github.com/tadzik/Shell-Command.git
+[submodule "ext/HTTP__UserAgent"]
+	path = ext/HTTP__UserAgent
+	url = git@github.com:sergot/http-useragent
+[submodule "ext/DateTime__Parse"]
+	path = ext/DateTime__Parse
+	url = git@github.com:sergot/datetime-parse
+[submodule "ext/Compress__Zlib"]
+	path = ext/Compress__Zlib
+	url = git@github.com:retupmoca/P6-Compress-Zlib
+[submodule "ext/Compress__Zlib__Raw"]
+	path = ext/Compress__Zlib__Raw
+	url = git@github.com:retupmoca/P6-Compress-Zlib-Raw
+[submodule "ext/Encode"]
+	path = ext/Encode
+	url = git@github.com:sergot/perl6-encode
+[submodule "ext/File__Temp"]
+	path = ext/File__Temp
+	url = git@github.com:perlpilot/p6-File-Temp
+[submodule "ext/HTTP__Status"]
+	path = ext/HTTP__Status
+	url = git@github.com:supernovus/perl6-http-status
+[submodule "ext/IO__Capture__Simple"]
+	path = ext/IO__Capture__Simple
+	url = git@github.com:sergot/IO-Capture-Simple
+[submodule "ext/MIME__Base64"]
+	path = ext/MIME__Base64
+	url = git@github.com:perl6/Perl6-MIME-Base64
 [submodule "ext/NativeCall"]
 	path = ext/NativeCall
 	url = git@github.com:jnthn/zavolaj
