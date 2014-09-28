@@ -1,8 +1,12 @@
 class Panda::Fetcher;
+use Panda::Common;
 use File::Find;
 use Shell::Command;
+use HTTP::UserAgent :simple;
+use Compress::Zlib;
+use Archive::Tar;
 
-method fetch($from, $to) {
+method fetch($from is copy, $to, :@mirrors-list) {
     given $from {
         when /\.git$/ {
             return git-fetch $from, $to;
@@ -11,7 +15,38 @@ method fetch($from, $to) {
             local-fetch $from, $to;
         }
         when /^http '://'/ {
-            http-fetch $from, $to;
+            #~ mkpath $to unless $to.IO.d;
+            getstore($from, ~$to);
+            CATCH {
+                die "Could not fetch $from: {$_.message}"
+            }
+        }
+        when /^cpan '://'/ {
+            my $err;
+            $from ~~ s[^cpan '://'] = '';
+            mkpath ~$to unless $to.IO.d;
+            for @mirrors-list -> $url {
+                try {
+                    my $target   = "$to/" ~ $from.match(/<-[/]>+$/);
+                    my $meta_url = $from.subst(/'.tar.gz'$/, '.meta');
+                    my $meta_to  = "$to/META.info";
+                    getstore("$url/$from",     $target);
+                    getstore("$url/$meta_url", $meta_to);
+                    say "ls -l $target";
+                    shell("ls -l $target");
+                    shell("ls -l $meta_to");
+                    indir $target.path.directory, {
+                        Archive::Tar.extract_archive( $target );
+                    };
+                    shell("ls -l $target.path.directory()");
+                    #~ gzslurp($target);
+                    last;
+                    CATCH {
+                        $err = $!
+                    }
+                }
+            }
+            die "Could not fetch $from: {$err.message}" if $err ~~ Failure;
         }
         default {
             fail "Unable to handle source '$from'"
@@ -45,49 +80,6 @@ sub local-fetch($from, $to) {
         $_.copy("$where/{$_.basename}");
     }
     return True;
-}
-
-sub http-fetch($from, $to) {
-    my $s;
-    my $host = $from ~~ /^ [\w+ '://']? $<host>=[ <-[\/]>+ ] / ?? ~$<host> !! die "Could not parse url '$from'";
-    if  %*ENV<http_proxy> {
-        my ($host, $port) = %*ENV<http_proxy>.split('/').[2].split(':');
-        $s = IO::Socket::INET.new(host => $host, port => $port.Int);
-    }
-    else {
-        $s = IO::Socket::INET.new(:$host, :port(80));
-    }
-    $s.send("GET $from HTTP/1.1\nHost: $host\nAccept: */*\nConnection: Close\n\n");
-    my $buf = $s.recv(:bin);
-
-    my $i = 0;
-    my ($header, $new_chunk) = $buf.decode('utf8').split(/\r\n\r\n/, 2);
-    my @chunks = $new_chunk.encode;
-    if $header ~~ /^^ 'Transfer-Encoding:' \N+ chunked / {
-        my ($size, $new_chunk) = @chunks[$i].decode('utf8').split(/\r?\n/, 2);
-        @chunks[$i] = $new_chunk.encode;
-        $size = :16($size);
-        while @chunks[$i].bytes < $size {
-            @chunks[$i] ~= $s.recv(:bin, $size - @chunks[$i].bytes);
-            
-            if $size == @chunks[$i].bytes {
-                $i++;
-                @chunks[$i] ~= $s.recv(10, :bin).decode('utf8').trim-leading;
-                ($size, $new_chunk) = @chunks[$i].split(/\r?\n/, 2);
-                @chunks[$i] = $new_chunk.encode;
-                $size = :16($size);
-            }
-        }
-    }
-
-    given open($to, :w) {
-        .say: @chunks>>.decode('utf8').join('');
-        .close;
-    }
-
-    CATCH {
-        die "Could not download mirrors list: {$_.message}"
-    }
 }
 
 # vim: ft=perl6

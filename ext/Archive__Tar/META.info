@@ -1,0 +1,13 @@
+{
+    "name" : "Archive::Tar",
+    "version" : "1.0.0",
+    "author" : "github:FROGGS",
+    "description" : "",
+    "depends" : ["Compress::Zlib"],
+    "provides" : {
+        "Archive::Tar" : "lib/Archive/Tar.pm",
+        "Archive::Tar::Constant" : "lib/Archive/Tar/Constant.pm",
+        "Archive::Tar::File" : "lib/Archive/Tar/File.pm"
+    },
+    "source-url" : "git://github.com/FROGGS/p6-Archive-Tar.git"
+}

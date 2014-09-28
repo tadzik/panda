@@ -1,0 +1,17 @@
+This is the README file for Archive::Tar, the Perl module for creation
+and in-memory manipulation of tar files.
+
+* Installation
+
+Archive::Tar uses the standard perl module install process
+
+perl Makefile.PL
+make
+make test (optional but recommended)
+make install
+
+This module uses no C-coded parts in itself, but it will try to use
+the IO::Zlib module to read and write gzipped tarfiles.
+Archive::Tar will still work without IO::Zlib, it will just complain
+when you try to use a compressed archive or write one, since it
+obviously can't.

@@ -5,6 +5,7 @@ use Panda::Builder;
 use Panda::Tester;
 use Panda::Installer;
 use Panda::Mirrors;
+use Panda::CPAN;
 use Shell::Command;
 use JSON::Tiny;
 
@@ -16,6 +17,7 @@ sub tmpdir {
 class Panda {
     has $.ecosystem;
     has $.mirrors;
+    has $.cpan;
     has $.fetcher   = Panda::Fetcher.new;
     has $.builder   = Panda::Builder.new;
     has $.tester    = Panda::Tester.new;
@@ -87,7 +89,8 @@ class Panda {
         unless $bone.metainfo<source-url> {
             die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
         }
-        unless $_ = $.fetcher.fetch($bone.metainfo<source-url>, $dir) {
+        my @mirrors-list = $.mirrors.urls(self) if $bone.metainfo<source-url> ~~ /^ cpan '://' /;
+        unless $_ = $.fetcher.fetch($bone.metainfo<source-url>, $dir, :@mirrors-list) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
         self.announce('building', $bone);
@@ -133,11 +136,11 @@ class Panda {
         return @deps;
     }
 
-    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests) {
+    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, Bool :$cpan, Bool :$github) {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         my $p = self.project-from-local($proj);
-        $p ||= self.project-from-git($proj, $tmpdir);
+        $p  ||= self.project-from-git($proj,  $tmpdir) if $github;
         if $p {
             if $.ecosystem.get-project($p.name) {
                 self.announce: "Installing {$p.name} "
@@ -146,12 +149,22 @@ class Panda {
             $.ecosystem.add-project($p);
             $proj = $p.name;
         }
-        my $bone = $.ecosystem.get-project($proj);
+        my $bone = $.ecosystem.get-project($proj) if $github;
+        if $cpan {
+            $.cpan.fetch-if-needed(self);
+            $bone ||= $.cpan.get-project($proj);
+        }
+
         if not $bone {
             sub die($m) { X::Panda.new($proj, 'resolve', $m).throw }
             my $suggestion = $.ecosystem.suggest-project($proj);
-            die "Project $proj not found in the ecosystem. Maybe you meant $suggestion?" if $suggestion;
-            die "Project $proj not found in the ecosystem";
+            my $where = $cpan && $github
+                      ?? 'in the ecosystem or on CPAN'
+                      !! $github
+                      ?? 'in the ecosystem'
+                      !! 'on CPAN';
+            die "Project $proj not found $where. Maybe you meant $suggestion?" if $suggestion;
+            die "Project $proj not found $where";
         }
         unless $nodeps {
             my @deps = self.get-deps($bone).uniq;

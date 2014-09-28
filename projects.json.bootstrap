@@ -22,5 +22,93 @@
       "name" : "JSON::Tiny",
       "description" : "A minimal JSON (de)serializer",
       "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/DateTime__Parse",
+      "version" : "*",
+      "name" : "DateTime::Parse",
+      "description" : "",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/HTTP__Status",
+      "version" : "*",
+      "name" : "HTTP::Status",
+      "description" : "",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/Encode",
+      "version" : "*",
+      "name" : "Encode",
+      "description" : "",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/File__Temp",
+      "version" : "*",
+      "name" : "File::Temp",
+      "description" : "",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/MIME__Base64",
+      "version" : "*",
+      "name" : "MIME::Base64",
+      "description" : "",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/IO__Capture__Simple",
+      "version" : "*",
+      "name" : "IO::Capture::Simple",
+      "description" : "",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/HTTP__UserAgent",
+      "version" : "*",
+      "name" : "HTTP::UserAgent",
+      "description" : "",
+      "depends" : ["Encode"]
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/NativeCall",
+      "version" : "*",
+      "name" : "NativeCall",
+      "description" : "",
+      "depends" : []
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/Compress__Zlib__Raw",
+      "version" : "*",
+      "name" : "Compress::Zlib::Raw",
+      "description" : "",
+      "depends" : ["NativeCall"]
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/Compress__Zlib",
+      "version" : "*",
+      "name" : "Compress::Zlib",
+      "description" : "",
+      "depends" : ["Compress::Zlib::Raw"]
+   },
+   {
+      "source-type" : "local",
+      "source-url" : "_BASEDIR_/Archive__Tar",
+      "version" : "*",
+      "name" : "Archive::Tar",
+      "description" : "",
+      "depends" : ["Compress::Zlib"]
    }
 ]

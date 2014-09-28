@@ -42,9 +42,20 @@ my $env_sep = $is_win ?? ';' !! ':';
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Find/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Shell__Command/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/JSON__Tiny/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/DateTime__Parse/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/HTTP__Status/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Encode/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Temp/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/MIME__Base64/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/IO__Capture__Simple/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/HTTP__UserAgent/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/NativeCall/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Compress__Zlib__Raw/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Compress__Zlib/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Archive__Tar/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/lib";
 
-shell "$*EXECUTABLE bin/panda install File::Find Shell::Command JSON::Tiny {cwd}";
+shell "$*EXECUTABLE bin/panda install File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status Encode File::Temp MIME::Base64 IO::Capture::Simple HTTP::UserAgent NativeCall Compress::Zlib::Raw Compress::Zlib Archive::Tar {cwd}";
 if "$destdir/panda/src".IO ~~ :d {
     rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
                                 # that src should not be kept at all, but

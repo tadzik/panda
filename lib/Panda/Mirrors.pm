@@ -3,9 +3,17 @@ class Panda::Mirrors {
     has $.mirrorslist;
     has $.url = 'http://www.cpan.org/MIRRORED.BY';
 
-    method probe($panda, $limit = Inf) is export {
-        $panda.announce("Fetching $!url");
-        $panda.fetcher.fetch: $!url, $!mirrorsfile unless $!mirrorsfile.IO.e;
+    #~ use JSON::Tiny;
+
+    method fetch-if-needed($panda) {
+        unless $!mirrorsfile.IO.e {
+            $panda.announce("Fetching $!url");
+            $panda.fetcher.fetch: $!url, $!mirrorsfile;
+        }
+    }
+
+    method probe($panda, $limit = Inf) {
+        self.fetch-if-needed($panda);
 
         my grammar Ping {
             rule TOP {
@@ -62,8 +70,8 @@ class Panda::Mirrors {
         $panda.announce("Pinging {+%data.keys} servers, please be patient");
         my $x = 0;
         for %data.kv -> $name, $values is rw {
-            last if $x++ > $limit;
-            if ($values<dst_http> // $values<dst_ftp>) ~~ m,^ \w+ '://' $<host>=<-[/]>+ , {
+            $values<ping> = Inf;
+            if ($x++ < $limit && $values<dst_http> // $values<dst_ftp>) ~~ m,^ \w+ '://' $<host>=<-[/]>+ , {
                 $values<ping> = Ping.subparse(qqx{ping -n -c1 -W1 $<host>}, :actions(Ping::Average)).?made // Inf
             }
         }
@@ -75,9 +83,16 @@ class Panda::Mirrors {
             .close;
         }
 
-        CATCH {
-            die "Could not probe mirrors: {$_.message}"
-        }
+        #~ CATCH {
+            #~ die "Could not probe mirrors: {$_.message}"
+        #~ }
+    }
+
+    method urls($panda) {
+        self.probe($panda, 30) unless $!mirrorslist.IO.s;
+
+        my $json = from-json $!mirrorslist.IO.slurp;
+        $json.map(*.values[0].<dst_http>).grep(*.defined)>>.subst(/'/'$/, '')
     }
 }
 

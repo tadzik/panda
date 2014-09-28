@@ -4,6 +4,7 @@ use Panda;
 use Panda::Ecosystem;
 use Panda::App;
 use Panda::Mirrors;
+use Panda::CPAN;
 
 # default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
@@ -41,23 +42,29 @@ my $panda;
         extra-statefiles => @extra-statefiles
     );
 
+    my $cpan = Panda::CPAN.new( :$pandadir );
+
     my $mirrors = Panda::Mirrors.new(
         mirrorsfile => "$pandadir/MIRRORED.BY",
         mirrorslist => "$pandadir/mirrors.json",
     );
 
-    $panda = Panda.new(:$ecosystem, :$mirrors);
+    $panda = Panda.new(:$ecosystem, :$mirrors, :$cpan);
 }
 
 # allow switches after positionals
 @*ARGS = @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
 
 #= Install the specified modules
-multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
+multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$cpan, Bool :$github is copy) {
+    $github = True unless $cpan;
     for @modules -> $x {
         try {
-            $panda.resolve($x, :$notests, :$nodeps);
-            CATCH { when X::Panda { say $_.message } }
+            $panda.resolve($x, :$notests, :$nodeps, :$cpan, :$github);
+            CATCH {
+                default { say X::Panda }
+                #~ when X::Panda { say $_.message }
+            }
         };
     }
 }
@@ -78,8 +85,9 @@ multi MAIN ('info', *@modules) {
 }
 
 #= Search the name/description
-multi MAIN ('search', $pattern) {
-    search-projects($panda, $pattern);
+multi MAIN ('search', $pattern, Bool :$cpan, Bool :$github is copy) {
+    $github = True unless $cpan;
+    search-projects($panda, $pattern, :$cpan, :$github);
 }
 
 #= Ping CPAN servers to get nearest neighbours

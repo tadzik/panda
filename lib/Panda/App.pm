@@ -38,11 +38,22 @@ sub wrap ($str) is export {
     return $str.comb(/ . ** 0..40 [ << | $ ]/).grep({ .chars > 0 }).join("\n" ~ " " x 36);
 }
 
-sub search-projects($panda, $string) is export {
-    for $panda.ecosystem.project-list -> $project {
-        my $p = $panda.ecosystem.get-project($project);
-        next unless $p.name ~~ /:i $string / || $p.metainfo<description> ~~ /:i $string /;
-        printf "%-24s %-10s %s\n",$p.name,$p.version, wrap($p.metainfo<description>);
+sub search-projects($panda, $string, :$cpan, :$github) is export {
+    $panda.cpan.fetch-if-needed($panda) if $cpan;
+    if $github {
+        say "Resources on github:";
+        for $panda.ecosystem.project-list -> $project {
+            my $p = $panda.ecosystem.get-project($project);
+            next unless $p.name ~~ /:i $string / || $p.metainfo<description> ~~ /:i $string /;
+            printf "  %-24s %-10s %s\n",$p.name,$p.version, wrap($p.metainfo<description>);
+        }
+    }
+    if $cpan {
+        say "Resources on CPAN:";
+        for $panda.cpan.p6dists.list -> $p {
+            next unless $p.name ~~ /:i $string / || $p.metainfo<description> ~~ /:i $string /;
+            printf "  %-24s %-10s %s\n",$p.name,$p.version, wrap($p.metainfo<description>);
+        }
     }
 }
 
