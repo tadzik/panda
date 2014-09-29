@@ -2,7 +2,7 @@ class Panda::Fetcher;
 use Panda::Common;
 use File::Find;
 use Shell::Command;
-use HTTP::UserAgent :simple;
+use HTTP::UserAgent;
 use Compress::Zlib;
 use Archive::Tar;
 
@@ -13,7 +13,7 @@ method fetch($from is copy, $to, :@mirrors-list) {
         }
         when /^http '://'/ {
             #~ mkpath $to unless $to.IO.d;
-            getstore($from, ~$to);
+            $to.IO.spurt: HTTP::UserAgent.new.get($from).content;
             CATCH {
                 die "Could not fetch $from: {$_.message}"
             }
@@ -27,8 +27,8 @@ method fetch($from is copy, $to, :@mirrors-list) {
                     my $target   = "$to/" ~ $from.match(/<-[/]>+$/);
                     my $meta_url = $from.subst(/'.tar.gz'$/, '.meta');
                     my $meta_to  = "$to/META.info";
-                    getstore("$url/$from",     $target);
-                    getstore("$url/$meta_url", $meta_to);
+                    $target.IO.spurt:  HTTP::UserAgent.new.get("$url/$from").content;
+                    $meta_to.IO.spurt: HTTP::UserAgent.new.get("$url/$meta_url").content;
                     say "ls -l $target";
                     shell("ls -l $target");
                     shell("ls -l $meta_to");
