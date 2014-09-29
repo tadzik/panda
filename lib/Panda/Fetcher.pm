@@ -29,14 +29,9 @@ method fetch($from is copy, $to, :@mirrors-list) {
                     my $meta_to  = "$to/META.info";
                     $target.IO.spurt:  HTTP::UserAgent.new.get("$url/$from").content;
                     $meta_to.IO.spurt: HTTP::UserAgent.new.get("$url/$meta_url").content;
-                    say "ls -l $target";
-                    shell("ls -l $target");
-                    shell("ls -l $meta_to");
                     indir $target.path.directory, {
                         Archive::Tar.extract_archive( $target );
                     };
-                    shell("ls -l $target.path.directory()");
-                    #~ gzslurp($target);
                     last;
                     CATCH {
                         $err = $!
