@@ -10,7 +10,13 @@ use v6;
 #~ }
 
 #~ @EXPORT = Archive::Tar::Constant->_list_consts( __PACKAGE__ );
-sub READ_ONLY($a) is export { $a ?? { :r, :b } !! :r }
+
+my \BLOCK = 512;
+sub BLOCK_SIZE   is export { my $n = ($^a/BLOCK).Int; $n++ if $^a % BLOCK; $n * BLOCK };
+sub TAR_PAD($a?) is export { my $x = $a || return; return "\x0" x (BLOCK - ($x % BLOCK) ) };
+sub READ_ONLY    is export { $^a ?? { :r, :b } !! :r }
+sub WRITE_ONLY   is export { $^a ?? 'wb' ~ $^a !! 'w' };
+sub MODE_READ    is export { so $^a ~~ /^r/ }
 
 sub EXPORT(|) {
     my %EXPORT;
@@ -28,18 +34,12 @@ sub EXPORT(|) {
 
     %EXPORT<BUFFER>         = 4096;
     %EXPORT<HEAD>           = 512;
-    %EXPORT<BLOCK> = my \BLOCK = 512;
+    %EXPORT<BLOCK>          = BLOCK;
 
     %EXPORT<COMPRESS_GZIP>  = 9;
     %EXPORT<COMPRESS_BZIP>  = 'bzip2';
 
-    %EXPORT<&BLOCK_SIZE>   := { my $n = ($^a/BLOCK).Int; $n++ if $^a % BLOCK; $n * BLOCK };
-    %EXPORT<TAR_PAD>       := -> $a? { my $x = $a || return; return "\x0" x (BLOCK - ($x % BLOCK) ) };
     %EXPORT<TAR_END>        = Buf.new(0 xx BLOCK);
-
-    #~ %EXPORT<&READ_ONLY>    := { $^a ?? { :r, :b } !! :r };
-    %EXPORT<&WRITE_ONLY>   := { $^a ?? 'wb' ~ $^a !! 'w' };
-    %EXPORT<&MODE_READ>    := { so $^a ~~ /^r/ };
 
     # Pointless assignment to make -w shut up
     #~ my $getpwuid; $getpwuid = 'unknown' unless eval { my $f = getpwuid (0); };

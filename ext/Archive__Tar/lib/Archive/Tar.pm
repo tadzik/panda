@@ -19,7 +19,7 @@ has $._error is rw = '';
 #~ use File::Spec          ();
 #~ use File::Spec::Unix    ();
 #~ use File::Path          ();
-BEGIN try require Compress::Zlib;
+try require Compress::Zlib;
 use Archive::Tar::File;
 use Archive::Tar::Constant;
 
@@ -287,7 +287,6 @@ method _read_tar($handle, *%opts) {
     my $data;
 
     LOOP: while $chunk = $handle.read( HEAD ) {
-        say LOOP;
         ### IO::Zlib doesn't support this yet
         my $offset;
         #~ if ( ref($handle) ne 'IO::Zlib' ) {
