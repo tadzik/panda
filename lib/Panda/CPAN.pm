@@ -5,11 +5,12 @@ class Panda::CPAN {
     use Panda::Project;
     use Compress::Zlib;
 
-    method fetch-if-needed($panda) {
+    method update($panda, :$force) {
         for < p6dists.json    p6dists.json.gz
               p6provides.json p6provides.json.gz
               p6binaries.json p6binaries.json.gz > -> $json, $gz {
-            unless "$!pandadir/$gz".IO.s { # }
+            my $io = "$!pandadir/$gz".IO;
+            if $force || !$io.s || 0 < $io.modified < now - 86400 {
                 my $i = 0;
                 for $panda.mirrors.urls($panda) -> $url {
                     $i ?? $panda.announce("Retrying $url/authors/$gz")

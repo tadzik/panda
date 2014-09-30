@@ -5,15 +5,16 @@ class Panda::Mirrors {
 
     #~ use JSON::Tiny;
 
-    method fetch-if-needed($panda) {
-        unless $!mirrorsfile.IO.e {
+    method update($panda, :$force) {
+        my $io = $!mirrorsfile.IO;
+        if $force || !$io.s || 0 < $io.modified < now - 86400 {
             $panda.announce("Fetching $!url");
             $panda.fetcher.fetch: $!url, $!mirrorsfile;
         }
     }
 
     method probe($panda, $limit = Inf) {
-        self.fetch-if-needed($panda);
+        self.update($panda);
 
         my grammar Ping {
             rule TOP {

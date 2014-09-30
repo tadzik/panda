@@ -152,7 +152,7 @@ class Panda {
         }
         my $bone = $.ecosystem.get-project($proj) if $github;
         if $cpan {
-            $.cpan.fetch-if-needed(self);
+            $.cpan.update(self);
             $bone ||= $.cpan.get-project($proj);
         }
 

@@ -81,7 +81,7 @@ sub wrap ($str) is export {
 }
 
 sub search-projects($panda, $string, :$cpan, :$github) is export {
-    $panda.cpan.fetch-if-needed($panda) if $cpan;
+    $panda.cpan.update($panda) if $cpan;
     if $github {
         say "Resources on github:";
         for $panda.ecosystem.project-list -> $project {

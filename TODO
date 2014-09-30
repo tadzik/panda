@@ -23,8 +23,6 @@ Resources on CPAN:
   Inline                   v1
                                       ^-- display description
 
-* let panda --cpan update fetch p6dists.json.gz, p6provides.json.gz and p6binaries.json.gz
-
 * Resources on CPAN:
   Inline                   v1.2
   Inline                   v1

@@ -47,7 +47,7 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$cpan, Bo
         try {
             $panda.resolve($x, :$notests, :$nodeps, :$cpan, :$github);
             CATCH {
-                default { say X::Panda }
+                default { say $_.message }
                 #~ when X::Panda { say $_.message }
             }
         };
@@ -60,8 +60,10 @@ multi MAIN ('list', Bool :$installed, Bool :$verbose) {
 }
 
 #= Update the module database
-multi MAIN ('update') {
-    $panda.ecosystem.update;
+multi MAIN ('update', Bool :$cpan, Bool :$github is copy) {
+    $github = True unless $cpan;
+    $panda.ecosystem.update            if $github;
+    $panda.cpan.update($panda, :force) if $cpan;
 }
 
 #= Display information about specified modules
