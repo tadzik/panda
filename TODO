@@ -12,3 +12,24 @@
   can survive rebuilding projects that require these settings
 * Merge with panda-niecza?
 * Update README.md to represent current reality
+
+CPAN related TODOs
+
+* panda --cpan --github search inline
+Resources on github:
+  Inline                   1.0.0      use C-code from within Perl
+  Inline::Perl5            *          Use Perl 5 code in a Perl 6 program
+Resources on CPAN:
+  Inline                   v1
+                                      ^-- display description
+
+* let panda --cpan update fetch p6dists.json.gz, p6provides.json.gz and p6binaries.json.gz
+
+* Resources on CPAN:
+  Inline                   v1.2
+  Inline                   v1
+                           ^-- perhaps display as a range or sequence
+
+* panda --cpan install Inline
+Cannot call 'Real'; none of these signatures match:
+:(Mu:U \v: *%_)
