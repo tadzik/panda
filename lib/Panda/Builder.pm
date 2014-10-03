@@ -55,15 +55,15 @@ sub build-order(@module-files) {
 
 method build($where) {
     indir $where, {
-        if "Build.pm".IO.f {
-            @*INC.push($where);
-            GLOBAL::<Build>:delete;
-            require 'Build.pm';
-            if ::('Build').isa(Panda::Builder) {
-                ::('Build').new.build($where);
-            }
-            @*INC.pop;
-        }
+#        if "Build.pm".IO.f {
+#            @*INC.push($where);
+#            GLOBAL::<Build>:delete;
+#            require 'Build.pm';
+#            if ::('Build').isa(Panda::Builder) {
+#                ::('Build').new.build($where);
+#            }
+#            @*INC.pop;
+#        }
         my @files;
         if 'lib'.IO.d {
             @files = find(dir => 'lib', type => 'file').map({
