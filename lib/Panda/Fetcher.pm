@@ -46,7 +46,8 @@ sub local-fetch($from, $to) {
     my $cleanup       = $from.IO.cleanup;
     my $cleanup_chars = $cleanup.chars;
     for eager find(dir => $from).list {
-        my $d = IO::Spec.catpath($_.volume, $_.directory, '');
+        my $io = .IO;
+        my $d  = IO::Spec.catpath($io.volume, $io.directory, '');
         # We need to cleanup the path, because the returned elems are too.
         if ($d.Str.index(~$cleanup) // -1) == 0 {
             $d = $d.substr($cleanup_chars)
@@ -55,8 +56,8 @@ sub local-fetch($from, $to) {
         next if $d ~~ /^ '/'? '.git'/; # skip VCS files
         my $where = "$to/$d";
         mkpath $where;
-        next if $_.IO ~~ :d;
-        $_.copy("$where/{$_.basename}");
+        next if $io ~~ :d;
+        $io.copy("$where/{$io.basename}");
     }
     return True;
 }

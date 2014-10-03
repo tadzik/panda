@@ -66,8 +66,9 @@ method build($where) {
         }
         my @files;
         if 'lib'.IO.d {
-            @files = find(dir => 'lib', type => 'file').grep({
-                $_.basename.substr(0, 1) ne '.'
+            @files = find(dir => 'lib', type => 'file').map({
+                my $io = .IO;
+                $io if $io.basename.substr(0, 1) ne '.';
             });
         }
         my @dirs = @files.map(*.directory).uniq;
