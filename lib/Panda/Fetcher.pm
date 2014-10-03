@@ -43,7 +43,7 @@ sub git-fetch($from, $to) {
 sub local-fetch($from, $to) {
     # We need to eagerify this, as we'll sometimes
     # copy files to a subdirectory of $from
-    my $cleanup       = $from.IO.path.cleanup;
+    my $cleanup       = $from.IO.cleanup;
     my $cleanup_chars = $cleanup.chars;
     for eager find(dir => $from).list {
         my $d = IO::Spec.catpath($_.volume, $_.directory, '');
