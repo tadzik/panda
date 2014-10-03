@@ -56,7 +56,7 @@ sub build-order(@module-files) {
 method build($where) {
     indir $where, {
         if "Build.pm".IO.f {
-            @*INC.push('.');
+            @*INC.push($where);
             GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Builder) {
