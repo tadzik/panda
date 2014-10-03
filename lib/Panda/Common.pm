@@ -23,8 +23,8 @@ sub withp6lib(&what) is export {
     }
     my $sep = $*DISTRO.is-win ?? ';' !! ':';
     %*ENV<PERL6LIB> = join $sep,
-        cwd() ~ '/blib/lib',
-        cwd() ~ '/lib',
+        $*CWD ~ '/blib/lib',
+        $*CWD ~ '/lib',
         %*ENV<PERL6LIB> // '';
     what();
 }
