@@ -7,7 +7,8 @@ sub dirname ($mod as Str) is export {
 
 sub indir ($where, Callable $what) is export {
     mkpath $where;
-    temp $*CWD = $where.IO.absolute;
+#    temp $*CWD = chdir($where);  # ok after 2014.10
+    temp $*CWD = $where.IO.absolute.IO;  # TEMPORARY until 2014.10
     $what()
 }
 
