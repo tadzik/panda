@@ -83,7 +83,7 @@ class Panda {
 
     method install(Panda::Project $bone, $nodeps,
                    $notests, $isdep as Bool) {
-        my $cwd = cwd;
+        my $cwd = $*CWD;
         my $dir = tmpdir();
         self.announce('fetching', $bone);
         unless $bone.metainfo<source-url> {

@@ -14,7 +14,7 @@ my $is_win = $*OS eq 'MSWin32';
 
 my $panda-base;
 my $destdir = %*ENV<DESTDIR>;
-$destdir = "{cwd}/$destdir" if defined($destdir) && $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
+$destdir = "$*CWD/$destdir" if defined($destdir) && $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
 for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
     $destdir  = $prefix;
     $panda-base = "$prefix/panda";
@@ -28,7 +28,7 @@ unless $panda-base.path.w {
 }
 
 my $projects  = slurp 'projects.json.bootstrap';
-   $projects ~~ s:g/_BASEDIR_/{cwd}\/ext/;
+   $projects ~~ s:g/_BASEDIR_/$*CWD\/ext/;
    $projects .= subst('\\', '/', :g) if $is_win;
 
 given open "$panda-base/projects.json", :w {
@@ -39,23 +39,23 @@ given open "$panda-base/projects.json", :w {
 my $env_sep = $is_win ?? ';' !! ':';
 
 %*ENV<PERL6LIB> ~= "{$env_sep}$destdir/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Find/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Shell__Command/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/JSON__Tiny/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/DateTime__Parse/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/HTTP__Status/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Encode/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/File__Temp/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/MIME__Base64/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/IO__Capture__Simple/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/HTTP__UserAgent/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/NativeCall/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Compress__Zlib__Raw/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Compress__Zlib/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/ext/Archive__Tar/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}{cwd}/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/File__Find/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Shell__Command/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/JSON__Tiny/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/DateTime__Parse/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/HTTP__Status/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Encode/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/File__Temp/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/MIME__Base64/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/IO__Capture__Simple/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/HTTP__UserAgent/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/NativeCall/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Compress__Zlib__Raw/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Compress__Zlib/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Archive__Tar/lib";
+%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/lib";
 
-shell "$*EXECUTABLE bin/panda install File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status Encode File::Temp MIME::Base64 IO::Capture::Simple HTTP::UserAgent NativeCall Compress::Zlib::Raw Compress::Zlib Archive::Tar {cwd}";
+shell "$*EXECUTABLE bin/panda install File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status Encode File::Temp MIME::Base64 IO::Capture::Simple HTTP::UserAgent NativeCall Compress::Zlib::Raw Compress::Zlib Archive::Tar $*CWD";
 if "$destdir/panda/src".IO ~~ :d {
     rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
                                 # that src should not be kept at all, but

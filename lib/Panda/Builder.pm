@@ -56,7 +56,7 @@ sub build-order(@module-files) {
 method build($where) {
     indir $where, {
         if "Build.pm".IO.f {
-            @*INC.push('.');
+            @*INC.push($where);
             GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Builder) {
@@ -66,8 +66,9 @@ method build($where) {
         }
         my @files;
         if 'lib'.IO.d {
-            @files = find(dir => 'lib', type => 'file').grep({
-                $_.basename.substr(0, 1) ne '.'
+            @files = find(dir => 'lib', type => 'file').map({
+                my $io = .IO;
+                $io if $io.basename.substr(0, 1) ne '.';
             });
         }
         my @dirs = @files.map(*.directory).uniq;

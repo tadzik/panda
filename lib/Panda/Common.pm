@@ -7,7 +7,8 @@ sub dirname ($mod as Str) is export {
 
 sub indir ($where, Callable $what) is export {
     mkpath $where;
-    temp $*CWD = $where.path.absolute;
+#    temp $*CWD = chdir($where);  # ok after 2014.10
+    temp $*CWD = $where.IO.absolute.IO;  # TEMPORARY until 2014.10
     $what()
 }
 
@@ -23,8 +24,8 @@ sub withp6lib(&what) is export {
     }
     my $sep = $*DISTRO.is-win ?? ';' !! ':';
     %*ENV<PERL6LIB> = join $sep,
-        cwd() ~ '/blib/lib',
-        cwd() ~ '/lib',
+        $*CWD ~ '/blib/lib',
+        $*CWD ~ '/lib',
         %*ENV<PERL6LIB> // '';
     what();
 }
