@@ -35,7 +35,7 @@ class Panda::CPAN {
                 my $p = Panda::Project.new(
                     name         => $dist<name>,
                     auth         => $dist<auth>,
-                    version      => $dist<ver>,
+                    version      => Version.new($dist<ver> eq '*' ?? 0 !! $dist<ver>),
                     dependencies => [],
                     metainfo     => {
                         description => '',
@@ -49,7 +49,7 @@ class Panda::CPAN {
     }
 
     method get-project($p as Str) {
-        @.p6dists.grep({ $^a.name eq $p }).sort({ $^b.version <=> $^a.version })[0]
+        @.p6dists.grep({ $^a.name eq $p }).sort({ $^b.version cmp $^a.version })[0]
     }
 }
 
