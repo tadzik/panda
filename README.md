@@ -66,7 +66,7 @@ You will need a recent TAP::Harness (3.x) to have a prove binary with an -e opti
 
 Panda can be used like:
 
-    panda install Acme::Meow
+    panda install Task::Star
 
 Alternatively, you can install a package from the local disk by supplying its path:
 
