@@ -68,6 +68,8 @@ Panda can be used like:
 
     panda install Task::Star
 
+([Task::Star](https://github.com/tadzik/Task-Star/) is a handy bundle that installs all the modules shipped with the Rakudo Star Perl 6 distribution.)
+
 Alternatively, you can install a package from the local disk by supplying its path:
 
     panda install ./perl6-Acme-Meow
