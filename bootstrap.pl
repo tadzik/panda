@@ -10,7 +10,7 @@ use Shell::Command;
 
 say '==> Bootstrapping Panda';
 
-my $is_win = $*OS eq 'MSWin32';
+my $is_win = $*DISTRO.name eq 'mswin32';
 
 my $panda-base;
 my $destdir = %*ENV<DESTDIR>;
