@@ -17,7 +17,7 @@ my $panda = Panda.new(:ecosystem(make-default-ecosystem));
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     for @modules -> $x {
         try {
-            $panda.resolve($x, :$notests, :$nodeps);
+            $panda.resolve($x, :$notests, :$nodeps, :action<install>);
             CATCH { when X::Panda { say $_.message } }
         };
     }
@@ -41,6 +41,16 @@ multi MAIN ('info', *@modules) {
 #= Search the name/description
 multi MAIN ('search', $pattern) {
     search-projects($panda, $pattern);
+}
+
+#= Download and unpack the distribution and then open the directory with your shell.
+multi MAIN ('look', *@modules) {
+    for @modules -> $x {
+        try {
+            $panda.resolve($x, :notests, :action<look>);
+            CATCH { when X::Panda { say $_.message } }
+        };
+    }
 }
 
 END {
