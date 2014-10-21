@@ -47,7 +47,7 @@ multi MAIN ('search', $pattern) {
 multi MAIN ('look', *@modules) {
     for @modules -> $x {
         try {
-            $panda.resolve($x, :notests, :action<look>);
+            $panda.resolve($x, :notests, :nodeps, :action<look>);
             CATCH { when X::Panda { say $_.message } }
         };
     }
