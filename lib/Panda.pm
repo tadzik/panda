@@ -114,13 +114,13 @@ class Panda {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
         self.announce('building', $bone);
-        unless $_ = $.builder.build($dir) {
+        unless $_ = $.builder.build($dir, :$bone) {
             die X::Panda.new($bone.name, 'build', $_)
         }
         unless $notests {
             self.announce('testing', $bone);
-            unless $_ = $.tester.test($dir) {
-                die X::Panda.new($bone.name, 'test', $_)
+            unless $_ = $.tester.test($dir, :$bone) {
+                die X::Panda.new($bone.name, 'test', $_, :$bone)
             }
         }
         self.announce('installing', $bone);

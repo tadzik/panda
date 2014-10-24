@@ -3,6 +3,7 @@ use Shell::Command;
 use Panda;
 use Panda::Ecosystem;
 use Panda::App;
+use Panda::Reporter;
 
 # default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
@@ -18,7 +19,10 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     for @modules -> $x {
         try {
             $panda.resolve($x, :$notests, :$nodeps, :action<install>);
-            CATCH { when X::Panda { say $_.message } }
+            CATCH { when X::Panda {
+                'test-report'.IO.spurt: Panda::Reporter.new( :bone($_.bone) ).to-json if $_.bone;
+                say $_.message
+            } }
         };
     }
 }

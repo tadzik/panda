@@ -53,7 +53,7 @@ sub build-order(@module-files) {
     return map { %module-to-path{$_} }, @order;
 }
 
-method build($where) {
+method build($where, :$bone) {
     indir $where, {
         if "Build.pm".IO.f {
             @*INC.push($where);
@@ -76,6 +76,7 @@ method build($where) {
 
         my @tobuild = build-order(@files);
         withp6lib {
+            my $output = '';
             for @tobuild -> $file {
                 $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
@@ -88,9 +89,21 @@ method build($where) {
                 #    next;
                 #}
                 say "Compiling $file to {comptarget}";
-                shell("$*EXECUTABLE --target={comptarget} "
-                    ~ "--output=$dest $file")
-                        or fail "Failed building $file";
+                my $cmd    = "$*EXECUTABLE --target={comptarget} "
+                           ~ "--output=$dest $file";
+                $output ~= "$cmd\n";
+                my $handle = open($cmd, :r, :p);
+                for $handle.lines {
+                    .chars && .say;
+                    $output ~= "$_\n";
+                }
+                my $passed = $handle.close-pipe == 0;
+
+                if $bone {
+                    $bone.build-output = $output;
+                    $bone.build-passed = $passed;
+                }
+                fail "Failed building $file" unless $passed;
             }
             1;
         }

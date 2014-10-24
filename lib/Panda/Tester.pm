@@ -1,7 +1,7 @@
 class Panda::Tester;
 use Panda::Common;
 
-method test($where, :$prove-command = 'prove') {
+method test($where, :$bone, :$prove-command = 'prove') {
     indir $where, {
         my Bool $run-default = True;
         if "Build.pm".IO.f {
@@ -17,8 +17,21 @@ method test($where, :$prove-command = 'prove') {
 
         if $run-default && 't'.IO ~~ :d {
             withp6lib {
-                my $c = "$prove-command -e $*EXECUTABLE -r t/";
-                shell $c or fail "Tests failed";
+                my $cmd    = "$prove-command -e $*EXECUTABLE -r t/";
+                my $handle = open($cmd, :r, :p);
+                my $output = '';
+                for $handle.lines {
+                    .chars && .say;
+                    $output ~= "$_\n";
+                }
+                my $passed = $handle.close-pipe == 0;
+
+                if $bone {
+                    $bone.test-output = $output;
+                    $bone.test-passed = $passed;
+                }
+
+                fail "Tests failed" unless $passed;
             }
         }
     };

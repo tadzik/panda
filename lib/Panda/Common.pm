@@ -57,12 +57,13 @@ class X::Panda is Exception {
     has $.module is rw;
     has $.stage;
     has $.description;
+    has $.bone;
 
-    method new($module, $stage, $description is copy) {
+    method new($module, $stage, $description is copy, :$bone) {
         if $description ~~ Failure {
             $description = $description.exception.message
         }
-        self.bless(:$module, :$stage, :$description)
+        self.bless(:$module, :$stage, :$description, :$bone)
     }
 
     method message {
