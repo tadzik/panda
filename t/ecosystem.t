@@ -8,7 +8,7 @@ my $installed = Panda::Project::installed;
 
 't/fakestate'.path.copy('REMOVEME');
 my $a = Panda::Ecosystem.new(
-    statefile    => "{cwd}/REMOVEME",
+    statefile    => "$*CWD/REMOVEME",
     projectsfile => 't/fakeprojects'
 ) but role {
     method flush-states { }
@@ -39,6 +39,6 @@ is $a.suggest-project("frobfrob"), "Frob::Frob", 'suggestions 3';
 is $a.suggest-project("Adventure::Engine"), "Adventure-Engine", 'suggestions 4';
 is $a.suggest-project("Adventure_engine"), "Adventure-Engine", 'suggestions 5';
 
-unlink "{cwd}/REMOVEME";
+unlink "$*CWD/REMOVEME";
 
 # vim: ft=perl6

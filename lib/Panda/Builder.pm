@@ -71,7 +71,7 @@ method build($where) {
                 $io if $io.basename.substr(0, 1) ne '.';
             });
         }
-        my @dirs = @files.map(*.directory).uniq;
+        my @dirs = @files.map(*.dirname).uniq;
         mkpath "blib/$_" for @dirs;
 
         my @tobuild = build-order(@files);
@@ -79,7 +79,7 @@ method build($where) {
             for @tobuild -> $file {
                 $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
-                my $dest = "blib/{$file.directory}/"
+                my $dest = "blib/{$file.dirname}/"
                          ~ $file.basename ~ '.' ~ compsuffix ;
                 #note "$dest modified: ", $dest.IO.modified;
                 #note "$file modified: ", $file.IO.modified;
