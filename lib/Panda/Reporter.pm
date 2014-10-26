@@ -2,6 +2,28 @@ class Panda::Reporter;
 
 has $.bone is rw;
 
+method submit {
+    if %*ENV<PANDA_SUBMIT_TESTREPORTS> {
+        my $s;
+        my $to-send = '';
+        if %*ENV<http_proxy> {
+            my ($host, $port) = %*ENV<http_proxy>.split('/').[2].split(':');
+            $s                = IO::Socket::INET.new( :$host, :port($port.Int) );
+            $to-send          = "POST http://127.0.0.1:3000/report HTTP/1.1\nHost: localhost\nConnection: Close";
+        }
+        else {
+            $s       = IO::Socket::INET.new(:host<127.0.0.1>, :port(3000));
+            $to-send = "POST /report HTTP/1.0";
+        }
+
+        $s.send($to-send ~ "\nContent-Type: application/json\r\n\r\n" ~ self.to-json);
+
+        CATCH {
+            die "Could not submit test report: {$_.message}"
+        }
+    }
+}
+
 method to-json {
     to-json {
         :name($!bone.name),

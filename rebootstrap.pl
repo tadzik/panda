@@ -7,6 +7,7 @@ BEGIN {
 use lib 'ext/File__Find/lib/';
 use lib 'ext/Shell__Command/lib';
 use Shell::Command;
+%*ENV<PANDA_SUBMIT_TESTREPORTS>:delete;
 
 # Find old state file
 my ($prefix, $state-file);

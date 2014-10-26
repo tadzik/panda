@@ -4,6 +4,7 @@ use Panda::Fetcher;
 use Panda::Builder;
 use Panda::Tester;
 use Panda::Installer;
+use Panda::Reporter;
 use Shell::Command;
 use JSON::Tiny;
 
@@ -129,11 +130,13 @@ class Panda {
                        !! Panda::Project::State::installed;
         $.ecosystem.project-set-state($bone, $s);
         self.announce('success', $bone);
+        Panda::Reporter.new( :$bone ).submit;
 
         chdir $cwd;
         rm_rf $dir;
 
         CATCH {
+            Panda::Reporter.new( :$bone ).submit;
             chdir $cwd;
             rm_rf $dir;
         }
