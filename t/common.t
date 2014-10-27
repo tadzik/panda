@@ -3,7 +3,7 @@ use Test;
 use Panda::Common;
 
 plan 2;
-my $cwd = cwd;
+my $cwd = $*CWD;
 
 dies_ok { indir 't', { die "OH NOEZ" } }, '&indir passes exceptions on';
-is cwd(), $cwd, 'indir rewinds cwd even when exceptions were thrown';
+is $*CWD, $cwd, 'indir rewinds cwd even when exceptions were thrown';

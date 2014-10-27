@@ -7,14 +7,14 @@ use Panda::Project;
 sub make-default-ecosystem is export {
     my $pandadir;
     my $destdir = %*ENV<DESTDIR>;
-    $destdir = "{cwd}/$destdir" if defined($destdir) &&  !$*DISTRO.is-win && $destdir !~~ /^ '/' /;
+    $destdir = "$*CWD/$destdir" if defined($destdir) && !$*DISTRO.is-win && $destdir !~~ /^ '/' /;
     for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
         $destdir  = $prefix;
-        $pandadir = "$prefix/panda";
-        try mkpath $pandadir unless $pandadir.IO ~~ :d;
-        last if $pandadir.path.w
+        $pandadir = "$prefix/panda".IO;
+        try mkpath $pandadir unless $pandadir ~~ :d;
+        last if $pandadir.w;
     }
-    unless $pandadir.path.w {
+    unless $pandadir.w {
         die "Found no writable directory into which panda could be installed";
     }
 
