@@ -34,7 +34,7 @@ sub find (:$dir!, :$name, :$type, Bool :$recursive = True,
 
     my @targets = dir($dir);
     my $list = gather while @targets {
-        my $elem = (@targets.shift).IO;
+        my $elem = @targets.shift;
         take $elem if checkrules($elem, { :$name, :$type });
         if $recursive {
             if $elem.IO ~~ :d {
