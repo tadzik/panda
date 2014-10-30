@@ -16,7 +16,9 @@ method submit {
             $to-send = "POST /report HTTP/1.0";
         }
 
-        $s.send($to-send ~ "\nContent-Type: application/json\r\n\r\n" ~ self.to-json);
+        my $buf = Buf.new(self.to-json.ords);
+        $s.send("$to-send\nContent-Type: application/json\r\nContent-Length: $buf.elems()\r\n\r\n");
+        $s.write($buf);
 
         CATCH {
             die "Could not submit test report: {$_.message}"
