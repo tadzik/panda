@@ -97,7 +97,7 @@ method build($where, :$bone) {
                     .chars && .say;
                     $output ~= "$_\n";
                 }
-                my $passed = $handle.close-pipe == 0;
+                my $passed = $handle.close-pipe.status == 0;
 
                 if $bone {
                     $bone.build-output = $output;

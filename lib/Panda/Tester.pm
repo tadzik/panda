@@ -24,7 +24,7 @@ method test($where, :$bone, :$prove-command = 'prove') {
                     .chars && .say;
                     $output ~= "$_\n";
                 }
-                my $passed = $handle.close-pipe == 0;
+                my $passed = $handle.close-pipe.status == 0;
 
                 if $bone {
                     $bone.test-output = $output;
