@@ -18,13 +18,13 @@ method test($where, :$bone, :$prove-command = 'prove') {
         if $run-default && 't'.IO ~~ :d {
             withp6lib {
                 my $cmd    = "$prove-command -e $*EXECUTABLE -r t/";
-                my $handle = open($cmd, :r, :p);
+                my $handle = pipe($cmd, :r);
                 my $output = '';
                 for $handle.lines {
                     .chars && .say;
                     $output ~= "$_\n";
                 }
-                my $passed = $handle.close-pipe.status == 0;
+                my $passed = $handle.close.status == 0;
 
                 if $bone {
                     $bone.test-output = $output;

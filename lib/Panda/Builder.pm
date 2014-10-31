@@ -92,12 +92,12 @@ method build($where, :$bone) {
                 my $cmd    = "$*EXECUTABLE --target={comptarget} "
                            ~ "--output=$dest $file";
                 $output ~= "$cmd\n";
-                my $handle = open($cmd, :r, :p);
+                my $handle = pipe($cmd, :r);
                 for $handle.lines {
                     .chars && .say;
                     $output ~= "$_\n";
                 }
-                my $passed = $handle.close-pipe.status == 0;
+                my $passed = $handle.close.status == 0;
 
                 if $bone {
                     $bone.build-output = $output;
