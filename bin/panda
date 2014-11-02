@@ -13,7 +13,7 @@ my $panda = Panda.new(:ecosystem(make-default-ecosystem));
 # allow switches after positionals
 @*ARGS = @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
 
-#= Install the specified modules
+#| Install the specified modules
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     for @modules -> $x {
         try {
@@ -23,27 +23,27 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     }
 }
 
-#= List all available modules
+#| List all available modules
 multi MAIN ('list', Bool :$installed, Bool :$verbose) {
     listprojects($panda, :$installed, :$verbose);
 }
 
-#= Update the module database
+#| Update the module database
 multi MAIN ('update') {
     $panda.ecosystem.update;
 }
 
-#= Display information about specified modules
+#| Display information about specified modules
 multi MAIN ('info', *@modules) {
     projectinfo($panda, @modules);
 }
 
-#= Search the name/description
+#| Search the name/description
 multi MAIN ('search', $pattern) {
     search-projects($panda, $pattern);
 }
 
-#= Download and unpack the distribution and then open the directory with your shell.
+#| Download and unpack the distribution and then open the directory with your shell.
 multi MAIN ('look', *@modules) {
     for @modules -> $x {
         try {
