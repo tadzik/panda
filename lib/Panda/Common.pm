@@ -7,7 +7,7 @@ sub dirname ($mod as Str) is export {
 
 sub indir ($where, Callable $what) is export {
     mkpath $where;
-    temp $*CWD = $where.path.absolute;
+    temp $*CWD = chdir($where);
     $what()
 }
 
@@ -21,36 +21,17 @@ sub withp6lib(&what) is export {
             %*ENV<PERL6LIB>:delete;
         }
     }
-    my $sep = $*OS eq 'MSWin32' ?? ';' !! ':';
+    my $sep = $*DISTRO.is-win ?? ';' !! ':';
     %*ENV<PERL6LIB> = join $sep,
-        cwd() ~ '/blib/lib',
-        cwd() ~ '/lib',
-        %*ENV<PERL6LIB> // '';
+        $*CWD ~ '/blib/lib',
+        $*CWD ~ '/lib',
+        %*ENV<PERL6LIB> // ();
     what();
 }
 
-sub compsuffix is export {
-    $*VM.name eq 'moar'
-        ?? 'moarvm'
-        !! comptarget
-}
+sub compsuffix is export { state $ = $*VM.precomp-ext }
 
-sub comptarget is export {
-    given $*VM.name {
-        when 'parrot' {
-            return 'pir';
-        }
-        when 'jvm' {
-            return 'jar';
-        }
-        when 'moar' {
-            return 'mbc';
-        }
-        default {
-            die($_ ~ ' is an unsupported backend VM.');
-        }
-    }
-}
+sub comptarget is export { state $ = $*VM.precomp-target }
 
 class X::Panda is Exception {
     has $.module is rw;

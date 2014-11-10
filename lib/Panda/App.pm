@@ -1,5 +1,47 @@
 module Panda::App;
+use Shell::Command;
+use Panda::Ecosystem;
 use Panda::Project;
+
+# initialize the Panda object
+sub make-default-ecosystem is export {
+    my $pandadir;
+    my $destdir = %*ENV<DESTDIR>;
+    $destdir = "$*CWD/$destdir" if defined($destdir) && !$*DISTRO.is-win && $destdir !~~ /^ '/' /;
+    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
+        $destdir  = $prefix;
+        $pandadir = "$prefix/panda".IO;
+        try mkpath $pandadir unless $pandadir ~~ :d;
+        last if $pandadir.w;
+    }
+    unless $pandadir.w {
+        die "Found no writable directory into which panda could be installed";
+    }
+
+    my @extra-statefiles;
+    unless $destdir eq %*CUSTOM_LIB<site> {
+        for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
+            unless $destdir eq $prefix {
+                @extra-statefiles.push("$prefix/panda/state");
+            }
+        }
+    }
+
+    # Add the path we're installing to @*INC
+    #
+    # If we're installing to a custom destdir or we're installing to a standard
+    # dir that did not exist, it isn't in @*INC (which will make Build.pm
+    # files that depend on the modules we just installed break).
+    #
+    # If this is already in @*INC, it doesn't harm anything to re-add it.
+    @*INC.push($destdir~'/lib');
+
+    return Panda::Ecosystem.new(
+        statefile    => "$pandadir/state",
+        projectsfile => "$pandadir/projects.json",
+        extra-statefiles => @extra-statefiles
+    );
+}
 
 sub listprojects($panda, :$installed, :$verbose) is export {
     my $es        = $panda.ecosystem;

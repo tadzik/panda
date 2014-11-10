@@ -8,76 +8,53 @@ use Panda::App;
 if %*ENV<PANDA_DEFAULT_OPTS> {
     @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ (@*ARGS ?? ' ' ~ @*ARGS !! '');
 }
-
-# initialize the Panda object
-my $panda;
-{
-    my $pandadir;
-    my $destdir = %*ENV<DESTDIR>;
-    $destdir = "{cwd}/$destdir" if defined($destdir) &&  $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
-    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-        $destdir  = $prefix;
-        $pandadir = "$prefix/panda";
-        try mkpath $pandadir unless $pandadir.IO ~~ :d;
-        last if $pandadir.path.w
-    }
-    unless $pandadir.path.w {
-        die "Found no writable directory into which panda could be installed";
-    }
-
-    my @extra-statefiles;
-    unless $destdir eq %*CUSTOM_LIB<site> {
-        for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-            unless $destdir eq $prefix {
-                @extra-statefiles.push("$prefix/panda/state");
-            }
-        }
-    }
-
-    my $ecosystem = Panda::Ecosystem.new(
-        statefile    => "$pandadir/state",
-        projectsfile => "$pandadir/projects.json",
-        extra-statefiles => @extra-statefiles
-    );
-
-    $panda = Panda.new(:$ecosystem);
-}
+my $panda = Panda.new(:ecosystem(make-default-ecosystem));
 
 # allow switches after positionals
 @*ARGS = @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
 
-#= Install the specified modules
+#| Install the specified modules
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     for @modules -> $x {
         try {
-            $panda.resolve($x, :$notests, :$nodeps);
+            $panda.resolve($x, :$notests, :$nodeps, :action<install>);
             CATCH { when X::Panda { say $_.message } }
         };
     }
 }
 
-#= List all available modules
+#| List all available modules
 multi MAIN ('list', Bool :$installed, Bool :$verbose) {
     listprojects($panda, :$installed, :$verbose);
 }
 
-#= Update the module database
+#| Update the module database
 multi MAIN ('update') {
     $panda.ecosystem.update;
 }
 
-#= Display information about specified modules
+#| Display information about specified modules
 multi MAIN ('info', *@modules) {
     projectinfo($panda, @modules);
 }
 
-#= Search the name/description
+#| Search the name/description
 multi MAIN ('search', $pattern) {
     search-projects($panda, $pattern);
 }
 
+#| Download and unpack the distribution and then open the directory with your shell.
+multi MAIN ('look', *@modules) {
+    for @modules -> $x {
+        try {
+            $panda.resolve($x, :notests, :nodeps, :action<look>);
+            CATCH { when X::Panda { say $_.message } }
+        };
+    }
+}
+
 END {
-    rm_rf '.work' if '.work'.IO.e;
+    rm_rf '.panda-work' if '.panda-work'.IO.e;
 }
 
 # vim: ft=perl6

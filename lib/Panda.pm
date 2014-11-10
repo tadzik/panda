@@ -9,7 +9,7 @@ use JSON::Tiny;
 
 sub tmpdir {
     state $i = 0;
-    ".work/{time}_{$i++}".path.absolute
+    ".panda-work/{time}_{$i++}".path.absolute
 }
 
 class Panda {
@@ -66,7 +66,7 @@ class Panda {
             mkpath $tmpdir;
             $.fetcher.fetch($proj, $tmpdir);
             my $mod = from-json slurp "$tmpdir/META.info";
-            $mod<source-url>  = $tmpdir;
+            $mod<source-url>  = ~$tmpdir;
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
@@ -77,9 +77,34 @@ class Panda {
         return False;
     }
 
+    method look(Panda::Project $bone) {
+        my $dir = tmpdir();
+
+        self.announce('fetching', $bone);
+        unless $bone.metainfo<source-url> {
+            die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
+        }
+        unless $_ = $.fetcher.fetch($bone.metainfo<source-url>, $dir) {
+            die X::Panda.new($bone.name, 'fetch', $_)
+        }
+
+        my $shell = %*ENV<SHELL>;
+        $shell ||= %*ENV<COMSPEC>
+            if $*DISTRO.name eq 'mswin32';
+
+        if $shell {
+
+            my $*CWD = $dir;
+            self.announce("Entering $dir with $shell\n");
+            shell $shell or fail "Unable to invoke shell: $shell"
+        } else {
+            self.announce("You don't seem to have a SHELL");
+        }
+    }
+
     method install(Panda::Project $bone, $nodeps,
                    $notests, $isdep as Bool) {
-        my $cwd = cwd;
+        my $cwd = $*CWD;
         my $dir = tmpdir();
         self.announce('fetching', $bone);
         unless $bone.metainfo<source-url> {
@@ -131,9 +156,10 @@ class Panda {
         return @deps;
     }
 
-    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests) {
+    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action='install') {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
+        mkpath $tmpdir;
         my $p = self.project-from-local($proj);
         $p ||= self.project-from-git($proj, $tmpdir);
         if $p {
@@ -159,7 +185,11 @@ class Panda {
             };
             self.install($_, $nodeps, $notests, 1) for @deps;
         }
-        self.install($bone, $nodeps, $notests, 0);
+
+        given $action {
+            when 'install' { self.install($bone, $nodeps, $notests, 0); }
+            when 'look'    { self.look($bone) };
+        }
     }
 }
 

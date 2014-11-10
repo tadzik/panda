@@ -6,7 +6,7 @@ use Shell::Command;
 plan 8;
 
 my $src  = 'testmodules/compiled__module';
-my $dest = "{cwd}/removeme";
+my $dest = "$*CWD/removeme";
 
 lives_ok { Panda::Installer.install($src, $dest) };
 

@@ -25,7 +25,8 @@ sub topo-sort(@modules, %dependencies) {
 }
 
 sub path-to-module-name($path) {
-    $path.subst(/^'lib/'/, '').subst(/^'lib6/'/, '').subst(/\.pm6?$/, '').subst('/', '::', :g);
+    my $slash = / [ '/' | '\\' ]  /;
+    $path.subst(/^'lib'<$slash>/, '').subst(/^'lib6'<$slash>/, '').subst(/\.pm6?$/, '').subst($slash, '::', :g);
 }
 
 sub build-order(@module-files) {
@@ -55,7 +56,7 @@ sub build-order(@module-files) {
 method build($where) {
     indir $where, {
         if "Build.pm".IO.f {
-            @*INC.push('.');
+            @*INC.push($where);
             GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Builder) {
@@ -65,11 +66,12 @@ method build($where) {
         }
         my @files;
         if 'lib'.IO.d {
-            @files = find(dir => 'lib', type => 'file').grep({
-                $_.basename.substr(0, 1) ne '.'
+            @files = find(dir => 'lib', type => 'file').map({
+                my $io = .IO;
+                $io if $io.basename.substr(0, 1) ne '.';
             });
         }
-        my @dirs = @files.map(*.directory).uniq;
+        my @dirs = @files.map(*.dirname).uniq;
         mkpath "blib/$_" for @dirs;
 
         my @tobuild = build-order(@files);
@@ -77,8 +79,8 @@ method build($where) {
             for @tobuild -> $file {
                 $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
-                my $dest = "blib/{$file.directory}/"
-                         ~ "{$file.basename.subst(/\.pm6?$/, ".{compsuffix}" )}";
+                my $dest = "blib/{$file.dirname}/"
+                         ~ $file.basename ~ '.' ~ compsuffix ;
                 #note "$dest modified: ", $dest.IO.modified;
                 #note "$file modified: ", $file.IO.modified;
                 #if $dest.IO.modified >= $file.IO.modified {
