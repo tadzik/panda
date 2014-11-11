@@ -38,6 +38,7 @@ given open "$panda-base/projects.json", :w {
 
 my $env_sep = $is_win ?? ';' !! ':';
 
+%*ENV<RAKUDOLIB> = "$destdir.^name()=$destdir" if $destdir.^can('install');
 %*ENV<PERL6LIB> ~= "{$env_sep}$destdir/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/File__Find/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Shell__Command/lib";
