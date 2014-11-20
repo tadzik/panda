@@ -35,27 +35,27 @@ sub strip-pod(@in is rw, Str :$in-block? = '') {
     my $in-para = False;
     while @in.elems {
         my $line = @in.shift;
+
         if $in-para && $line ~~ /^\s*$/ {
+            # End of paragraph
             $in-para = False;
             @out.push: $line;
             next;
         }
-        if $in-block && $line ~~ /^\s* \=end $in-block / {
+        if $in-block && $line ~~ /^\s* '=end' \s* $in-block / {
+            # End of block
             @out.push: '';
             last;
         }
 
-        if $line ~~ /^\s* \=begin \s* ([\w\-]+)/ && $0 -> $block-type {
+        if $line ~~ /^\s* '=begin' \s+ (<[\w\-]>+)/ && $0 -> $block-type {
+            # Start of block
             $in-para = False;
             @out.push: '', |strip-pod(@in, :in-block($block-type.Str));
             next;
         }
-        if $line ~~ /^\s* \=for \s* [\w\-]+/ {
-            $in-para = True;
-            @out.push: '';
-            next;
-        }
-        if $line ~~ /^\s* \=\w+(\s|$)/ {
+        if $line ~~ /^\s* '='\w<[\w-]>* (\s|$)/ {
+            # Start of paragraph
             $in-para = True;
             @out.push: '';
             next;
