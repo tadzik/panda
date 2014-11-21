@@ -20,9 +20,9 @@ for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
     $panda-base = "$prefix/panda";
     try mkdir $destdir;
     try mkpath $panda-base unless $panda-base.IO ~~ :d;
-    last if $panda-base.path.w
+    last if $panda-base.IO.w
 }
-unless $panda-base.path.w {
+unless $panda-base.IO.w {
     warn "panda-base: { $panda-base.perl }";
     die "Found no writable directory into which panda could be installed";
 }

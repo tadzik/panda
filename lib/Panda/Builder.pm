@@ -71,7 +71,7 @@ method build($where) {
                 $io if $io.basename.substr(0, 1) ne '.';
             });
         }
-        my @dirs = @files.map(*.dirname).uniq;
+        my @dirs = @files.map(*.dirname).unique;
         mkpath "blib/$_" for @dirs;
 
         my @tobuild = build-order(@files);

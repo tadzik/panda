@@ -11,7 +11,7 @@ use Shell::Command;
 # Find old state file
 my ($prefix, $state-file);
 for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) {
-    if "$_/panda/state".path.e {
+    if "$_/panda/state".IO.e {
         $prefix = $_;
         $state-file = "$_/panda/state";
     }

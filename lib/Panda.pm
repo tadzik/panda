@@ -9,7 +9,7 @@ use JSON::Tiny;
 
 sub tmpdir {
     state $i = 0;
-    ".panda-work/{time}_{$i++}".path.absolute
+    ".panda-work/{time}_{$i++}".IO.absolute
 }
 
 class Panda {
@@ -178,7 +178,7 @@ class Panda {
             die "Project $proj not found in the ecosystem";
         }
         unless $nodeps {
-            my @deps = self.get-deps($bone).uniq;
+            my @deps = self.get-deps($bone).unique;
             @deps.=grep: {
                 $.ecosystem.project-get-state($_)
                     == Panda::Project::absent
