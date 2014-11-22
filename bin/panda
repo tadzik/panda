@@ -44,7 +44,7 @@ multi MAIN ('search', $pattern) {
 }
 
 #= Test and install all known distributions
-multi MAIN ('smoke', :$exclude = '') {
+multi MAIN ('smoke', :$exclude = 'panda') {
     my @exclude = $exclude.split(',');
     my @projects = $panda.ecosystem.project-list;
     for @projects -> $p {
