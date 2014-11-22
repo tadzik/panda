@@ -43,6 +43,22 @@ multi MAIN ('search', $pattern) {
     search-projects($panda, $pattern);
 }
 
+#| Test and install all known distributions
+multi MAIN ('smoke', :$exclude = 'panda') {
+    my @exclude = $exclude.split(',');
+    my @projects = $panda.ecosystem.project-list;
+    for @projects -> $p {
+        next if $p ~~ any @exclude;
+        @exclude.push: $p;
+        try {
+            $panda.resolve($p, :action<install>);
+            CATCH {
+                default { }
+            }
+        }
+    }
+}
+
 #| Download and unpack the distribution and then open the directory with your shell.
 multi MAIN ('look', *@modules) {
     for @modules -> $x {
