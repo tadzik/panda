@@ -2,5 +2,5 @@
 use Panda::Installer;
 
 sub MAIN($from = '.', $to?) {
-    Panda::Installer.new.install($from.path.absolute, $to);
+    exit Panda::Installer.new.install($from.path.absolute, $to) ?? 0 !! 1;
 }
