@@ -9,6 +9,7 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
     @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ (@*ARGS ?? ' ' ~ @*ARGS !! '');
 }
 my $panda = Panda.new(:ecosystem(make-default-ecosystem));
+my %failed;
 
 # allow switches after positionals
 @*ARGS = @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
@@ -16,10 +17,8 @@ my $panda = Panda.new(:ecosystem(make-default-ecosystem));
 #| Install the specified modules
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     for @modules -> $x {
-        try {
-            $panda.resolve($x, :$notests, :$nodeps, :action<install>);
-            CATCH { when X::Panda { say $_.message } }
-        };
+        $panda.resolve($x, :$notests, :$nodeps, :action<install>);
+        CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
 }
 
@@ -43,18 +42,39 @@ multi MAIN ('search', $pattern) {
     search-projects($panda, $pattern);
 }
 
+#| Test and install all known distributions
+multi MAIN ('smoke', :$exclude = 'panda') {
+    my @exclude = $exclude.split(',');
+    my @projects = $panda.ecosystem.project-list;
+    for @projects -> $p {
+        next if $p ~~ any @exclude;
+        @exclude.push: $p;
+        try {
+            $panda.resolve($p, :action<install>);
+            CATCH {
+                default { }
+            }
+        }
+    }
+}
+
 #| Download and unpack the distribution and then open the directory with your shell.
 multi MAIN ('look', *@modules) {
     for @modules -> $x {
-        try {
-            $panda.resolve($x, :notests, :nodeps, :action<look>);
-            CATCH { when X::Panda { say $_.message } }
-        };
+        $panda.resolve($x, :notests, :nodeps, :action<look>);
+        CATCH { when X::Panda { %failed{$x}.push($_)  && say $_ } };
     }
 }
 
 END {
     rm_rf '.panda-work' if '.panda-work'.IO.e;
+
+    for %failed.kv -> $source,$messages {
+        FIRST say "\nFailure Summary\n----------------";
+        say "$source",("\n\t*$_" for $messages.list);
+        LAST exit 1;
+    }
+    exit 0;
 }
 
 # vim: ft=perl6

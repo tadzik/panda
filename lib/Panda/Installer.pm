@@ -20,7 +20,7 @@ method default-destdir {
     }
     for grep(*.defined, $ret, %*CUSTOM_LIB<site home>) -> $prefix {
         $ret = $prefix;
-        last if $ret.path.w;
+        last if $ret.IO.w;
     }
     return $ret;
 }

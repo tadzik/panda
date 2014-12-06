@@ -29,6 +29,43 @@ sub path-to-module-name($path) {
     $path.subst(/^'lib'<$slash>/, '').subst(/^'lib6'<$slash>/, '').subst(/\.pm6?$/, '').subst($slash, '::', :g);
 }
 
+#| Replace Pod lines with empty lines.
+sub strip-pod(@in is rw, Str :$in-block? = '') {
+    my @out;
+    my $in-para = False;
+    while @in.elems {
+        my $line = @in.shift;
+
+        if $in-para && $line ~~ /^\s*$/ {
+            # End of paragraph
+            $in-para = False;
+            @out.push: $line;
+            next;
+        }
+        if $in-block && $line ~~ /^\s* '=end' \s* $in-block / {
+            # End of block
+            @out.push: '';
+            last;
+        }
+
+        if $line ~~ /^\s* '=begin' \s+ (<[\w\-]>+)/ && $0 -> $block-type {
+            # Start of block
+            $in-para = False;
+            @out.push: '', |strip-pod(@in, :in-block($block-type.Str));
+            next;
+        }
+        if $line ~~ /^\s* '='\w<[\w-]>* (\s|$)/ {
+            # Start of paragraph
+            $in-para = True;
+            @out.push: '';
+            next;
+        }
+
+        @out.push: ($in-para || $in-block) ?? '' !! $line;
+    }
+    @out;
+}
+
 sub build-order(@module-files) {
     my @modules = map { path-to-module-name($_) }, @module-files;
     my %module-to-path = @modules Z=> @module-files;
@@ -37,8 +74,8 @@ sub build-order(@module-files) {
         my $module = path-to-module-name($module-file);
         %usages_of{$module} = [];
         next unless $module-file.Str ~~ /\.pm6?$/; # don't try to "parse" non-perl files
-        my $fh = open($module-file.Str, :r);
-        for $fh.lines() {
+        my @lines = strip-pod(slurp($module-file.Str).lines);
+        for @lines {
             if /^\s* ['use'||'need'||'require'] \s+ (\w+ ['::' \w+]*)/ && $0 -> $used {
                 next if $used eq 'v6';
                 next if $used eq 'MONKEY_TYPING';
@@ -46,14 +83,13 @@ sub build-order(@module-files) {
                 %usages_of{$module}.push(~$used);
             }
         }
-        $fh.close;
     }
     my @order = topo-sort(@modules, %usages_of);
 
     return map { %module-to-path{$_} }, @order;
 }
 
-method build($where) {
+method build($where, :$bone) {
     indir $where, {
         if "Build.pm".IO.f {
             @*INC.push($where);
@@ -71,11 +107,12 @@ method build($where) {
                 $io if $io.basename.substr(0, 1) ne '.';
             });
         }
-        my @dirs = @files.map(*.dirname).uniq;
+        my @dirs = @files.map(*.dirname).unique;
         mkpath "blib/$_" for @dirs;
 
         my @tobuild = build-order(@files);
         withp6lib {
+            my $output = '';
             for @tobuild -> $file {
                 $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
@@ -88,9 +125,21 @@ method build($where) {
                 #    next;
                 #}
                 say "Compiling $file to {comptarget}";
-                shell("$*EXECUTABLE --target={comptarget} "
-                    ~ "--output=$dest $file")
-                        or fail "Failed building $file";
+                my $cmd    = "$*EXECUTABLE --target={comptarget} "
+                           ~ "--output=$dest $file";
+                $output ~= "$cmd\n";
+                my $handle = pipe($cmd, :r);
+                for $handle.lines {
+                    .chars && .say;
+                    $output ~= "$_\n";
+                }
+                my $passed = $handle.close.status == 0;
+
+                if $bone {
+                    $bone.build-output = $output;
+                    $bone.build-passed = $passed;
+                }
+                fail "Failed building $file" unless $passed;
             }
             1;
         }

@@ -6,7 +6,7 @@ plan 14;
 my $absent    = Panda::Project::absent;
 my $installed = Panda::Project::installed;
 
-'t/fakestate'.path.copy('REMOVEME');
+'t/fakestate'.IO.copy('REMOVEME');
 my $a = Panda::Ecosystem.new(
     statefile    => "$*CWD/REMOVEME",
     projectsfile => 't/fakeprojects'
