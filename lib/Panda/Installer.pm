@@ -47,7 +47,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
             if 'bin'.IO ~~ :d {
                 @files.push: find(dir => 'bin', type => 'file').list.grep( -> $bin {
                     next if $bin.basename.substr(0, 1) eq '.';
-                    next if $*OS ne 'MSWin32' and $bin.basename ~~ /\.bat$/;
+                    next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;
                     $bin
                 } )
             }
