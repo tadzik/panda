@@ -66,7 +66,9 @@ You will need a recent TAP::Harness (3.x) to have a prove binary with an -e opti
 
 Panda can be used like:
 
-    panda install Acme::Meow
+    panda install Task::Star
+
+([Task::Star](https://github.com/tadzik/Task-Star/) is a handy bundle that installs all the modules shipped with the Rakudo Star Perl 6 distribution.)
 
 Alternatively, you can install a package from the local disk by supplying its path:
 

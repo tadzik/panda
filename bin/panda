@@ -36,54 +36,81 @@ my $panda;
 
     $panda = Panda.new(:ecosystem(make-default-ecosystem), :$mirrors, :$cpan);
 }
+my %failed;
 
 # allow switches after positionals
 @*ARGS = @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
 
-#= Install the specified modules
+#| Install the specified modules
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$cpan, Bool :$github is copy) {
     $github = True unless $cpan;
     for @modules -> $x {
-        try {
-            $panda.resolve($x, :$notests, :$nodeps, :$cpan, :$github);
-            CATCH {
-                default { say $_.message }
-                #~ when X::Panda { say $_.message }
-            }
-        };
+        $panda.resolve($x, :$notests, :$nodeps, :$cpan, :$github);
+        CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
 }
 
-#= List all available modules
+#| List all available modules
 multi MAIN ('list', Bool :$installed, Bool :$verbose) {
     listprojects($panda, :$installed, :$verbose);
 }
 
-#= Update the module database
+#| Update the module database
 multi MAIN ('update', Bool :$cpan, Bool :$github is copy) {
     $github = True unless $cpan;
     $panda.ecosystem.update            if $github;
     $panda.cpan.update($panda, :force) if $cpan;
 }
 
-#= Display information about specified modules
+#| Display information about specified modules
 multi MAIN ('info', *@modules) {
     projectinfo($panda, @modules);
 }
 
-#= Search the name/description
+#| Search the name/description
 multi MAIN ('search', $pattern, Bool :$cpan, Bool :$github is copy) {
     $github = True unless $cpan;
     search-projects($panda, $pattern, :$cpan, :$github);
 }
 
-#= Ping CPAN servers to get nearest neighbours
+#| Ping CPAN servers to get nearest neighbours
 multi MAIN ('probe-mirrors', $limit = Inf) {
     $panda.mirrors.probe($panda);
 }
 
+#| Test and install all known distributions
+multi MAIN ('smoke', :$exclude = 'panda') {
+    my @exclude = $exclude.split(',');
+    my @projects = $panda.ecosystem.project-list;
+    for @projects -> $p {
+        next if $p ~~ any @exclude;
+        @exclude.push: $p;
+        try {
+            $panda.resolve($p, :action<install>);
+            CATCH {
+                default { }
+            }
+        }
+    }
+}
+
+#| Download and unpack the distribution and then open the directory with your shell.
+multi MAIN ('look', *@modules) {
+    for @modules -> $x {
+        $panda.resolve($x, :notests, :nodeps, :action<look>);
+        CATCH { when X::Panda { %failed{$x}.push($_)  && say $_ } };
+    }
+}
+
 END {
     rm_rf '.panda-work' if '.panda-work'.IO.e;
+
+    for %failed.kv -> $source,$messages {
+        FIRST say "\nFailure Summary\n----------------";
+        say "$source",("\n\t*$_" for $messages.list);
+        LAST exit 1;
+    }
+    exit 0;
 }
 
 # vim: ft=perl6

@@ -19,7 +19,7 @@ method default-destdir {
     }
     for grep(*.defined, $ret, %*CUSTOM_LIB<site home>) -> $prefix {
         $ret = $prefix;
-        last if $ret.path.w;
+        last if $ret.IO.w;
     }
     return $ret;
 }
@@ -39,7 +39,7 @@ method install($from, $to? is copy) {
             for self.sort-lib-contents(@lib) -> $i {
                 next if $i.basename.substr(0, 1) eq '.';
                 # .substr(5) to skip 'blib/'
-                mkpath "$to/{$i.directory.substr(5)}";
+                mkpath "$to/{$i.dirname.substr(5)}";
                 copy($i, "$to/{$i.substr(5)}");
             }
         }
@@ -47,7 +47,7 @@ method install($from, $to? is copy) {
             for find(dir => 'bin', type => 'file').list -> $bin {
                 next if $bin.basename.substr(0, 1) eq '.';
                 next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;
-                mkpath "$to/{$bin.directory}";
+                mkpath "$to/{$bin.dirname}";
                 copy($bin, "$to/$bin");
                 "$to/$bin".IO.chmod(0o755) unless $*DISTRO.is-win;
             }

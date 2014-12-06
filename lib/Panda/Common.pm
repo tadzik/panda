@@ -7,8 +7,7 @@ sub dirname ($mod as Str) is export {
 
 sub indir ($where, Callable $what) is export {
     mkpath $where;
-#    temp $*CWD = chdir($where);  # ok after 2014.10
-    temp $*CWD = $where.IO.absolute.IO;  # TEMPORARY until 2014.10
+    temp $*CWD = chdir($where);
     $what()
 }
 
@@ -26,43 +25,25 @@ sub withp6lib(&what) is export {
     %*ENV<PERL6LIB> = join $sep,
         $*CWD ~ '/blib/lib',
         $*CWD ~ '/lib',
-        %*ENV<PERL6LIB> // '';
+        %*ENV<PERL6LIB> // ();
     what();
 }
 
-sub compsuffix is export {
-    $*VM.name eq 'moar'
-        ?? 'moarvm'
-        !! comptarget
-}
+sub compsuffix is export { state $ = $*VM.precomp-ext }
 
-sub comptarget is export {
-    given $*VM.name {
-        when 'parrot' {
-            return 'pir';
-        }
-        when 'jvm' {
-            return 'jar';
-        }
-        when 'moar' {
-            return 'mbc';
-        }
-        default {
-            die($_ ~ ' is an unsupported backend VM.');
-        }
-    }
-}
+sub comptarget is export { state $ = $*VM.precomp-target }
 
 class X::Panda is Exception {
     has $.module is rw;
     has $.stage;
     has $.description;
+    has $.bone;
 
-    method new($module, $stage, $description is copy) {
+    method new($module, $stage, $description is copy, :$bone) {
         if $description ~~ Failure {
             $description = $description.exception.message
         }
-        self.bless(:$module, :$stage, :$description)
+        self.bless(:$module, :$stage, :$description, :$bone)
     }
 
     method message {

@@ -80,7 +80,7 @@ sub local-fetch($from, $to) {
     my $cleanup_chars = $cleanup.chars;
     for eager find(dir => $from).list {
         my $io = .IO;
-        my $d  = IO::Spec.catpath($io.volume, $io.directory, '');
+        my $d  = $*SPEC.catpath($io.volume, $io.dirname, '');
         # We need to cleanup the path, because the returned elems are too.
         if ($d.Str.index(~$cleanup) // -1) == 0 {
             $d = $d.substr($cleanup_chars)

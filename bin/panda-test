@@ -2,5 +2,5 @@
 use Panda::Tester;
 
 sub MAIN($where = '.') {
-    Panda::Tester.test($where.path.absolute);
+    exit Panda::Tester.test($where.path.absolute) ?? 0 !! 1;
 }

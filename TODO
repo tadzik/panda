@@ -12,6 +12,7 @@
   can survive rebuilding projects that require these settings
 * Merge with panda-niecza?
 * Update README.md to represent current reality
+* Quick way to git submodule foreach git pull origin master
 
 CPAN related TODOs
 

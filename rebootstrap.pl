@@ -7,11 +7,12 @@ BEGIN {
 use lib 'ext/File__Find/lib/';
 use lib 'ext/Shell__Command/lib';
 use Shell::Command;
+%*ENV<PANDA_SUBMIT_TESTREPORTS>:delete;
 
 # Find old state file
 my ($prefix, $state-file);
 for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) {
-    if "$_/panda/state".path.e {
+    if "$_/panda/state".IO.e {
         $prefix = $_;
         $state-file = "$_/panda/state";
     }
