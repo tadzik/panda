@@ -13,6 +13,7 @@
         "Panda::Fetcher"   : "lib/Panda/Fetcher.pm",
         "Panda::Installer" : "lib/Panda/Installer.pm",
         "Panda::Project"   : "lib/Panda/Project.pm",
+        "Panda::Reporter"  : "lib/Panda/Reporter.pm",
         "Panda::Tester"    : "lib/Panda/Tester.pm"
     }
 }
