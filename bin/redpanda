@@ -4,18 +4,14 @@ use Panda::Fetcher;
 use Panda::Builder;
 use Panda::Tester;
 use Panda::Installer;
+use Panda::HTTP;
 use Shell::Command;
 use JSON::Tiny;
 
 sub get-meta($module is copy) {
-    $module ~~ s:g/'::'/;/;
-    my $s = IO::Socket::INET.new(:host<feather.perl6.nl>, :port(3000));
-    $s.send("GET /module/$module HTTP/1.0\n\n");
-    my ($buf, $g) = '';
-    $buf ~= $g while $g = $s.get;
-    my $body = $buf.split(/\r?\n\r?\n/, 2)[1];
-    unless $body {
-        return Failure.new("Did not get a proper API response");
+    my ($code, $status, $body) = get("/module/$module");
+    unless $code == 200 {
+        fail "Cannot fetch meta data for module '$module': $code $status";
     }
     return from-json($body)
         or Failure.new("Could not parse JSON API response");
