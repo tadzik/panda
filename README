@@ -1,5 +1,9 @@
 A simple Perl 6 module for serializing and deserializing JSON.
 
+  use JSON::Tiny;
+  say from-json('{ "a": 42 }').perl;
+  say to-json { a => [1, 2, 'b'] };
+
 All files (unless noted otherwise) can be used, modified and redistributed
 under the terms of the Artistic License Version 2. Examples (in the
 documentation, in tests or distributed as separate files) can be considered
@@ -16,7 +20,8 @@ http://github.com/masak/ufo and run:
 one of the prerequisites for panda itself -- so until Rakudo does automatic
 recompiles, panda will become very confused after completing the install.
 New, tested versions of this module should be imported into panda's source
-in ext/JSON__Tiny/, and panda's reboostrap.pl run.)
+in ext/JSON__Tiny/, and panda's reboostrap.pl run. On the upside this means
+that installing panda gives you JSON::Tiny right away.)
 
 State:
 
