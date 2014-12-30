@@ -128,7 +128,7 @@ method build($where, :$bone) {
                 my $cmd    = "$*EXECUTABLE --target={comptarget} "
                            ~ "--output=$dest $file";
                 $output ~= "$cmd\n";
-                my $handle = pipe($cmd, :r);
+                my $handle = pipe("$cmd 2>&1", :r);
                 for $handle.lines {
                     .chars && .say;
                     $output ~= "$_\n";
