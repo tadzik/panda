@@ -143,7 +143,7 @@ class Panda {
     }
 
     method get-deps(Panda::Project $bone) {
-        my @bonedeps = $bone.dependencies.grep(*.defined).map({
+        my @bonedeps = $bone.dependencies.grep(*.defined).for({
             $.ecosystem.get-project($_)
                 or die X::Panda.new($bone.name, 'resolve',
                                     "Dependency $_ is not present in the module ecosystem")

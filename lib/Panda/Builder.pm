@@ -102,12 +102,12 @@ method build($where, :$bone) {
         }
         my @files;
         if 'lib'.IO.d {
-            @files = find(dir => 'lib', type => 'file').map({
+            @files = find(dir => 'lib', type => 'file').for({
                 my $io = .IO;
                 $io if $io.basename.substr(0, 1) ne '.';
             });
         }
-        my @dirs = @files.map(*.dirname).unique;
+        my @dirs = @files.for(*.dirname).unique;
         mkpath "blib/$_" for @dirs;
 
         my @tobuild = build-order(@files);
