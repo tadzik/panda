@@ -22,6 +22,14 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     }
 }
 
+#| Install dependencies, but don't build the modules themselves
+multi MAIN ('installdeps', *@modules, Bool :$notests) {
+    for @modules -> $x {
+        $panda.resolve($x, :$notests);
+        CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
+    }
+}
+
 #| List all available modules
 multi MAIN ('list', Bool :$installed, Bool :$verbose) {
     listprojects($panda, :$installed, :$verbose);

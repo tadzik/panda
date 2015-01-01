@@ -159,7 +159,7 @@ class Panda {
         return @deps;
     }
 
-    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action='install') {
+    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action) {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         mkpath $tmpdir;
@@ -189,9 +189,11 @@ class Panda {
             self.install($_, $nodeps, $notests, 1) for @deps;
         }
 
-        given $action {
-            when 'install' { self.install($bone, $nodeps, $notests, 0); }
-            when 'look'    { self.look($bone) };
+        if $action.defined {
+            given $action {
+                when 'install' { self.install($bone, $nodeps, $notests, 0); }
+                when 'look'    { self.look($bone) };
+            }
         }
     }
 }
