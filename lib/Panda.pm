@@ -159,7 +159,7 @@ class Panda {
         return @deps;
     }
 
-    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action) {
+    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action='install') {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         mkpath $tmpdir;
@@ -168,7 +168,8 @@ class Panda {
         if $p {
             if $.ecosystem.get-project($p.name) {
                 self.announce: "Installing {$p.name} "
-                               ~ "from a local directory '$proj'";
+                               ~ "from a local directory '$proj'"
+                               if $action eq 'install';
             }
             $.ecosystem.add-project($p);
             $proj = $p.name;
@@ -189,11 +190,10 @@ class Panda {
             self.install($_, $nodeps, $notests, 1) for @deps;
         }
 
-        if $action.defined {
-            given $action {
-                when 'install' { self.install($bone, $nodeps, $notests, 0); }
-                when 'look'    { self.look($bone) };
-            }
+        given $action {
+            when 'install' { self.install($bone, $nodeps, $notests, 0); }
+            when 'install-deps-only' { }
+            when 'look'    { self.look($bone) };
         }
     }
 }
