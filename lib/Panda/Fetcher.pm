@@ -4,16 +4,18 @@ use Shell::Command;
 
 method fetch($from, $to) {
     given $from {
+        my $commit;
+        $from.=subst(/ '@' (<[ . / ]+alpha+digit>+) $/, { $commit = $0; "" });
         when /\.git$/ {
-            return git-fetch $from, $to;
+            return git-fetch $from, $to, $commit;
         }
         when /^ $<schema>=[<alnum><[+.-]+alnum>*] '://' / {
             when $<schema> {
                 when /^'git://'/ {
-                    return git-fetch $from, $to;
+                    return git-fetch $from, $to, $commit;
                 }
                 when /^[http|https]'+git://'/ {
-                    return git-fetch $from.subst(/'+git'/, ''), $to;
+                    return git-fetch $from.subst(/'+git'/, ''), $to, $commit;
                 }
                 when /^'file://'/ {
                     return local-fetch $from.subst(/^'file://'/, ''), $to;
@@ -34,9 +36,13 @@ method fetch($from, $to) {
     return True;
 }
 
-sub git-fetch($from, $to) {
+sub git-fetch($from, $to, $commit = Nil) {
     shell "git clone -q $from \"$to\""
         or fail "Failed cloning git repository '$from'";
+    if $commit {
+        temp $*CWD = chdir($to);
+        shell "git checkout $commit";
+    }
     return True;
 }
 
