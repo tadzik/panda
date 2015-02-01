@@ -168,7 +168,8 @@ class Panda {
         if $p {
             if $.ecosystem.get-project($p.name) {
                 self.announce: "Installing {$p.name} "
-                               ~ "from a local directory '$proj'";
+                               ~ "from a local directory '$proj'"
+                               if $action eq 'install';
             }
             $.ecosystem.add-project($p);
             $proj = $p.name;
@@ -191,6 +192,7 @@ class Panda {
 
         given $action {
             when 'install' { self.install($bone, $nodeps, $notests, 0); }
+            when 'install-deps-only' { }
             when 'look'    { self.look($bone) };
         }
     }
