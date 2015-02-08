@@ -100,11 +100,11 @@ class Panda::Ecosystem {
         %!projects{$p.name} = $p;
     }
 
-    method get-project($p as Str) {
+    method get-project(Str(Any) $p) {
         %!projects{$p}
     }
 
-    method suggest-project($p as Str) {
+    method suggest-project(Str(Any) $p) {
         my &canonical = *.subst(/ <[\- _ :]>+ /, "", :g).lc;
         my $cpname = canonical($p);
         for %!projects.keys {

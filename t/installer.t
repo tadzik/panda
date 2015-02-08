@@ -10,7 +10,7 @@ my $dest = "$*CWD/removeme";
 
 lives_ok { Panda::Installer.install($src, $dest) };
 
-sub file_exists_ok($a as Str, $msg as Str) {
+sub file_exists_ok(Str(Any) $a, Str(Any) $msg) {
     ok $a.IO ~~ :f, $msg
 }
 

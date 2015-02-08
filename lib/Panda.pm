@@ -48,7 +48,7 @@ class Panda {
         self.announce: "{$p.key.name} depends on {$p.value.join(", ")}"
     }
 
-    method project-from-local($proj as Str) {
+    method project-from-local(Str(Any) $proj) {
         if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
             my $mod = from-json slurp "$proj/META.info";
             $mod<source-url>  = $proj;
@@ -62,7 +62,7 @@ class Panda {
         return False;
     }
 
-    method project-from-git($proj as Str, $tmpdir) {
+    method project-from-git(Str(Any) $proj, $tmpdir) {
         if $proj ~~ m{^git\:\/\/} {
             mkpath $tmpdir;
             $.fetcher.fetch($proj, $tmpdir);
@@ -104,7 +104,7 @@ class Panda {
     }
 
     method install(Panda::Project $bone, $nodeps,
-                   $notests, $isdep as Bool) {
+                   $notests, Bool(Any) $isdep) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
         self.announce('fetching', $bone);
@@ -159,7 +159,7 @@ class Panda {
         return @deps;
     }
 
-    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action='install') {
+    method resolve(Str(Any) $proj is copy, Bool :$nodeps, Bool :$notests, :$action='install') {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         mkpath $tmpdir;

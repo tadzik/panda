@@ -1,7 +1,7 @@
 module Panda::Common;
 use Shell::Command;
 
-sub dirname ($mod as Str) is export {
+sub dirname (Str(Any) $mod) is export {
     $mod.subst(':', '_', :g);
 }
 
