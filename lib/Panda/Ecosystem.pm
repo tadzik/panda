@@ -33,14 +33,13 @@ class Panda::Ecosystem {
         }
 
         self.update if $!projectsfile.IO !~~ :f || $!projectsfile.IO ~~ :z;
-        my $list;
-        {
-            $list = from-json slurp $!projectsfile;
-            die unless defined $list;
-
-            CATCH {
-                die "An unknown error occured while reading the projects file";
-            }
+        my $contents = slurp $!projectsfile;
+        my $list = try from-json $contents;
+        if $! {
+            die "Cannot parse $!projectsfile as JSON: $!";
+        }
+        unless defined $list {
+            die "An unknown error occured while reading the projects file";
         }
         my %non-ecosystem = %!saved-meta;
         for $list.list -> $mod {
