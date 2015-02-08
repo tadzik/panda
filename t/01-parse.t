@@ -190,7 +190,7 @@ break"]>>,
     Q<<{"Extra comma": true,}>>,
 ;
 
-plan (+@t) + (+@n);
+plan (+@t) + (+@n) + 1;
 
 my $i = 0;
 for @t -> $t {
@@ -218,6 +218,10 @@ for @n -> $t {
     $i++;
 }
 
+throws_like {
+    use JSON::Tiny;
+    from-json '',
+}, X::JSON::Tiny::Invalid;
 
 # vim: ft=perl6
 

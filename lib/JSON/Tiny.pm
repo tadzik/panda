@@ -18,6 +18,11 @@ module JSON::Tiny;
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
 
+class X::JSON::Tiny::Invalid is Exception {
+    has $.source;
+    method message { "Input ($.source.chars() characters) is not a valid JSON string" }
+}
+
 proto to-json($) is export {*}
 
 multi to-json(Real:D $d) { ~$d }
@@ -48,6 +53,10 @@ multi to-json(Mu:D $s) {
 sub from-json($text) is export {
     my $a = JSON::Tiny::Actions.new();
     my $o = JSON::Tiny::Grammar.parse($text, :actions($a));
+    unless $o {
+        X::JSON::Tiny::Invalid.new(source => $text).throw;
+    }
+    
     return $o.ast;
 }
 # vim: ft=perl6
