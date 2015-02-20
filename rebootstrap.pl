@@ -1,9 +1,5 @@
 #!/usr/bin/env perl6
 use v6;
-BEGIN {
-    shell 'git submodule init';
-    shell 'git submodule update';
-}
 use lib 'ext/File__Find/lib/';
 use lib 'ext/Shell__Command/lib';
 use Shell::Command;

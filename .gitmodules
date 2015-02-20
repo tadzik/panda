@@ -1,12 +1,3 @@
-[submodule "ext/JSON__Tiny"]
-	path = ext/JSON__Tiny
-	url = git://github.com/moritz/json.git
-[submodule "ext/File__Find"]
-	path = ext/File__Find
-	url = git://github.com/tadzik/File-Find.git
-[submodule "ext/Shell__Command"]
-	path = ext/Shell__Command
-	url = git://github.com/tadzik/Shell-Command.git
 [submodule "ext/HTTP__UserAgent"]
 	path = ext/HTTP__UserAgent
 	url = git@github.com:sergot/http-useragent
@@ -34,6 +25,3 @@
 [submodule "ext/MIME__Base64"]
 	path = ext/MIME__Base64
 	url = git@github.com:perl6/Perl6-MIME-Base64
-[submodule "ext/NativeCall"]
-	path = ext/NativeCall
-	url = git@github.com:jnthn/zavolaj

@@ -102,12 +102,12 @@ method build($where, :$bone) {
         }
         my @files;
         if 'lib'.IO.d {
-            @files = find(dir => 'lib', type => 'file').map({
+            @files = find(dir => 'lib', type => 'file').for({
                 my $io = .IO;
                 $io if $io.basename.substr(0, 1) ne '.';
             });
         }
-        my @dirs = @files.map(*.dirname).unique;
+        my @dirs = @files.for(*.dirname).unique;
         mkpath "blib/$_" for @dirs;
 
         my @tobuild = build-order(@files);
@@ -128,7 +128,7 @@ method build($where, :$bone) {
                 my $cmd    = "$*EXECUTABLE --target={comptarget} "
                            ~ "--output=$dest $file";
                 $output ~= "$cmd\n";
-                my $handle = pipe($cmd, :r);
+                my $handle = pipe("$cmd 2>&1", :r);
                 for $handle.lines {
                     .chars && .say;
                     $output ~= "$_\n";

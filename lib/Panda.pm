@@ -148,7 +148,7 @@ class Panda {
     }
 
     method get-deps(Panda::Project $bone) {
-        my @bonedeps = $bone.dependencies.grep(*.defined).map({
+        my @bonedeps = $bone.dependencies.grep(*.defined).for({
             $.ecosystem.get-project($_)
                 or die X::Panda.new($bone.name, 'resolve',
                                     "Dependency $_ is not present in the module ecosystem")
@@ -173,7 +173,8 @@ class Panda {
         if $p {
             if $.ecosystem.get-project($p.name) {
                 self.announce: "Installing {$p.name} "
-                               ~ "from a local directory '$proj'";
+                               ~ "from a local directory '$proj'"
+                               if $action eq 'install';
             }
             $.ecosystem.add-project($p);
             $proj = $p.name;
@@ -206,6 +207,7 @@ class Panda {
 
         given $action {
             when 'install' { self.install($bone, $nodeps, $notests, 0); }
+            when 'install-deps-only' { }
             when 'look'    { self.look($bone) };
         }
     }

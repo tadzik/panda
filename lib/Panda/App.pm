@@ -45,13 +45,13 @@ sub make-default-ecosystem is export {
 
 sub listprojects($panda, :$installed, :$verbose) is export {
     my $es        = $panda.ecosystem;
-    my @projects  = $es.project-list.sort.map: { $es.get-project($_) };
+    my @projects  = $es.project-list.sort.for: { $es.get-project($_) };
        @projects .= grep({ $es.project-get-state($_) ne Panda::Project::State::absent })
                     if $installed;
-    my @saved     = @projects.map({ $es.project-get-saved-meta($_) || {} });
+    my @saved     = @projects.for({ $es.project-get-saved-meta($_) || {} });
     my $max-name  = @projects».name».chars.max;
     my $max-ver   = @projects».version».chars.max;
-    my $max-rev   = @saved.map({ $_<source-revision> // '?'})».chars.max;
+    my $max-rev   = @saved.for({ $_<source-revision> // '?'})».chars.max;
 
     for @projects -> $x {
         my $s = do given $es.project-get-state($x) {
