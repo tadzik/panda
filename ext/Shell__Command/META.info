@@ -1,0 +1,7 @@
+{
+    "name"        : "Shell::Command",
+    "version"     : "*",
+    "description" : "Common shell command replacements",
+    "depends"     : ["File::Find"],
+    "source-url"  : "git://github.com/tadzik/Shell-Command.git"
+}
