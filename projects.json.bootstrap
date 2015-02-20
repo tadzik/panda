@@ -81,19 +81,11 @@
    },
    {
       "source-type" : "local",
-      "source-url" : "_BASEDIR_/NativeCall",
-      "version" : "*",
-      "name" : "NativeCall",
-      "description" : "",
-      "depends" : []
-   },
-   {
-      "source-type" : "local",
       "source-url" : "_BASEDIR_/Compress__Zlib__Raw",
       "version" : "*",
       "name" : "Compress::Zlib::Raw",
       "description" : "",
-      "depends" : ["NativeCall"]
+      "depends" : []
    },
    {
       "source-type" : "local",

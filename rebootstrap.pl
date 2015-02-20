@@ -29,8 +29,8 @@ my @modules;
 given open($state-file) {
     for .lines() -> $line {
         my ($name, $state) = split /\s/, $line;
-        next if $name eq any(<File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status Encode File::Temp MIME::Base64 IO::Capture::Simple HTTP::UserAgent NativeCall Compress::Zlib::Raw Compress::Zlib Archive::Tar panda>);
-        #~ next if $name eq any(<File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status HTTP::UserAgent NativeCall Compress::Zlib::Raw Compress::Zlib panda>);
+        next if $name eq any(<File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status Encode File::Temp MIME::Base64 IO::Capture::Simple HTTP::UserAgent Compress::Zlib::Raw Compress::Zlib Archive::Tar panda>);
+        #~ next if $name eq any(<File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status HTTP::UserAgent Compress::Zlib::Raw Compress::Zlib panda>);
         if $state eq 'installed' {
             @modules.push: $name;
         }

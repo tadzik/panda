@@ -46,13 +46,12 @@ my $env_sep = $is_win ?? ';' !! ':';
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/MIME__Base64/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/IO__Capture__Simple/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/HTTP__UserAgent/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/NativeCall/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Compress__Zlib__Raw/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Compress__Zlib/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Archive__Tar/lib";
 %*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/lib";
 
-shell "$*EXECUTABLE bin/panda install File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status Encode File::Temp MIME::Base64 IO::Capture::Simple HTTP::UserAgent NativeCall Compress::Zlib::Raw Compress::Zlib Archive::Tar $*CWD";
+shell "$*EXECUTABLE bin/panda install File::Find Shell::Command JSON::Tiny DateTime::Parse HTTP::Status Encode File::Temp MIME::Base64 IO::Capture::Simple HTTP::UserAgent Compress::Zlib::Raw Compress::Zlib Archive::Tar $*CWD";
 if "$destdir/panda/src".IO ~~ :d {
     rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
                                 # that src should not be kept at all, but
