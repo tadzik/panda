@@ -28,7 +28,7 @@ sub get-meta($module is copy) {
 }
 
 sub MAIN($url) {
-    my $dir = '.panda-work'.path.absolute;
+    my $dir = '.panda-work'.IO.absolute;
     rm_rf $dir;
     try {
         Panda::Fetcher::fetch($url, $dir);
