@@ -19,11 +19,11 @@ my $panda;
     $destdir = "{cwd}/$destdir" if defined($destdir) &&  $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
     for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
         $destdir  = $prefix;
-        $pandadir = "$prefix/panda";
-        try mkpath $pandadir unless $pandadir.IO ~~ :d;
-        last if $pandadir.path.w
+        $pandadir = "$prefix/panda".IO;
+        try mkpath $pandadir unless $pandadir ~~ :d;
+        last if $pandadir.w
     }
-    unless $pandadir.path.w {
+    unless $pandadir.w {
         die "Found no writable directory into which panda could be installed";
     }
 
