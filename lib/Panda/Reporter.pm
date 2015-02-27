@@ -9,11 +9,11 @@ method submit {
         if %*ENV<http_proxy> {
             my ($host, $port) = %*ENV<http_proxy>.split('/').[2].split(':');
             $s                = IO::Socket::INET.new( :$host, :port($port.Int) );
-            $to-send          = "POST http://85.25.222.109/report HTTP/1.1\nHost: localhost\nConnection: Close";
+            $to-send          = "POST http://testers.p6c.org/report HTTP/1.1\nHost: testers.p6c.org\nConnection: Close";
         }
         else {
-            $s       = IO::Socket::INET.new(:host<85.25.222.109>, :port(80));
-            $to-send = "POST /report HTTP/1.0";
+            $s       = IO::Socket::INET.new(:host<213.95.82.53>, :port(80));
+            $to-send = "POST http://testers.p6c.org/report HTTP/1.1\nHost: testers.p6c.org\nConnection: Close";
         }
 
         my $buf = Buf.new(self.to-json.ords);
