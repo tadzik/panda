@@ -1,9 +1,18 @@
 class Panda::Reporter;
 
 has $.bone is rw;
+has $.reports-file is rw;
 
 method submit {
     if %*ENV<PANDA_SUBMIT_TESTREPORTS> {
+        my $pandadir;
+        my $destdir = %*ENV<DESTDIR>;
+
+        my $report-line = join "\t", $!bone.name, ($!bone.metainfo<authority> // $!bone.metainfo<author> // $!bone.metainfo<auth>),
+                                     $!bone.version, $!bone.build-passed, $!bone.test-passed, $*VM.name;
+
+        return if $!reports-file.e && $!reports-file.lines.first($report-line);
+
         my $s;
         my $to-send = '';
         if %*ENV<http_proxy> {
@@ -19,6 +28,10 @@ method submit {
         my $buf = Buf.new(self.to-json.ords);
         $s.send("$to-send\nContent-Type: application/json\r\nContent-Length: $buf.elems()\r\n\r\n");
         $s.write($buf);
+
+        my $fh = $!reports-file.open(:a);
+        $fh.say: $report-line;
+        $fh.close;
 
         CATCH {
             die "Could not submit test report: {$_.message}"

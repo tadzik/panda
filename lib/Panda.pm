@@ -107,6 +107,7 @@ class Panda {
                    $notests, $isdep as Bool) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
+        my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
         self.announce('fetching', $bone);
         unless $bone.metainfo<source-url> {
             die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
@@ -130,13 +131,13 @@ class Panda {
                        !! Panda::Project::State::installed;
         $.ecosystem.project-set-state($bone, $s);
         self.announce('success', $bone);
-        Panda::Reporter.new( :$bone ).submit;
+        Panda::Reporter.new( :$bone, :$reports-file ).submit;
 
         chdir $cwd;
         rm_rf $dir;
 
         CATCH {
-            Panda::Reporter.new( :$bone ).submit;
+            Panda::Reporter.new( :$bone, :$reports-file ).submit;
             chdir $cwd;
             rm_rf $dir;
         }
