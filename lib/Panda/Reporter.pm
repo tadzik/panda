@@ -8,8 +8,8 @@ method submit {
         my $pandadir;
         my $destdir = %*ENV<DESTDIR>;
 
-        my $report-line = join "\t", $!bone.name, ($!bone.metainfo<authority> // $!bone.metainfo<author> // $!bone.metainfo<auth>),
-                                     $!bone.version, $!bone.build-passed, $!bone.test-passed, $*VM.name;
+        my $report-line = join "\t", $!bone.name, ($!bone.metainfo<authority> // $!bone.metainfo<author> // $!bone.metainfo<auth> // ''),
+                                     $!bone.version // '*', $!bone.build-passed, $!bone.test-passed, $*VM.name;
 
         return if $!reports-file.e && $!reports-file.lines.first($report-line);
 
