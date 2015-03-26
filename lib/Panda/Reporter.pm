@@ -5,32 +5,41 @@ has $.reports-file is rw;
 
 method submit {
     if %*ENV<PANDA_SUBMIT_TESTREPORTS> {
-        my $pandadir;
-        my $destdir = %*ENV<DESTDIR>;
+        my $report-line = join "\t", $!bone.name,
+                                    ($!bone.metainfo<authority> // $!bone.metainfo<author> // $!bone.metainfo<auth> // ''),
+                                    ($!bone.version // '*'),
+                                    ($!bone.build-passed // ''), ($!bone.test-passed // ''),
+                                     $*VM.name;
 
-        my $report-line = join "\t", $!bone.name, ($!bone.metainfo<authority> // $!bone.metainfo<author> // $!bone.metainfo<auth> // ''),
-                                     $!bone.version // '*', $!bone.build-passed, $!bone.test-passed, $*VM.name;
-
-        return if $!reports-file.e && $!reports-file.lines.first($report-line);
+        if $!reports-file.e && $!reports-file.slurp.match(/^^ $report-line \t $<report-id>=[\d+] $$/) -> $/ {
+            say "==> Test report is duplicate of: http://testers.perl6.org/reports/$<report-id>.html";
+            return
+        }
 
         my $s;
         my $to-send = '';
         if %*ENV<http_proxy> {
             my ($host, $port) = %*ENV<http_proxy>.split('/').[2].split(':');
             $s                = IO::Socket::INET.new( :$host, :port($port.Int) );
-            $to-send          = "POST http://testers.p6c.org/report HTTP/1.1\nHost: testers.p6c.org\nConnection: Close";
+            $to-send          = "POST http://testers.perl6.org/report HTTP/1.1\nHost: testers.perl6.org\nConnection: Close";
         }
         else {
             $s       = IO::Socket::INET.new(:host<213.95.82.53>, :port(80));
-            $to-send = "POST http://testers.p6c.org/report HTTP/1.1\nHost: testers.p6c.org\nConnection: Close";
+            $to-send = "POST http://testers.perl6.org/report HTTP/1.1\nHost: testers.perl6.org\nConnection: Close";
         }
 
         my $buf = Buf.new(self.to-json.ords);
         $s.send("$to-send\nContent-Type: application/json\r\nContent-Length: $buf.elems()\r\n\r\n");
         $s.write($buf);
 
+        my $report-id = '';
+        if $s.?lines -> @lines {
+            $report-id = @lines[*-1];
+            say "==> Test report submitted as: http://testers.perl6.org/reports/$report-id.html";
+        }
+
         my $fh = $!reports-file.open(:a);
-        $fh.say: $report-line;
+        $fh.say: $report-line ~ "\t" ~ $report-id;
         $fh.close;
 
         CATCH {
