@@ -41,6 +41,7 @@ given open($state-file) {
 
 # Clean old directories, boostrap a fresh panda,
 # and reinstall all manually-installed modules
+rm_f(dir(~$prefix)».grep({$_.basename ~~ /^ \d+ | MANIFEST $/})) if $prefix.IO.d;
 rm_rf "$prefix/lib";
 rm_rf "$prefix/panda";
 shell "$*EXECUTABLE bootstrap.pl";
