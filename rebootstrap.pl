@@ -6,11 +6,12 @@ use Shell::Command;
 %*ENV<PANDA_SUBMIT_TESTREPORTS>:delete;
 
 # Find old state file
-my ($prefix, $state-file);
+my ($prefix, $state-file, $reports-file);
 for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) {
     if "$_/panda/state".IO.e {
         $prefix = $_;
-        $state-file = "$_/panda/state";
+        $state-file   = "$_/panda/state";
+        $reports-file = "$_/panda/reports.{$*PERL.compiler.version}" if "$_/panda/reports.{$*PERL.compiler.version}".IO.e;
     }
 }
 
@@ -21,7 +22,8 @@ if not $state-file.defined {
 }
 
 # Save a copy of the old state file to be written *after* bootstrapping again
-my $old-state = slurp $state-file;
+my $old-state   = slurp $state-file;
+my $old-reports = slurp $reports-file if $reports-file;
 
 # Find modules that were installed by request
 # (as opposed to just for dependency resolution)
@@ -46,4 +48,5 @@ say "==> Reinstalling @modules[]";
 shell "$*EXECUTABLE bin/panda install @modules[]";
 
 # Save the backup state file back to $prefix/panda/
-spurt "$state-file.bak", $old-state if $old-state;
+spurt "$state-file.bak", $old-state   if $old-state;
+spurt $reports-file,     $old-reports if $old-reports;
