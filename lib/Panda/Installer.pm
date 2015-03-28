@@ -41,7 +41,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
             if 'blib'.IO ~~ :d {
                 @files.push: find(dir => 'blib', type => 'file').list.grep( -> $lib {
                     next if $lib.basename.substr(0, 1) eq '.';
-                    $lib.substr(5)
+                    $lib
                 } )
             }
             if 'bin'.IO ~~ :d {
