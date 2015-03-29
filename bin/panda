@@ -50,6 +50,11 @@ multi MAIN ('search', $pattern) {
     search-projects($panda, $pattern);
 }
 
+#| Autogenerate META.info
+multi MAIN ('gen-meta', Bool :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) {
+    $panda.bundler.bundle($panda, :$notests, :$name, :$auth, :$ver, :$desc);
+}
+
 #| Test and install all known distributions
 multi MAIN ('smoke', :$exclude = 'panda') {
     my @exclude = $exclude.split(',');

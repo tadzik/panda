@@ -4,6 +4,7 @@ use Panda::Fetcher;
 use Panda::Builder;
 use Panda::Tester;
 use Panda::Installer;
+use Panda::Bundler;
 use Panda::Reporter;
 use Shell::Command;
 use JSON::Tiny;
@@ -19,6 +20,7 @@ class Panda {
     has $.builder   = Panda::Builder.new;
     has $.tester    = Panda::Tester.new;
     has $.installer = Panda::Installer.new;
+    has $.bundler   = Panda::Bundler.new;
 
     multi method announce(Str $what) {
         say "==> $what"
