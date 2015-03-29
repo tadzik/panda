@@ -71,7 +71,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
         if %*ENV<PANDA_PROTRACKER_FILE>.IO.e {
             my $test = EVAL %*ENV<PANDA_PROTRACKER_FILE>.IO.slurp;
             for $test.list -> $m {
-                for $m<symbols> (-) $bone.metainfo<build-depends> {
+                for ($m<symbols> (-) $bone.metainfo<build-depends>).list.grep(/^<-[&]>*$/) {
                     if $m<file> && $m<file>.match(/^"$dir" [ [\/|\\] blib [\/|\\] ]? <?before 'lib' [\/|\\] > $<relname>=.+/) -> $match {
                         $bone.metainfo<build-provides>{$_ || file_to_symbol(~$match<relname>)} = ~$match<relname>
                     }
@@ -95,7 +95,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
             if %*ENV<PANDA_PROTRACKER_FILE>.IO.e {
                 my $test = EVAL %*ENV<PANDA_PROTRACKER_FILE>.IO.slurp;
                 for $test.list -> $m {
-                    for $m<symbols> (-) $bone.metainfo<build-depends> {
+                    for ($m<symbols> (-) $bone.metainfo<build-depends>).list.grep(/^<-[&]>*$/) {
                         if $m<file> && $m<file>.match(/^"$dir" [ [\/|\\] blib [\/|\\] ]? <?before 'lib' [\/|\\] > $<relname>=.+/) -> $match {
                             $bone.metainfo<test-provides>{$_ || file_to_symbol(~$match<relname>)} = ~$match<relname>
                         }
@@ -108,7 +108,8 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
             $bone.metainfo<build-depends> = [($bone.metainfo<build-depends> (-) 'Panda::DepTracker').list.flat];
             $bone.metainfo<test-depends>  = [($bone.metainfo<test-depends>  (-) 'Panda::DepTracker').list.flat];
         }
-        $bone.metainfo<depends> = [($bone.metainfo<test-depends> (&) $bone.metainfo<build-depends>).list.flat];
+        $bone.metainfo<depends>      = [($bone.metainfo<test-depends> (&) $bone.metainfo<build-depends>).list.flat];
+        $bone.metainfo<test-depends> = [($bone.metainfo<test-depends> (-) $bone.metainfo<build-depends>).list.flat];
         for $bone.metainfo<test-provides>.kv, $bone.metainfo<build-provides>.kv -> $k, $v {
             $bone.metainfo<provides>{$k} = $v
         }
