@@ -46,7 +46,7 @@ class Panda::Ecosystem {
             my $p = Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => $mod<depends>,
+                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
                 metainfo     => $mod,
             );
             self.add-project($p);
@@ -56,7 +56,7 @@ class Panda::Ecosystem {
             my $p = Panda::Project.new(
                 name         => $name,
                 version      => $mod<version>,
-                dependencies => $mod<depends>,
+                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
                 metainfo     => $mod,
             );
             self.add-project($p);

@@ -57,7 +57,7 @@ class Panda {
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => $mod<depends>,
+                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
                 metainfo     => $mod,
             );
         }
@@ -73,7 +73,7 @@ class Panda {
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => $mod<depends>,
+                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
                 metainfo     => $mod,
             );
         }
@@ -147,6 +147,7 @@ class Panda {
 
     method get-deps(Panda::Project $bone) {
         my @bonedeps = $bone.dependencies.grep(*.defined).for({
+            next if $_ eq 'Test' | 'NativeCall'; # XXX Handle dists properly that are shipped by a compiler.
             $.ecosystem.get-project($_)
                 or die X::Panda.new($bone.name, 'resolve',
                                     "Dependency $_ is not present in the module ecosystem")
