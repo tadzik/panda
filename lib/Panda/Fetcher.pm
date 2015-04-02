@@ -36,7 +36,7 @@ method fetch($from, $to) {
     return True;
 }
 
-sub git-fetch($from, $to, $commit = Nil) {
+sub git-fetch($from, $to, $commit?) {
     shell "git clone -q $from \"$to\""
         or fail "Failed cloning git repository '$from'";
     if $commit {
