@@ -117,7 +117,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
         $bone.metainfo<version> = $ver || prompt "Please enter version number (example: v0.1.0): ";
 
         $panda.announce('Creating META.info.proposed');
-        'META.info.proposed'.IO.spurt: to-json {
+        'META.info.proposed'.IO.spurt: to-json({
             perl           => 'v6',
             name           => $bone.name,
             description    => $bone.metainfo<description>,
@@ -129,7 +129,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
             support        => {
                 source => ~$bone.metainfo<source-url>,
             }
-        };
+        }) ~ "\n";
 
         CATCH {
             try unlink %*ENV<PANDA_DEPTRACKER_FILE> if %*ENV<PANDA_DEPTRACKER_FILE>.IO.e;
