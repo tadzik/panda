@@ -1,6 +1,6 @@
 {
   "perl" : "v6",
-  "name" : "Json::Fast",
+  "name" : "JSON::Fast",
   "description" : "A naive, but hopefully fast json parser",
   "version" : "v0.1",
   "test-depends" : [
