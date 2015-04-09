@@ -1,2 +1,7 @@
-# naive_json_parser
-a naive imperative json parser in perl6, to evaluate performance against JSON::Tiny
+# json_fast
+
+a naive imperative json parser in pure perl6 (but with direct access to nqp:: ops), to evaluate performance against JSON::Tiny
+
+Currently it seems to be about 5x faster and uses up about a fourth of the RAM.
+
+There should be some more speed attainable through tuning, micro-optimizations, re-introducing the block flattening optimization in rakudo and other stuff.
