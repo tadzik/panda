@@ -32,8 +32,13 @@ module JSON::Fast;
 #}
 
 my sub nom-ws(str $text, int $pos is rw) {
-    while (my int $ord = try nqp::ordat($text, $pos)) and ($ord == 32 || $ord == 10 || $ord == 13 || $ord == 9) {
+    loop {
+        my int $wsord = nqp::ordat($text, $pos);
+        last unless $wsord == 32 || $wsord == 10 || $wsord == 13 || $wsord == 9;
         $pos = $pos + 1;
+    }
+    CATCH {
+        die "reached the end of the string while looking for things";
     }
 }
 
@@ -44,7 +49,7 @@ my sub parse-string(str $text, int $pos is rw) {
     my str $result;
 
     loop {
-        my int $ord = nqp::ordat($text, $pos);
+        my $ord := nqp::ordat($text, $pos);
         $pos = $pos + 1;
 
         if $ord == 34 { # "
@@ -56,7 +61,7 @@ my sub parse-string(str $text, int $pos is rw) {
             $result = substr($text, $startpos, $pos - 1 - $startpos);
             @pieces.push: $result;
 
-            my $kind = nqp::substr($text, $pos, 1);
+            my $kind := nqp::substr($text, $pos, 1);
 
             if $kind eq '"' {
                 @pieces.push: '"';
@@ -75,7 +80,7 @@ my sub parse-string(str $text, int $pos is rw) {
             } elsif $kind eq 't' {
                 @pieces.push: "\t";
             } elsif $kind eq 'u' {
-                my $hexstr = nqp::substr($text, $pos + 1, 4);
+                my $hexstr := nqp::substr($text, $pos + 1, 4);
                 if nqp::chars($hexstr) != 4 {
                     die "expected exactly four alnum digits after \\u";
                 }
@@ -108,14 +113,14 @@ my sub parse-numeric(str $text, int $pos is rw) {
 
     $pos = $pos + 1 while nqp::iscclass(nqp::const::CCLASS_NUMERIC, $text, $pos);
 
-    my str $residual = nqp::substr($text, $pos, 1);
+    my $residual := nqp::substr($text, $pos, 1);
 
     if $residual eq '.' {
         $pos = $pos + 1;
 
         $pos = $pos + 1 while nqp::iscclass(nqp::const::CCLASS_NUMERIC, $text, $pos);
 
-        $residual = nqp::substr($text, $pos, 1);
+        $residual := nqp::substr($text, $pos, 1);
     }
     
     if $residual eq 'e' || $residual eq 'E' {
@@ -128,7 +133,7 @@ my sub parse-numeric(str $text, int $pos is rw) {
         $pos = $pos + 1 while nqp::iscclass(nqp::const::CCLASS_NUMERIC, $text, $pos);
     }
 
-    +(my $result = nqp::substr($text, $startpos - 1, $pos - $startpos + 1)) // die "invalid number token $result.perl()";
+    +(my $result := nqp::substr($text, $startpos - 1, $pos - $startpos + 1)) // die "invalid number token $result.perl()";
 }
 
 my sub parse-null(str $text, int $pos is rw) {
@@ -170,7 +175,7 @@ my sub parse-obj(str $text, int $pos is rw) {
             }
             nom-ws($text, $pos);
 
-            my str $partitioner = nqp::substr($text, $pos, 1);
+            my $partitioner := nqp::substr($text, $pos, 1);
             $pos = $pos + 1;
 
             if $partitioner eq ':'      and not defined $key and not defined $value {
