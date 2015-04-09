@@ -1,0 +1,15 @@
+{
+  "perl" : "v6",
+  "name" : "Json::Fast",
+  "description" : "A naive, but hopefully fast json parser",
+  "version" : "v0.1",
+  "test-depends" : [
+    "Test"
+  ],
+  "provides" : {
+    "JSON::Fast" : "lib/JSON/Fast.pm"
+  },
+  "support" : {
+    "source-url" : "git://github.com/timo/json_fast.git"
+  }
+}
