@@ -32,7 +32,7 @@ module JSON::Fast;
 #}
 
 my sub nom-ws(str $text, int $pos is rw) {
-    while (my int $ord = nqp::ordat($text, $pos)) and ($ord == 32 || $ord == 10 || $ord == 13 || $ord == 9) {
+    while (my int $ord = try nqp::ordat($text, $pos)) and ($ord == 32 || $ord == 10 || $ord == 13 || $ord == 9) {
         $pos = $pos + 1;
     }
 }
@@ -51,14 +51,55 @@ my sub parse-string(str $text, int $pos is rw) {
             $result = nqp::substr($text, $startpos, $pos - 1 - $startpos);
             last;
         } elsif $ord == 92 { # \
-            die "backslash sequences NYI";
-            #$result = substr($text, $startpos, $pos - $startpos);
-            #loop {
-                
-            #}
+            my @pieces;
+
+            $result = substr($text, $startpos, $pos - 1 - $startpos);
+            @pieces.push: $result;
+
+            my $kind = nqp::substr($text, $pos, 1);
+
+            if $kind eq '"' {
+                @pieces.push: '"';
+            } elsif $kind eq '\\' {
+                @pieces.push: '\\';
+            } elsif $kind eq '/' {
+                @pieces.push: '/';
+            } elsif $kind eq 'b' {
+                @pieces.push: "\b";
+            } elsif $kind eq 'f' {
+                @pieces.push: chr(0x0c);
+            } elsif $kind eq 'n' {
+                @pieces.push: "\n";
+            } elsif $kind eq 'r' {
+                @pieces.push: "\r";
+            } elsif $kind eq 't' {
+                @pieces.push: "\t";
+            } elsif $kind eq 'u' {
+                my $hexstr = nqp::substr($text, $pos + 1, 4);
+                if nqp::chars($hexstr) != 4 {
+                    die "expected exactly four alnum digits after \\u";
+                }
+                @pieces.push: chr(:16($hexstr));
+                $pos = $pos + 4;
+            } else {
+                die "I don't understand the escape sequence \\$kind";
+            }
+
+            if nqp::eqat($text, '"', $pos + 1) {
+                $result = $result ~ @pieces[1];
+                $pos = $pos + 2;
+                last;
+            } else {
+                $pos = $pos + 1;
+                @pieces.push: parse-string($text, $pos);
+                $result = @pieces.join("");
+                last;
+            }
+        } elsif $ord == 10 || $ord == 13 || $ord == 9 {
+            die "the only whitespace allowed in json strings are spaces";
         }
     }
-
+    
     $result;
 }
 
@@ -87,7 +128,7 @@ my sub parse-numeric(str $text, int $pos is rw) {
         $pos = $pos + 1 while nqp::iscclass(nqp::const::CCLASS_NUMERIC, $text, $pos);
     }
 
-    +nqp::substr($text, $startpos - 1, $pos - $startpos);
+    +(my $result = nqp::substr($text, $startpos - 1, $pos - $startpos + 1)) // die "invalid number token $result.perl()";
 }
 
 my sub parse-null(str $text, int $pos is rw) {
@@ -113,7 +154,20 @@ my sub parse-obj(str $text, int $pos is rw) {
         %();
     } else {
         loop {
-            my $thing = parse-thing($text, $pos);
+            my $thing;
+
+            if defined $key {
+                $thing = parse-thing($text, $pos)
+            } else {
+                nom-ws($text, $pos);
+
+                if nqp::eqat($text, '"', $pos) {
+                    $pos = $pos + 1;
+                    $thing = parse-string($text, $pos)
+                } else {
+                    die "json requires object keys to be strings";
+                }
+            }
             nom-ws($text, $pos);
 
             my str $partitioner = nqp::substr($text, $pos, 1);
@@ -215,9 +269,21 @@ sub from-json(Str() $text) is export {
 
     $pos = $pos + 1;
 
+    my $result;
+
     if $initial eq '{' {
-        parse-obj($ntext, $pos);
+        $result = parse-obj($ntext, $pos);
     } elsif $initial eq '[' {
-        parse-array($ntext, $pos);
+        $result = parse-array($ntext, $pos);
+    } else {
+        die "a JSON string ought to be a list or an object";
     }
+
+    try nom-ws($text, $pos);
+
+    if $pos != nqp::chars($text) {
+        die "additional text after the end of the document: { substr($text, $pos).perl }";
+    }
+
+    $result;
 }

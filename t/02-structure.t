@@ -1,6 +1,6 @@
 use v6;
-BEGIN { @*INC.push('lib') };
-use JSON::Tiny;
+
+use JSON::Fast;
 use Test;
 
 my @t =
@@ -61,7 +61,7 @@ my @t =
 plan +@t;
 
 for @t -> $p {
-    my $s = from-json($p.key);
+    my $s = try from-json($p.key);
     is_deeply $s, $p.value, 
         "Correct data structure for «{$p.key.subst(/\n/, '\n', :g)}»";
 }
