@@ -2,7 +2,7 @@ class Panda::Fetcher;
 use File::Find;
 use Shell::Command;
 
-method fetch($from, $to) {
+method fetch($from is copy, $to) {
     given $from {
         my $commit;
         $from.=subst(/ '@' (<[ . / ]+alpha+digit>+) $/, { $commit = $0; "" });
