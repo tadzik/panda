@@ -2,6 +2,17 @@
     "name"        : "Shell::Command",
     "version"     : "*",
     "description" : "Common shell command replacements",
-    "depends"     : ["File::Find"],
+    "build-depends" : [
+        "File::Find"
+    ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [
+        "File::Find"
+    ],
+    "provides" : {
+        "Shell::Command" : "lib/Shell/Command.pm"
+    },
     "source-url"  : "git://github.com/tadzik/Shell-Command.git"
 }
