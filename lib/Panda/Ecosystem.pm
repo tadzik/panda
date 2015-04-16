@@ -145,10 +145,9 @@ class Panda::Ecosystem {
         my %dependencies;
         return unless +@ret;
         for @ret {
-            %dependencies{.name} = .dependencies
+            %dependencies{.name} = .dependencies.map({ self.get-project($_) }).grep({ $_ })
         }
-        # .map is needed because topo-sort sometimes stringifies (???)
-        return topo-sort(@ret, %dependencies).map({self.get-project(~$_)});
+        return topo-sort(@ret, %dependencies)
     }
 }
 
