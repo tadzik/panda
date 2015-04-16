@@ -35,6 +35,11 @@ multi MAIN ('list', Bool :$installed, Bool :$verbose) {
     listprojects($panda, :$installed, :$verbose);
 }
 
+#| Show reverse dependencies
+multi MAIN ('revdep', Str $name) {
+    revdep($panda, $name)
+}
+
 #| Update the module database
 multi MAIN ('update') {
     $panda.ecosystem.update;

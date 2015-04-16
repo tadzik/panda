@@ -135,4 +135,12 @@ sub projectinfo($panda, @args) is export {
     }
 }
 
+sub revdep($panda, $name) is export {
+    for $panda.ecosystem.project-list -> $p {
+        if any($p.dependencies) eq $name {
+            say $p.name;
+        }
+    }
+}
+
 # vim: ft=perl6
