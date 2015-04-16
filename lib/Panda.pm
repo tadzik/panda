@@ -52,6 +52,12 @@ class Panda {
 
     method project-from-local($proj as Str) {
         if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
+            if $proj !~~ rx{'/'|'.'} {
+                die X::Panda.new($proj, 'resolve',
+                        "Possibly ambiguous module name requested." 
+                        ~ " Please specify at least one slash if you really mean to install"
+                        ~ " from local directory (e.g. ./$proj)")
+            }
             my $mod = from-json slurp "$proj/META.info";
             $mod<source-url>  = $proj;
             return Panda::Project.new(
