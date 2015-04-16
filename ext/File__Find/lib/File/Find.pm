@@ -29,13 +29,16 @@ sub checkrules ($elem, %opts) {
     return True
 }
 
-sub find (:$dir!, :$name, :$type, Bool :$recursive = True,
+sub find (:$dir!, :$name, :$type, :$exclude = False, Bool :$recursive = True,
     Bool :$keep-going = False) is export {
 
     my @targets = dir($dir);
     my $list = gather while @targets {
         my $elem = @targets.shift;
-        take $elem if checkrules($elem, { :$name, :$type });
+        # exclude is special because it also stops traversing inside,
+        # which checkrules does not
+        next if $elem ~~ $exclude;
+        take $elem if checkrules($elem, { :$name, :$type, :$exclude });
         if $recursive {
             if $elem.IO ~~ :d {
                 @targets.push: dir($elem);
@@ -90,6 +93,12 @@ regexes passed, by the way).
 
 Given a type, C<find()> will only return files being the given type.
 The available types are C<file>, C<dir> or C<symlink>.
+
+=head2 exclude
+
+Exclude is meant to be used for skipping certain big and uninteresting
+directories, like '.git'. Neither them nor any of their contents will be
+returned, saving a significant amount of time.
 
 =head2 keep-going
 

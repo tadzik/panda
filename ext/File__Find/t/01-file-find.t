@@ -1,7 +1,7 @@
 use v6;
 use Test;
 use File::Find;
-plan 10;
+plan 11;
 
 my $res = find(:dir<t/dir1>);
 my @test = $res.map({ .Str }).sort;
@@ -40,6 +40,12 @@ $res = find(:dir<t/dir1>, :type<file>, :name(/foo/));
 @test = $res.map({ .Str }).sort;
 equals @test, <t/dir1/file.foo t/dir1/foodir/not_a_dir>,
 	'types: file, combined with name';
+
+#exclude
+$res = find(:dir<t/dir1>, :type<file>, :exclude<t/dir1/another_dir>);
+@test = $res.map({ .Str }).sort;
+equals @test, <t/dir1/file.bar t/dir1/file.foo t/dir1/foodir/not_a_dir>, 'exclude works';
+
 
 #keep-going
 skip_rest('keep-going tests are brokenz');
