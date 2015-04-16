@@ -14,20 +14,23 @@ File::Find - Get a lazy list of a directory tree
 
 ## DESCRIPTION
 
-C<File::Find> allows you to get the contents of the given directory,
+`File::Find` allows you to get the contents of the given directory,
 recursively, depth first.
-The only exported function, C<find()>, generates a lazy
+
+The only exported function, `find()`, generates a lazy
 list of files in given directory. Every element of the list is an
-C<IO::Path> object, described below.
-C<find()> takes one (or more) named arguments. The C<dir> argument
-is mandatory, and sets the directory C<find()> will traverse. 
+`IO::Path` object, described below.
+
+`find()` takes one (or more) named arguments. The `dir` argument
+is mandatory, and sets the directory `find()` will traverse.
+
 There are also few optional arguments. If more than one is passed,
 all of them must match for a file to be returned.
 
 **name**
 
-Specify a name of the file C<File::Find> is ought to look for. If you
-pass a string here, C<find()> will return only the files with the given
+Specify a name of the file `File::Find` is ought to look for. If you
+pass a string here, `find()` will return only the files with the given
 name. When passing a regex, only the files with path matching the
 pattern will be returned. Any other type of argument passed here will
 just be smartmatched against the path (which is exactly what happens to
@@ -35,12 +38,12 @@ regexes passed, by the way).
 
 **type**
 
-Given a type, C<find()> will only return files being the given type.
-The available types are C<file>, C<dir> or C<symlink>.
+Given a type, `find()` will only return files being the given type.
+The available types are `file`, `dir` or `symlink.
 
 **keep-going**
 
-Parameter C<keep-going> tells C<find()> to not stop finding files
+Parameter `keep-going` tells `find()` to not stop finding files
 on errors such as 'Access is denied', but rather ignore the errors
 and keep going.
 
@@ -52,7 +55,7 @@ File::Find::Rule, and its features are planned to be similar one day.
 
 ## CAVEATS
 
-List assignment is eager in Perl 6, so if You assign C<find()> result
+List assignment is eager in Perl 6, so if You assign `find()` result
 to an array, the elements will be copied and the laziness will be
-spoiled. For a proper lazy list, use either binding (C<:=>) or assign
+spoiled. For a proper lazy list, use either binding (`:=`) or assign
 a result to a scalar value (see SYNOPSIS).
