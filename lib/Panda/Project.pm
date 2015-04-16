@@ -10,4 +10,8 @@ class Panda::Project {
     has $.test-passed is rw;
 
     enum State <absent installed-dep installed>;
+
+    method Str { $!name }
+
+    method gist { "Panda::Project($!name)" }
 }

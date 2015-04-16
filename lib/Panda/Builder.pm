@@ -3,27 +3,6 @@ use Panda::Common;
 use File::Find;
 use Shell::Command;
 
-sub topo-sort(@modules, %dependencies) {
-    my @order;
-    my %color_of = @modules X=> 'not yet visited';
-    sub dfs-visit($module) {
-        %color_of{$module} = 'visited';
-        for %dependencies{$module}.list -> $used {
-            if (%color_of{$used} // '') eq 'not yet visited' {
-                dfs-visit($used);
-            }
-        }
-        push @order, $module;
-    }
-
-    for @modules -> $module {
-        if %color_of{$module} eq 'not yet visited' {
-            dfs-visit($module);
-        }
-    }
-    @order;
-}
-
 sub path-to-module-name($path) {
     my $slash = / [ '/' | '\\' ]  /;
     $path.subst(/^'lib'<$slash>/, '').subst(/^'lib6'<$slash>/, '').subst(/\.pm6?$/, '').subst($slash, '::', :g);

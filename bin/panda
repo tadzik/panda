@@ -36,8 +36,8 @@ multi MAIN ('list', Bool :$installed, Bool :$verbose) {
 }
 
 #| Show reverse dependencies
-multi MAIN ('revdep', Str $name) {
-    revdep($panda, $name)
+multi MAIN ('revdep', Str $name, Bool :$installed) {
+    revdep($panda, $name, :$installed)
 }
 
 #| Update the module database

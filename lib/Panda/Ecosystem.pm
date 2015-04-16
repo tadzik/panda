@@ -1,5 +1,6 @@
 class Panda::Ecosystem {
     use Panda::Project;
+    use Panda::Common;
     use JSON::Tiny;
     use Shell::Command;
 
@@ -114,7 +115,11 @@ class Panda::Ecosystem {
     }
 
     method project-get-state(Panda::Project $p) {
-        %!states{$p.name} // Panda::Project::absent
+        %!states{$p.name} // Panda::Project::State::absent
+    }
+
+    method is-installed(Panda::Project $p) {
+        self.project-get-state($p) != Panda::Project::State::absent
     }
 
     method project-get-saved-meta(Panda::Project $p) {
@@ -126,6 +131,24 @@ class Panda::Ecosystem {
         %!states{$p.name} = $s;
         %!saved-meta{$p.name} = $p.metainfo;
         self.flush-states;
+    }
+
+    method revdeps($name as Str, Bool :$installed) {
+        my @ret;
+        for self.project-list -> $p {
+            if any($p.dependencies) eq $name {
+                if !$installed or self.is-installed($p) {
+                    @ret.push: $p, self.revdeps($p, :$installed);
+                }
+            }
+        }
+        my %dependencies;
+        return unless +@ret;
+        for @ret {
+            %dependencies{.name} = .dependencies
+        }
+        # .map is needed because topo-sort sometimes stringifies (???)
+        return topo-sort(@ret, %dependencies).map({self.get-project(~$_)});
     }
 }
 
