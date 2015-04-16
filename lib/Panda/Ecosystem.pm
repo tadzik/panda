@@ -64,7 +64,7 @@ class Panda::Ecosystem {
     }
 
     method project-list {
-        return %!projects.keys
+        return %!projects.values
     }
 
     method update {

@@ -45,7 +45,7 @@ sub make-default-ecosystem is export {
 
 sub listprojects($panda, :$installed, :$verbose) is export {
     my $es        = $panda.ecosystem;
-    my @projects  = $es.project-list.sort.for: { $es.get-project($_) };
+    my @projects  = $es.project-list.sort(*.name);
        @projects .= grep({ $es.project-get-state($_) ne Panda::Project::State::absent })
                     if $installed;
     my @saved     = @projects.for({ $es.project-get-saved-meta($_) || {} });
@@ -81,8 +81,7 @@ sub wrap ($str) is export {
 }
 
 sub search-projects($panda, $string) is export {
-    for $panda.ecosystem.project-list -> $project {
-        my $p = $panda.ecosystem.get-project($project);
+    for $panda.ecosystem.project-list -> $p {
         next unless $p.name ~~ /:i $string / || $p.metainfo<description> ~~ /:i $string /;
         printf "%-24s %-10s %s\n",$p.name,$p.version, wrap($p.metainfo<description>);
     }
