@@ -1,6 +1,6 @@
 {
     "name"        : "File::Find",
-    "version"     : "*",
+    "version"     : "0.1",
     "description" : "File::Find for Perl 6",
     "depends"     : [],
     "provides"    : { "File::Find" : "lib/File/Find.pm" },
