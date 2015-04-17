@@ -52,7 +52,7 @@ class Panda {
 
     method project-from-local($proj as Str) {
         if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
-            if $proj !~~ rx{'/'|'.'} {
+            if $proj !~~ rx{'/'|'.'|'\\'} {
                 die X::Panda.new($proj, 'resolve',
                         "Possibly ambiguous module name requested." 
                         ~ " Please specify at least one slash if you really mean to install"
