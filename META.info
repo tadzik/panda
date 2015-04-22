@@ -9,6 +9,7 @@
   "provides" : {
     "JSON::Fast" : "lib/JSON/Fast.pm"
   },
+  "source-url" : "git://github.com/timo/json_fast.git",
   "support" : {
     "source" : "git://github.com/timo/json_fast.git"
   }
