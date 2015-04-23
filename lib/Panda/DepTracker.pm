@@ -1,3 +1,4 @@
+use nqp;
 
 my class DepTracker is CompUnitRepo {
     method load_module($module_name, %opts, *@GLOBALish is rw, Any :$line, Any :$file, :%chosen) {
