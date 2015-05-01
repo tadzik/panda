@@ -7,11 +7,11 @@ use Shell::Command;
 
 say '==> Bootstrapping Panda';
 
-my $is_win = $*DISTRO.name eq 'mswin32';
+my $is_win = $*DISTRO.is-win;
 
 my $panda-base;
 my $destdir = %*ENV<DESTDIR>;
-$destdir = "$*CWD/$destdir" if defined($destdir) && $*OS ne 'MSWin32' && $destdir !~~ /^ '/' /;
+$destdir = "$*CWD/$destdir" if defined($destdir) && $is_win && $destdir !~~ /^ '/' /;
 for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
     $destdir  = $prefix;
     $panda-base = "$prefix/panda";
