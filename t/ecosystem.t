@@ -29,9 +29,9 @@ is $a.project-get-state($a.get-project('new')), $absent, 'get-state 2';
 $a.project-set-state($b, $installed);
 is $a.project-get-state($b), $installed, 'get-state 3';
 
-is $b.dependencies[0], 'some',  'dependencies 1';
-is $b.dependencies[1], 'thing', 'dependencies 2';
-is $b.dependencies[2], 'else',  'dependencies 3';
+is any($b.dependencies), 'some',  'dependencies 1';
+is any($b.dependencies), 'thing', 'dependencies 2';
+is any($b.dependencies), 'else',  'dependencies 3';
 
 is $a.suggest-project("Frob-Frob"), "Frob::Frob", 'suggestions 1';
 is $a.suggest-project("Frob_Frob"), "Frob::Frob", 'suggestions 2';
