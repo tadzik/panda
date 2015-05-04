@@ -16,7 +16,7 @@ method sort-lib-contents(@lib) {
 method default-destdir {
     my $ret = %*ENV<DESTDIR>;
     if defined($ret) && !$*DISTRO.is-win && $ret !~~ /^ '/' / {
-        $ret = "{cwd}/$ret" ;
+        $ret = "$*CWD/$ret" ;
     }
     for grep(*.defined, $ret, %*CUSTOM_LIB<site home>) -> $prefix {
         $ret = $prefix;

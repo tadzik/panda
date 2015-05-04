@@ -3,15 +3,21 @@ use v6;
 use lib 'ext/File__Find/lib/';
 use lib 'ext/Shell__Command/lib/';
 use Shell::Command;
-%*ENV<PANDA_SUBMIT_TESTREPORTS>:delete;
 
 say '==> Bootstrapping Panda';
 
-my $is_win = $*DISTRO.is-win;
+# prevent a lot of expensive dynamic lookups
+my $CWD    := $*CWD;
+my $DISTRO := $*DISTRO;
+my %ENV    := %*ENV;
+
+%ENV<PANDA_SUBMIT_TESTREPORTS>:delete;
+
+my $is_win = $DISTRO.is-win;
 
 my $panda-base;
-my $destdir = %*ENV<DESTDIR>;
-$destdir = "$*CWD/$destdir" if defined($destdir) && $is_win && $destdir !~~ /^ '/' /;
+my $destdir = %ENV<DESTDIR>;
+$destdir = "$CWD/$destdir" if defined($destdir) && $is_win && $destdir !~~ /^ '/' /;
 for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
     $destdir  = $prefix;
     $panda-base = "$prefix/panda";
@@ -33,14 +39,16 @@ given open "$panda-base/projects.json", :w {
     .close;
 }
 
-my $env_sep = $is_win ?? ';' !! ':';
+my $env_sep = $DISTRO.?cur-sep // $DISTRO.path-sep;
 
-%*ENV<RAKUDOLIB> = "$destdir.^name()=$destdir" if $destdir.^can('install');
-%*ENV<PERL6LIB> ~= "{$env_sep}$destdir/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/File__Find/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/Shell__Command/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/ext/JSON__Tiny/lib";
-%*ENV<PERL6LIB> ~= "{$env_sep}$*CWD/lib";
+#%ENV<RAKUDOLIB> = "$destdir.^name()=$destdir" if $destdir.^can('install'); # WAT?
+%ENV<PERL6LIB>  = join( $env_sep,
+  "$destdir/lib",
+  "$CWD/ext/File__Find/lib",
+  "$CWD/ext/Shell__Command/lib",
+  "$CWD/ext/JSON__Tiny/lib",
+  "$CWD/lib",
+);
 
 shell "$*EXECUTABLE bin/panda install File::Find Shell::Command JSON::Tiny $*CWD";
 if "$destdir/panda/src".IO ~~ :d {
