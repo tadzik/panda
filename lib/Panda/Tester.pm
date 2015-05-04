@@ -5,7 +5,7 @@ method test($where, :$bone, :$prove-command = 'prove') {
     indir $where, {
         my Bool $run-default = True;
         if "Build.pm".IO.f {
-            @*INC.push('.');
+            @*INC.push('file#.');   # TEMPORARY !!!
             GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Tester) {

@@ -34,7 +34,7 @@ sub make-default-ecosystem is export {
     # files that depend on the modules we just installed break).
     #
     # If this is already in @*INC, it doesn't harm anything to re-add it.
-    @*INC.push($destdir~'/lib');
+    @*INC.push("file#" ~ $destdir ~ '/lib');   # TEMPORARY !!!
 
     return Panda::Ecosystem.new(
         statefile    => "$pandadir/state",
