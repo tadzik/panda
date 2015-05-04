@@ -19,7 +19,7 @@ method default-destdir {
         $ret = "$*CWD/$ret" ;
     }
     for grep(*.defined, $ret, %*CUSTOM_LIB<site home>) -> $prefix {
-        $ret = $prefix;
+        $ret = CompUnitRepo.new("inst#$prefix");   # TEMPORARY !!!
         last if $ret.IO.w;
     }
     return $ret;
