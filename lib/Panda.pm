@@ -99,7 +99,7 @@ class Panda {
 
         my $shell = %*ENV<SHELL>;
         $shell ||= %*ENV<COMSPEC>
-            if $*DISTRO.name eq 'mswin32';
+            if $*DISTRO.is-win;
 
         if $shell {
 

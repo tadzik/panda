@@ -21,7 +21,7 @@ sub withp6lib(&what) is export {
             %*ENV<PERL6LIB>:delete;
         }
     }
-    my $sep = $*DISTRO.is-win ?? ';' !! ':';
+    my $sep = $*DISTRO.?cur-sep // $*DISTRO.path-sep;
     %*ENV<PERL6LIB> = join $sep,
         $*CWD ~ '/blib/lib',
         $*CWD ~ '/lib',
