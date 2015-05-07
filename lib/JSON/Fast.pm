@@ -98,7 +98,7 @@ my sub parse-string(str $text, int $pos is rw) {
                 $result = @pieces.join("");
                 last;
             }
-        } elsif $ord == 10 || $ord == 13 || $ord == 9 {
+        } elsif $ord < 14 && ($ord == 10 || $ord == 13 || $ord == 9) {
             die "the only whitespace allowed in json strings are spaces";
         }
     }
