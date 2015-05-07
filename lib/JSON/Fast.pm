@@ -253,7 +253,7 @@ my sub parse-thing(str $text, int $pos is rw) {
     } elsif $initial eq 'f' {
         if nqp::eqat($text, 'alse', $pos) {
             $pos = $pos + 4;
-            True
+            False
         }
     } else {
         die "can't parse objects starting in $initial yet."
