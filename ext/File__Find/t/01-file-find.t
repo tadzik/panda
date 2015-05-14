@@ -42,7 +42,8 @@ equals @test, <t/dir1/file.foo t/dir1/foodir/not_a_dir>,
 	'types: file, combined with name';
 
 #exclude
-$res = find(:dir<t/dir1>, :type<file>, :exclude<t/dir1/another_dir>);
+my $exclude = $*DISTRO.is-win ?? 't\\dir1\\another_dir' !! 't/dir1/another_dir';
+$res = find(:dir<t/dir1>, :type<file>, :$exclude);
 @test = $res.map({ .Str }).sort;
 equals @test, <t/dir1/file.bar t/dir1/file.foo t/dir1/foodir/not_a_dir>, 'exclude works';
 
