@@ -143,7 +143,7 @@ class Panda::Ecosystem {
             }
         }
         my %dependencies;
-        return unless +@ret;
+        return Empty unless +@ret;
         for @ret {
             %dependencies{.name} = .dependencies
         }
