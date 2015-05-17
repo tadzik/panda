@@ -42,7 +42,7 @@ given open "$panda-base/projects.json", :w {
 my $env_sep = $DISTRO.?cur-sep // $DISTRO.path-sep;
 
 %ENV<PERL6LIB>  = join( $env_sep,
-  $destdir.can('path-spec') ?? $destdir.path-spec !! "file#$destdir/lib",
+  $destdir,
   "file#$CWD/ext/File__Find/lib",
   "file#$CWD/ext/Shell__Command/lib",
   "file#$CWD/ext/JSON__Tiny/lib",

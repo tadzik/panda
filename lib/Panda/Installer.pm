@@ -36,7 +36,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
     }
     indir $from, {
         # check if $.destdir is under control of a CompUnitRepo
-        if $to.can('install') {
+        if $to.starts-with('inst#') {
             my @files;
             if 'blib'.IO ~~ :d {
                 @files.push: find(dir => 'blib', type => 'file').list.grep( -> $lib {
@@ -51,7 +51,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
                     $bin
                 } )
             }
-            $to.install(:dist($bone), @files);
+            CompUnitRepo.new($to).install(:dist($bone), @files);
         }
         else {
             if 'blib'.IO ~~ :d {
