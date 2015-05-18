@@ -15,9 +15,9 @@ my %failed;
 @*ARGS = @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
 
 #| Install the specified modules
-multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
+multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$rebuild = True) {
     for @modules -> $x {
-        $panda.resolve($x, :$notests, :$nodeps, :action<install>);
+        $panda.resolve($x, :$notests, :$nodeps, :$rebuild, :action<install>);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
 }

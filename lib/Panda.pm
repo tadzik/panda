@@ -138,12 +138,12 @@ class Panda {
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
         # Check if there's any reverse dependencies to rebuild
-        unless $rebuild {
+        if $rebuild {
             my @revdeps = $.ecosystem.revdeps($bone, :installed);
             if $.ecosystem.is-installed($bone) and @revdeps {
                 self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
                 for @revdeps -> $revdep {
-                    self.install($revdep, False, False, False, :rebuild)
+                    self.install($revdep, False, False, False, :!rebuild)
                 }
             }
             $.ecosystem.project-set-state($bone, $s)
@@ -179,7 +179,7 @@ class Panda {
         return @deps;
     }
 
-    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action='install') {
+    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action='install', :$rebuild) {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         mkpath $tmpdir;
@@ -207,11 +207,11 @@ class Panda {
                 $.ecosystem.project-get-state($_)
                     == Panda::Project::absent
             };
-            self.install($_, $nodeps, $notests, 1) for @deps;
+            self.install($_, $nodeps, $notests, 1, :$rebuild) for @deps;
         }
 
         given $action {
-            when 'install' { self.install($bone, $nodeps, $notests, 0); }
+            when 'install' { self.install($bone, $nodeps, $notests, 0, :$rebuild); }
             when 'install-deps-only' { }
             when 'look'    { self.look($bone) };
         }

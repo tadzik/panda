@@ -49,7 +49,7 @@ my $env_sep = $DISTRO.?cur-sep // $DISTRO.path-sep;
   "file#$CWD/lib",
 );
 
-shell "$*EXECUTABLE bin/panda install File::Find Shell::Command JSON::Tiny $*CWD";
+shell "$*EXECUTABLE bin/panda --rebuild=False install File::Find Shell::Command JSON::Tiny $*CWD";
 if "$destdir/panda/src".IO ~~ :d {
     rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
                                 # that src should not be kept at all, but
