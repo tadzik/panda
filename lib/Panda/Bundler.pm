@@ -54,7 +54,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
 
         if "$dir/blib/lib".IO ~~ :d {
             find(dir => "$dir/blib/lib", type => 'file').list.grep( -> $lib is copy {
-                next unless $lib.basename ~~ / \.pm 6? $/;
+                next unless $lib.basename ~~ / \.pm6? $/;
                 $lib = file_to_symbol($lib);
                 try shell "$*EXECUTABLE -Iblib/lib -M$lib -e1 " ~ ($*DISTRO.is-win ?? ' >NIL 2>&1' !! ' >/dev/null 2>&1');
             } )
@@ -144,7 +144,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
 }
 
 sub file_to_symbol($file) {
-    my @names = $file.IO.relative.subst(/ \.pm 6? $/, '').split(/<[\\\/]>/);
+    my @names = $file.IO.relative.subst(/ \.pm6? $/, '').split(/<[\\\/]>/);
     shift @names if @names && @names[0] eq 'blib';
     shift @names if @names && @names[0] eq 'lib';
     @names.join('::');
