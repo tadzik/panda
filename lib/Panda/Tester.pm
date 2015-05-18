@@ -1,4 +1,4 @@
-class Panda::Tester;
+class Panda::Tester {
 use Panda::Common;
 
 method test($where, :$bone, :$prove-command = 'prove') {
@@ -37,6 +37,8 @@ method test($where, :$bone, :$prove-command = 'prove') {
         }
     };
     return True;
+}
+
 }
 
 # vim: ft=perl6

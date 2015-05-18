@@ -1,4 +1,4 @@
-class Panda::Builder;
+class Panda::Builder {
 use Panda::Common;
 use File::Find;
 use Shell::Command;
@@ -125,6 +125,8 @@ method build($where, :$bone) {
         1;
     };
     return True;
+}
+
 }
 
 # vim: ft=perl6
