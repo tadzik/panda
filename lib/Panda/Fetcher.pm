@@ -1,4 +1,4 @@
-unit class Panda::Fetcher;
+class Panda::Fetcher {
 use File::Find;
 use Shell::Command;
 
@@ -65,6 +65,8 @@ sub local-fetch($from, $to) {
         $io.copy("$where/{$io.basename}");
     }
     return True;
+}
+
 }
 
 # vim: ft=perl6

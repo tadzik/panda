@@ -1,4 +1,4 @@
-unit module Panda::Common;
+module Panda::Common {
 use Shell::Command;
 
 sub dirname ($mod as Str) is export {
@@ -71,6 +71,8 @@ class X::Panda is Exception {
         sprintf "%s stage failed for %s: %s",
                 $.stage, $.module, $.description
     }
+}
+
 }
 
 # vim: ft=perl6

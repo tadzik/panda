@@ -1,4 +1,4 @@
-unit class Panda::Installer;
+class Panda::Installer {
 use Panda::Common;
 use Panda::Project;
 use File::Find;
@@ -76,6 +76,8 @@ method install($from, $to? is copy, Panda::Project :$bone) {
         }
         1;
     }
+}
+
 }
 
 # vim: ft=perl6

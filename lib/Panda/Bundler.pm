@@ -1,4 +1,4 @@
-unit class Panda::Bundler;
+class Panda::Bundler {
 use Panda::Common;
 use Panda::Project;
 use File::Find;
@@ -148,6 +148,8 @@ sub file_to_symbol($file) {
     shift @names if @names && @names[0] eq 'blib';
     shift @names if @names && @names[0] eq 'lib';
     @names.join('::');
+}
+
 }
 
 # vim: ft=perl6

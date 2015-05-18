@@ -1,4 +1,4 @@
-unit module Panda::App;
+module Panda::App {
 use Shell::Command;
 use Panda::Ecosystem;
 use Panda::Project;
@@ -137,6 +137,8 @@ sub projectinfo($panda, @args) is export {
 
 sub revdep($panda, $name, :$installed) is export {
     say $panda.ecosystem.revdeps($name, :$installed).join("\n");
+}
+
 }
 
 # vim: ft=perl6

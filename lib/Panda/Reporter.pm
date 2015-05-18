@@ -1,4 +1,4 @@
-unit class Panda::Reporter;
+class Panda::Reporter {
 
 has $.bone is rw;
 has $.reports-file is rw;
@@ -98,3 +98,7 @@ method to-json {
         }),
     }
 }
+
+}
+
+# vim: ft=perl6
