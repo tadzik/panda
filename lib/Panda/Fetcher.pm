@@ -1,4 +1,4 @@
-class Panda::Fetcher;
+unit class Panda::Fetcher;
 use File::Find;
 use Shell::Command;
 

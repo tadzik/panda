@@ -1,4 +1,4 @@
-class Panda::Installer;
+unit class Panda::Installer;
 use Panda::Common;
 use Panda::Project;
 use File::Find;

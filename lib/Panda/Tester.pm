@@ -1,4 +1,4 @@
-class Panda::Tester;
+unit class Panda::Tester;
 use Panda::Common;
 
 method test($where, :$bone, :$prove-command = 'prove') {

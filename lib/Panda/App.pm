@@ -1,4 +1,4 @@
-module Panda::App;
+unit module Panda::App;
 use Shell::Command;
 use Panda::Ecosystem;
 use Panda::Project;

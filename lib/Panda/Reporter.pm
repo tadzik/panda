@@ -1,4 +1,4 @@
-class Panda::Reporter;
+unit class Panda::Reporter;
 
 has $.bone is rw;
 has $.reports-file is rw;

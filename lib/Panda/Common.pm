@@ -1,4 +1,4 @@
-module Panda::Common;
+unit module Panda::Common;
 use Shell::Command;
 
 sub dirname ($mod as Str) is export {

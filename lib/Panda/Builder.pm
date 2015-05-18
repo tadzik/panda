@@ -1,4 +1,4 @@
-class Panda::Builder;
+unit class Panda::Builder;
 use Panda::Common;
 use File::Find;
 use Shell::Command;

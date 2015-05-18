@@ -1,4 +1,4 @@
-class Panda::Bundler;
+unit class Panda::Bundler;
 use Panda::Common;
 use Panda::Project;
 use File::Find;
