@@ -5,24 +5,27 @@ use Panda::Project;
 
 # initialize the Panda object
 sub make-default-ecosystem is export {
-    my $pandadir;
-    my $destdir = %*ENV<DESTDIR>;
-    $destdir = "$*CWD/$destdir" if defined($destdir) && !$*DISTRO.is-win && $destdir !~~ /^ '/' /;
-    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-        $destdir  = $prefix;
-        $pandadir = "$prefix/panda".IO;
-        try mkpath $pandadir unless $pandadir ~~ :d;
-        last if $pandadir.w;
+    my $panda-base;
+    my $destdir;
+    # $path-spec can be an absolute or relative path (which will defautl to a CompUnitRepo::Local::File),
+    # or it is preceeded by 'inst#' or 'file#' which will choose the CompUnitRepo with this short-id.
+    for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) -> $path-spec {
+        $destdir    = CompUnitRepo.new($path-spec);
+        $panda-base = $destdir.IO.child('panda');
+        try mkpath $panda-base unless $panda-base.d;
+        last if $panda-base.w;
     }
-    unless $pandadir.w {
+
+    unless $panda-base.w {
         die "Found no writable directory into which panda could be installed";
     }
 
     my @extra-statefiles;
-    unless $destdir eq %*CUSTOM_LIB<site> {
-        for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-            unless $destdir eq $prefix {
-                @extra-statefiles.push("$prefix/panda/state");
+    unless $destdir ~~ CompUnitRepo.new(%*CUSTOM_LIB<site>) {
+        for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $path-spec is copy {
+            $path-spec = $path-spec ~~ CompUnitRepo ?? $path-spec !! CompUnitRepo.new($path-spec);
+            unless $destdir ~~ $path-spec {
+                @extra-statefiles.push("$path-spec/panda/state");
             }
         }
     }
@@ -37,8 +40,8 @@ sub make-default-ecosystem is export {
     @*INC.push("file#" ~ $destdir ~ '/lib');   # TEMPORARY !!!
 
     return Panda::Ecosystem.new(
-        statefile    => "$pandadir/state",
-        projectsfile => "$pandadir/projects.json",
+        statefile    => "$panda-base/state",
+        projectsfile => "$panda-base/projects.json",
         extra-statefiles => @extra-statefiles
     );
 }

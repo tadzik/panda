@@ -7,11 +7,12 @@ use Shell::Command;
 
 # Find old state file
 my ($prefix, $state-file, $reports-file);
-for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) {
-    if "$_/panda/state".IO.e {
-        $prefix = $_;
-        $state-file   = "$_/panda/state";
-        $reports-file = "$_/panda/reports.{$*PERL.compiler.version}" if "$_/panda/reports.{$*PERL.compiler.version}".IO.e;
+for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) -> $path-spec {
+    my $destdir    = CompUnitRepo.new($path-spec).IO;
+    if "$destdir/panda/state".IO.e {
+        $prefix       = ~$destdir;
+        $state-file   = "$destdir/panda/state";
+        $reports-file = "$destdir/panda/reports.{$*PERL.compiler.version}" if "$destdir/panda/reports.{$*PERL.compiler.version}".IO.e;
     }
 }
 
@@ -41,7 +42,8 @@ given open($state-file) {
 
 # Clean old directories, boostrap a fresh panda,
 # and reinstall all manually-installed modules
-rm_f(dir(~$prefix)».grep({$_.basename ~~ /^ \d+ | MANIFEST $/})) if $prefix.IO.d;
+my $ext = '.' ~ $*VM.precomp-ext;
+rm_f(dir(~$prefix)».grep({$_.basename ~~ /^ [ \d+ | MANIFEST ] $ext? $/})) if $prefix.IO.d;
 rm_rf "$prefix/lib";
 rm_rf "$prefix/panda";
 shell "$*EXECUTABLE bootstrap.pl";

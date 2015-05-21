@@ -16,15 +16,16 @@ my %ENV    := %*ENV;
 my $is_win = $DISTRO.is-win;
 
 my $panda-base;
-my $destdir = %ENV<DESTDIR>;
-$destdir = "$CWD/$destdir" if defined($destdir) && $is_win && $destdir !~~ /^ '/' /;
-for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-    $destdir  = $prefix;
-    $panda-base = "$prefix/panda";
-    try mkdir $destdir;
-    try mkpath $panda-base unless $panda-base.IO ~~ :d;
-    last if $panda-base.IO.w
+my $destdir;
+# $path-spec can be an absolute or relative path (which will defautl to a CompUnitRepo::Local::File),
+# or it is preceeded by 'inst#' or 'file#' which will choose the CompUnitRepo with this short-id.
+for grep(*.defined, %ENV<DESTDIR>, %*CUSTOM_LIB<site home>) -> $path-spec {
+    $destdir    = CompUnitRepo.new($path-spec);
+    $panda-base = $destdir.IO.child('panda');
+    try mkpath ~$panda-base; # IO::Path caches filestats, so we stringify here otherwise the .w check will fail
+    last if $panda-base.w;
 }
+
 unless $panda-base.IO.w {
     warn "panda-base: { $panda-base.perl }";
     die "Found no writable directory into which panda could be installed";
@@ -42,7 +43,7 @@ given open "$panda-base/projects.json", :w {
 my $env_sep = $DISTRO.?cur-sep // $DISTRO.path-sep;
 
 %ENV<PERL6LIB>  = join( $env_sep,
-  $destdir,
+  "$destdir/lib", # Eventually should be: $destdir.path-spec
   "file#$CWD/ext/File__Find/lib",
   "file#$CWD/ext/Shell__Command/lib",
   "file#$CWD/ext/JSON__Tiny/lib",

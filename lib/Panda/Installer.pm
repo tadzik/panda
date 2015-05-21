@@ -14,15 +14,14 @@ method sort-lib-contents(@lib) {
 
 # default install location
 method default-destdir {
-    my $ret = %*ENV<DESTDIR>;
-    if defined($ret) && !$*DISTRO.is-win && $ret !~~ /^ '/' / {
-        $ret = "$*CWD/$ret" ;
+    my $destdir;
+    # $path-spec can be an absolute or relative path (which will defautl to a CompUnitRepo::Local::File),
+    # or it is preceeded by 'inst#' or 'file#' which will choose the CompUnitRepo with this short-id.
+    for grep(*.defined, %*ENV<DESTDIR>, %*CUSTOM_LIB<site home>) -> $path-spec {
+        $destdir = CompUnitRepo.new($path-spec);
+        last if $destdir.IO.w;
     }
-    for grep(*.defined, $ret, %*CUSTOM_LIB<site home>) -> $prefix {
-        $ret = $prefix;
-        last if $ret.IO.w;
-    }
-    return $ret;
+    return $destdir;
 }
 
 sub copy($src, $dest) {
@@ -36,7 +35,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
     }
     indir $from, {
         # check if $.destdir is under control of a CompUnitRepo
-        if $to.starts-with('inst#') {
+        if $to.^can('install') {
             my @files;
             if 'blib'.IO ~~ :d {
                 @files.push: find(dir => 'blib', type => 'file').list.grep( -> $lib {
@@ -51,7 +50,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
                     $bin
                 } )
             }
-            CompUnitRepo.new($to).install(:dist($bone), @files);
+            $to.install(:dist($bone), @files);
         }
         else {
             if 'blib'.IO ~~ :d {
