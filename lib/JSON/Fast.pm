@@ -1,6 +1,6 @@
 use nqp;
 
-module JSON::Fast;
+unit module JSON::Fast;
 
 proto to-json($) is export {*}
 
