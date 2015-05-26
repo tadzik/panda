@@ -1,4 +1,4 @@
-module Shell::Command;
+unit module Shell::Command;
 use File::Find;
 
 sub cat(*@files) is export {

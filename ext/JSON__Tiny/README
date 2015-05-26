@@ -29,7 +29,6 @@ State:
 
 Missing features:
 
- * Correct handling and tests for surrogate pairs
  * Detection of cycles in input data structures (might never be fixed)
 
 Credits
