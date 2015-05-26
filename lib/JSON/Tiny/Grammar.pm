@@ -1,5 +1,5 @@
 use v6;
-grammar JSON::Tiny::Grammar;
+unit grammar JSON::Tiny::Grammar;
 
 token TOP       { ^ \s* [ <object> | <array> ] \s* $ }
 rule object     { '{' ~ '}' <pairlist>     }
@@ -31,7 +31,11 @@ token str {
 }
 
 token str_escape {
-    <["\\/bfnrt]> | u <xdigit>**4
+    <["\\/bfnrt]> | 'u' <utf16_codepoint>+ % '\u'
+}
+
+token utf16_codepoint {
+    <.xdigit>**4
 }
 
 # vim: ft=perl6
