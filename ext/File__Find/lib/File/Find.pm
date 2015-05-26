@@ -1,6 +1,6 @@
 use v6;
 
-module File::Find;
+unit module File::Find;
 
 sub checkrules ($elem, %opts) {
     if %opts<name>.defined {
