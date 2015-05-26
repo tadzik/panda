@@ -13,7 +13,7 @@ It supports strings, numbers, arrays and hashes (no custom objects).
 
 =end pod
 
-module JSON::Tiny;
+unit module JSON::Tiny;
 
 use JSON::Tiny::Actions;
 use JSON::Tiny::Grammar;
@@ -31,7 +31,9 @@ multi to-json(Str:D  $d) {
     '"'
     ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
             => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
-            .subst(/<-[\c32..\c126]>/, { ord(~$_).fmt('\u%04x') }, :g)
+            .subst(/<-[\c32..\c126]>/, {
+                $_.Str.encode('utf-16').values».fmt('\u%04x').join
+            }, :g)
     ~ '"'
 }
 multi to-json(Positional:D $d) {
@@ -57,6 +59,6 @@ sub from-json($text) is export {
         X::JSON::Tiny::Invalid.new(source => $text).throw;
     }
     
-    return $o.ast;
+    return $o.made;
 }
 # vim: ft=perl6
