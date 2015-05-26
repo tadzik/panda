@@ -7,7 +7,7 @@ plan 7;
 
 my $srcdir = 'testmodules';
 
-lives_ok { Panda::Builder.build("$srcdir/dummymodule") };
+lives-ok { Panda::Builder.build("$srcdir/dummymodule") };
 
 ok "$srcdir/dummymodule/blib/lib/foo.pm.{compsuffix}".IO ~~  :f, 'module compiled';
 ok "$srcdir/dummymodule/blib/lib/foo.pm".IO ~~   :f, 'and copied to blib';
@@ -16,7 +16,7 @@ ok "$srcdir/dummymodule/blib/lib/bar.{compsuffix}".IO !~~ :f, 'pod not compiled'
 ok "$srcdir/dummymodule/blib/lib/foo.js".IO ~~ :f,
    'random files also copied to blib';
 
-lives_ok { Panda::Builder.build("$srcdir/testme1") };
+lives-ok { Panda::Builder.build("$srcdir/testme1") };
 
 rm_rf "$srcdir/dummymodule/blib";
 

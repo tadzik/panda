@@ -8,7 +8,7 @@ plan 8;
 my $src  = 'testmodules/compiled__module';
 my $dest = "$*CWD/removeme";
 
-lives_ok { Panda::Installer.install($src, $dest) };
+lives-ok { Panda::Installer.install($src, $dest) };
 
 sub file_exists_ok($a as Str, $msg as Str) {
     ok $a.IO ~~ :f, $msg
@@ -26,7 +26,7 @@ rm_rf $dest;
 my @lib = 'foo.pm', 'foo.' ~ compsuffix, 'bam.' ~ compsuffix, 
           'bam.pm', 'blaz.pm', 'blaz.' ~ compsuffix, 'shazam.js';
 my @order = Panda::Installer.sort-lib-contents(@lib);
-is_deeply @order,
+is-deeply @order,
           [<foo.pm bam.pm blaz.pm shazam.js>, 
           'foo.' ~ compsuffix, 'bam.' ~ compsuffix, 'blaz.' ~ compsuffix],
           "{compsuffix}s will get installed after rest of the things";
