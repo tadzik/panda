@@ -162,7 +162,7 @@ class Panda {
     }
 
     method get-deps(Panda::Project $bone) {
-        my @bonedeps = $bone.dependencies.grep(*.defined).for({
+        my @bonedeps = $bone.dependencies.grep(*.defined).map({
             next if $_ eq 'Test' | 'NativeCall' | 'nqp'; # XXX Handle dists properly that are shipped by a compiler.
             $.ecosystem.get-project($_)
                 or die X::Panda.new($bone.name, 'resolve',
