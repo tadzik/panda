@@ -218,7 +218,7 @@ for @n -> $t {
     $i++;
 }
 
-throws_like {
+throws-like {
     use JSON::Tiny;
     from-json '',
 }, X::JSON::Tiny::Invalid;
