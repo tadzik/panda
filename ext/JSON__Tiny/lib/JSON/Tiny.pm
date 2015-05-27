@@ -38,12 +38,12 @@ multi to-json(Str:D  $d) {
 }
 multi to-json(Positional:D $d) {
     return  '[ '
-            ~ $d.for(&to-json).join(', ')
+            ~ $d.flatmap(&to-json).join(', ')
             ~ ' ]';
 }
 multi to-json(Associative:D  $d) {
     return '{ '
-            ~ $d.for({ to-json(.key) ~ ' : ' ~ to-json(.value) }).join(', ')
+            ~ $d.flatmap({ to-json(.key) ~ ' : ' ~ to-json(.value) }).join(', ')
             ~ ' }';
 }
 
