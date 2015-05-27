@@ -13,7 +13,7 @@ my $perl =  { 'codepoints' => [119991], 'characters' => '𝒷'            };
 
 my $parsed = from-json($json);
 
-is_deeply $parsed, $perl,
+is-deeply $parsed, $perl,
     "UTF-16 surrogate pair «$surrogate-pair» parses correctly";
 
 my $serialised = to-json($parsed<characters>);
