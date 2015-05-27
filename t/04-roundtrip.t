@@ -36,7 +36,7 @@ for @s.kv -> $k, $v {
     #warn "The json is <{ to-json( .value ) }>";
     my $r = from-json( to-json( $v.value ) );
     todo('known type mismatches') if $k == 9;
-    is_deeply $r, $v.value, $v.key
+    is-deeply $r, $v.value, $v.key
         or say "# Got: {$r.perl}\n# Expected: $v.value.perl()";
 }
 
