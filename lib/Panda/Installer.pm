@@ -28,6 +28,9 @@ method default-destdir {
 
 sub copy($src, $dest) {
     note "Copying $src to $dest";
+    unless $*DISTRO.is-win {
+        $dest.IO.unlink;
+    }
     $src.copy($dest);
 }
 
