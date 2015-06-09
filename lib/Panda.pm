@@ -138,7 +138,7 @@ class Panda {
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
         # Check if there's any reverse dependencies to rebuild
-        unless $rebuild {
+        if $rebuild {
             my @revdeps = $.ecosystem.revdeps($bone, :installed);
             if $.ecosystem.is-installed($bone) and @revdeps {
                 self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
