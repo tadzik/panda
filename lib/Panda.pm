@@ -112,7 +112,7 @@ class Panda {
     }
 
     method install(Panda::Project $bone, $nodeps,
-                   $notests, $isdep as Bool, :$rebuild) {
+                   $notests, $isdep as Bool, :$rebuild = True) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
         my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
