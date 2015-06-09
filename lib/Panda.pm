@@ -143,7 +143,7 @@ class Panda {
             if $.ecosystem.is-installed($bone) and @revdeps {
                 self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
                 for @revdeps -> $revdep {
-                    self.install($revdep, False, False, False, :rebuild)
+                    self.install($revdep, False, $notests, False, :rebuild)
                 }
             }
             $.ecosystem.project-set-state($bone, $s)
