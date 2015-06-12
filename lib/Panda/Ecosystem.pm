@@ -74,11 +74,11 @@ class Panda::Ecosystem {
         if  %*ENV<http_proxy> {
           my ($host, $port) = %*ENV<http_proxy>.split('/').[2].split(':');
           $s = IO::Socket::INET.new(host=>$host, port=>$port.Int);
-          $s.send("GET http://ecosystem-api.p6c.org/projects.json HTTP/1.1\nHost: ecosystem-api.p6c.org\nAccept: */*\nConnection: Close\r\n");
+          $s.send("GET http://ecosystem-api.p6c.org/projects.json HTTP/1.1\r\nHost: ecosystem-api.p6c.org\r\nAccept: */*\r\nConnection: Close\r\n\r\n");
         }
         else {
           $s = IO::Socket::INET.new(:host<ecosystem-api.p6c.org>, :port(80));
-          $s.send("GET /projects.json HTTP/1.0\nHost: ecosystem-api.p6c.org\r\n");
+          $s.send("GET /projects.json HTTP/1.0\r\nHost: ecosystem-api.p6c.org\r\n\r\n");
         }
         my ($buf, $g) = '';
         $buf ~= $g while $g = $s.get;
