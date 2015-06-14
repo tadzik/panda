@@ -81,6 +81,13 @@ class Panda::Ecosystem {
           $s.send("GET /projects.json HTTP/1.0\r\nHost: ecosystem-api.p6c.org\r\n\r\n");
         }
         my ($buf, $g) = '';
+
+        my $http-header = $s.get;
+
+        if $http-header !~~ /'HTTP/1.1 200 OK'/ {
+            die "can't download projects file $http-header";
+        }
+
         $buf ~= $g while $g = $s.get;
 
         if  %*ENV<http_proxy> {
