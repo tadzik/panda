@@ -98,7 +98,7 @@ class Panda {
         }
 
         my $shell = %*ENV<SHELL>;
-        $shell ||= %*ENV<COMSPEC>
+        $shell ||= %*ENV<ComSpec>
             if $*DISTRO.is-win;
 
         if $shell {
