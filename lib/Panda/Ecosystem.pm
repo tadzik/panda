@@ -84,8 +84,8 @@ class Panda::Ecosystem {
 
         my $http-header = $s.get;
 
-        if $http-header !~~ /'HTTP/1.1 200 OK'/ {
-            die "can't download projects file $http-header";
+        if $http-header !~~ /'HTTP/1.'<[01]>' 200 OK'/ {
+            die "can't download projects file: $http-header";
         }
 
         $buf ~= $g while $g = $s.get;
