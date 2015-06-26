@@ -17,18 +17,28 @@ method test($where, :$bone, :$prove-command = 'prove') {
 
         if $run-default && 't'.IO ~~ :d {
             withp6lib {
-                my $cmd    = "$prove-command -e \"$*EXECUTABLE -Ilib\" -r t/";
-
-                my $handle = pipe("$cmd 2>&1", :r);
                 my $output = '';
-                for $handle.lines {
-                    .chars && .say;
-                    $output ~= "$_\n";
-                }
-                my $passed = $handle.close.status == 0;
+                my $stdout = '';
+                my $stderr = '';
+
+                my $proc = Proc::Async.new($prove-command, '-e', "$*EXECUTABLE -Ilib", '-r', 't/');
+                $proc.stdout.tap(-> $chunk {
+                    print $chunk;
+                    $output ~= $chunk;
+                    $stdout ~= $chunk;
+                });
+                $proc.stderr.tap(-> $chunk {
+                    print $chunk;
+                    $output ~= $chunk;
+                    $stderr ~= $chunk;
+                });
+                my $p = $proc.start;
+                my $passed = $p.result.exitcode == 0;
 
                 if $bone {
                     $bone.test-output = $output;
+                    $bone.test-stdout = $stdout;
+                    $bone.test-stderr = $stderr;
                     $bone.test-passed = $passed;
                 }
 
