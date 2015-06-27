@@ -116,7 +116,7 @@ method build($where, :$bone) {
                     $stdout ~= $chunk;
                 });
                 $proc.stderr.tap(-> $chunk {
-                    print "\e[31;1m$chunk\e[0m";
+                    print $chunk;
                     $output ~= $chunk;
                     $stderr ~= $chunk;
                 });
