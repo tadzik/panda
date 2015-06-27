@@ -92,6 +92,9 @@ method build($where, :$bone) {
         my @tobuild = build-order(@files);
         withp6lib {
             my $output = '';
+            my $stdout = '';
+            my $stderr = '';
+
             for @tobuild -> $file {
                 $file.copy: "blib/$file";
                 next unless $file ~~ /\.pm6?$/;
@@ -104,20 +107,30 @@ method build($where, :$bone) {
                 #    next;
                 #}
                 say "Compiling $file to {comptarget}";
-                my $cmd    = "$*EXECUTABLE --target={comptarget} "
-                           ~ "--output=$dest $file";
-                $output ~= "$cmd\n";
-                my $handle = pipe("$cmd 2>&1", :r);
-                for $handle.lines {
-                    .chars && .say;
-                    $output ~= "$_\n";
-                }
-                my $passed = $handle.close.status == 0;
+
+                my $proc = Proc::Async.new($*EXECUTABLE, "--target={comptarget}", "--output=$dest", $file);
+                $output ~= "$*EXECUTABLE --target={comptarget} --output=$dest $file\n";
+                $proc.stdout.tap(-> $chunk {
+                    print $chunk;
+                    $output ~= $chunk;
+                    $stdout ~= $chunk;
+                });
+                $proc.stderr.tap(-> $chunk {
+                    print "\e[31;1m$chunk\e[0m";
+                    $output ~= $chunk;
+                    $stderr ~= $chunk;
+                });
+                my $p = $proc.start;
+
+                my $passed = $p.result.exitcode == 0;
 
                 if $bone {
                     $bone.build-output = $output;
+                    $bone.build-stdout = $stdout;
+                    $bone.build-stderr = $stderr;
                     $bone.build-passed = $passed;
                 }
+
                 fail "Failed building $file" unless $passed;
             }
             1;
