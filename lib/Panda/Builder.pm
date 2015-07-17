@@ -68,7 +68,7 @@ sub build-order(@module-files) {
     return map { %module-to-path{$_} }, @order;
 }
 
-method build($where, :$bone) {
+method build($where, :$bone, :$deps) {
     indir $where, {
         if "Build.pm".IO.f {
             @*INC.push("file#$where");   # TEMPORARY !!!
@@ -108,8 +108,14 @@ method build($where, :$bone) {
                 #}
                 say "Compiling $file to {comptarget}";
 
-                my $proc = Proc::Async.new($*EXECUTABLE, "--target={comptarget}", "--output=$dest", $file);
-                $output ~= "$*EXECUTABLE --target={comptarget} --output=$dest $file\n";
+                my @pargs = [ "--target={comptarget}", "--output=$dest", $file ]<>;
+
+                if $deps {
+                    @pargs.unshift: "-MPanda::DepTracker";
+                }
+
+                my $proc = Proc::Async.new($*EXECUTABLE, @pargs);
+                $output ~= "$*EXECUTABLE {@pargs}\n";
                 $proc.stdout.tap(-> $chunk {
                     print $chunk;
                     $output ~= $chunk;
