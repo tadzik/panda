@@ -21,8 +21,13 @@ method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'pro
                 my $stdout = '';
                 my $stderr = '';
 
-                my $p6command = $deps ?? "$*EXECUTABLE -MPanda::DepTracker" !! $*EXECUTABLE;
-                my $proc = Proc::Async.new($prove-command, '-e', "$p6command -Ilib", '-r', 't/');
+                my $libs = '';
+
+                for $deps -> $lib {
+                    $libs ~= ' -M' ~ $lib;
+                }
+
+                my $proc = Proc::Async.new($prove-command, '-e', "$*EXECUTABLE $libs -Ilib", '-r', 't/');
                 $proc.stdout.tap(-> $chunk {
                     print $chunk;
                     $output ~= $chunk;

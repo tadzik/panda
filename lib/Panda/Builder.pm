@@ -110,8 +110,8 @@ method build($where, :$bone, :$deps) {
 
                 my @pargs = [ "--target={comptarget}", "--output=$dest", $file ]<>;
 
-                if $deps {
-                    @pargs.unshift: "-MPanda::DepTracker";
+                for $deps -> $dep {
+                    @pargs.unshift: "-M" ~ $dep;
                 }
 
                 my $proc = Proc::Async.new($*EXECUTABLE, @pargs);

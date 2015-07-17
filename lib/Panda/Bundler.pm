@@ -48,7 +48,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
         try unlink %*ENV<PANDA_PROTRACKER_FILE> if %*ENV<PANDA_PROTRACKER_FILE>.IO.e;
 
         $panda.announce('building', $bone);
-        unless $_ = $panda.builder.build($dir, :deps) {
+        unless $_ = $panda.builder.build($dir, :deps(['Panda::DepTracker'])) {
             die X::Panda.new($bone.name, 'build', $_)
         }
 
@@ -82,7 +82,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
 
         unless $notests {
             $panda.announce('testing', $bone);
-            unless $_ = $panda.tester.test($dir, :deps) {
+            unless $_ = $panda.tester.test($dir, :deps(['Panda::DepTracker'])) {
                 die X::Panda.new($bone.name, 'test', $_)
             }
             if %*ENV<PANDA_DEPTRACKER_FILE>.IO.e {
