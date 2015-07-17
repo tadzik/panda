@@ -1,7 +1,7 @@
 class Panda::Tester {
 use Panda::Common;
 
-method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'prove.bat' !! 'prove') {
+method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'prove.bat' !! 'prove', $deps) {
     indir $where, {
         my Bool $run-default = True;
         if "Build.pm".IO.f {
@@ -21,7 +21,8 @@ method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'pro
                 my $stdout = '';
                 my $stderr = '';
 
-                my $proc = Proc::Async.new($prove-command, '-e', "$*EXECUTABLE -Ilib", '-r', 't/');
+                my $p6command = $deps ?? "$*EXECUTABLE -MPanda::DepTracker" !! $*EXECUTABLE;
+                my $proc = Proc::Async.new($prove-command, '-e', "$p6command -Ilib", '-r', 't/');
                 $proc.stdout.tap(-> $chunk {
                     print $chunk;
                     $output ~= $chunk;

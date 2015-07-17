@@ -82,7 +82,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
 
         unless $notests {
             $panda.announce('testing', $bone);
-            unless $_ = $panda.tester.test($dir) {
+            unless $_ = $panda.tester.test($dir, :deps) {
                 die X::Panda.new($bone.name, 'test', $_)
             }
             if %*ENV<PANDA_DEPTRACKER_FILE>.IO.e {
