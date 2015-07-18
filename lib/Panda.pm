@@ -187,7 +187,7 @@ class Panda {
         my $bone = self.project-from-local($proj);
         # Warn users that it's from a local directory,
         # may not be what they wanted
-        self.announce: "Installing {$p.name} "
+        self.announce: "Installing {$bone.name} "
                        ~ "from a local directory '$proj'"
                        if $bone and $action eq 'install';
         $bone ||= self.project-from-git($proj, $tmpdir);
