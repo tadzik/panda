@@ -192,8 +192,8 @@ class Panda {
                        if $bone and $action eq 'install';
         $bone ||= self.project-from-git($proj, $tmpdir);
         if $bone {
-            $.ecosystem.add-project($p);
-            $proj = $p.name;
+            $.ecosystem.add-project($bone);
+            $proj = $bone.name;
         } else {
             $bone = $.ecosystem.get-project($proj);
         }
