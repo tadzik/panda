@@ -1,0 +1,7 @@
+language: perl6
+
+before_script:
+  - perl6 bootstrap.pl
+
+script:
+  - prove -e perl6 -lr t/
