@@ -112,7 +112,7 @@ class Panda {
     }
 
     method install(Panda::Project $bone, $nodeps,
-                   $notests, $isdep as Bool, :$rebuild) {
+                   $notests, $isdep as Bool, :$rebuild = True) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
         my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
@@ -138,7 +138,7 @@ class Panda {
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
         # Check if there's any reverse dependencies to rebuild
-        unless $rebuild {
+        if $rebuild {
             my @revdeps = $.ecosystem.revdeps($bone, :installed);
             if $.ecosystem.is-installed($bone) and @revdeps {
                 self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
