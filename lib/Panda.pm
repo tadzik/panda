@@ -183,24 +183,28 @@ class Panda {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         mkpath $tmpdir;
-        my $p = self.project-from-local($proj);
-        $p ||= self.project-from-git($proj, $tmpdir);
-        if $p {
-            if $.ecosystem.get-project($p.name) {
-                self.announce: "Installing {$p.name} "
-                               ~ "from a local directory '$proj'"
-                               if $action eq 'install';
-            }
+
+        my $bone = self.project-from-local($proj);
+        # Warn users that it's from a local directory,
+        # may not be what they wanted
+        self.announce: "Installing {$p.name} "
+                       ~ "from a local directory '$proj'"
+                       if $bone and $action eq 'install';
+        $bone ||= self.project-from-git($proj, $tmpdir);
+        if $bone {
             $.ecosystem.add-project($p);
             $proj = $p.name;
+        } else {
+            $bone = $.ecosystem.get-project($proj);
         }
-        my $bone = $.ecosystem.get-project($proj);
+
         if not $bone {
             sub die($m) { X::Panda.new($proj, 'resolve', $m).throw }
             my $suggestion = $.ecosystem.suggest-project($proj);
             die "Project $proj not found in the ecosystem. Maybe you meant $suggestion?" if $suggestion;
             die "Project $proj not found in the ecosystem";
         }
+
         unless $nodeps {
             my @deps = self.get-deps($bone).unique;
             @deps.=grep: {
