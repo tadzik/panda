@@ -1,7 +1,7 @@
 class Panda::Tester {
 use Panda::Common;
 
-method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'prove.bat' !! 'prove', $deps) {
+method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'prove.bat' !! 'prove', :@deps) {
     indir $where, {
         my Bool $run-default = True;
         if "Build.pm".IO.f {
@@ -23,7 +23,7 @@ method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'pro
 
                 my $libs = '';
 
-                for $deps -> $lib {
+                for @deps -> $lib {
                     $libs ~= ' -M' ~ $lib;
                 }
 

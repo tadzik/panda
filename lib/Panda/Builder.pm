@@ -68,7 +68,7 @@ sub build-order(@module-files) {
     return map { %module-to-path{$_} }, @order;
 }
 
-method build($where, :$bone, :$deps) {
+method build($where, :$bone, :@deps) {
     indir $where, {
         if "Build.pm".IO.f {
             @*INC.push("file#$where");   # TEMPORARY !!!
@@ -110,7 +110,7 @@ method build($where, :$bone, :$deps) {
 
                 my @pargs = [ "--target={comptarget}", "--output=$dest", $file ]<>;
 
-                for $deps -> $dep {
+                for @deps -> $dep {
                     @pargs.unshift: "-M" ~ $dep;
                 }
 
