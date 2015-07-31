@@ -29,7 +29,7 @@ method submit {
         }
 
         my $buf = Buf.new(self.to-json.ords);
-        $s.send("$to-send\nContent-Type: application/json\r\nContent-Length: $buf.elems()\r\n\r\n");
+        $s.print("$to-send\nContent-Type: application/json\r\nContent-Length: $buf.elems()\r\n\r\n");
         $s.write($buf);
 
         my $report-id = '';
