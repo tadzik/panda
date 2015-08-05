@@ -108,21 +108,7 @@ method build($where, :$bone) {
                 #}
                 say "Compiling $file to {comptarget}";
 
-                my $proc = Proc::Async.new($*EXECUTABLE, "--target={comptarget}", "--output=$dest", $file);
-                $output ~= "$*EXECUTABLE --target={comptarget} --output=$dest $file\n";
-                $proc.stdout.tap(-> $chunk {
-                    print $chunk;
-                    $output ~= $chunk;
-                    $stdout ~= $chunk;
-                });
-                $proc.stderr.tap(-> $chunk {
-                    print $chunk;
-                    $output ~= $chunk;
-                    $stderr ~= $chunk;
-                });
-                my $p = $proc.start;
-
-                my $passed = $p.result.exitcode == 0;
+                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output($*EXECUTABLE, "--target={comptarget}", "--output=$dest", $file);
 
                 if $bone {
                     $bone.build-output = $output;

@@ -73,6 +73,28 @@ class X::Panda is Exception {
     }
 }
 
+sub run-and-gather-output(*@command) is export {
+    my $output = '';
+    my $stdout = '';
+    my $stderr = '';
+
+    my $proc = Proc::Async.new(|@command);
+    $proc.stdout.tap(-> $chunk {
+        print $chunk;
+        $output ~= $chunk;
+        $stdout ~= $chunk;
+    });
+    $proc.stderr.tap(-> $chunk {
+        print $chunk;
+        $output ~= $chunk;
+        $stderr ~= $chunk;
+    });
+    my $p = $proc.start;
+    my $passed = $p.result.exitcode == 0;
+
+    :$output, :$stdout, :$stderr, :$passed
+}
+
 }
 
 # vim: ft=perl6
