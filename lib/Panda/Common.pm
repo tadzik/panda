@@ -73,6 +73,44 @@ class X::Panda is Exception {
     }
 }
 
+my $has-proc-async = Proc::<Async>:exists;
+
+sub run-and-gather-output(*@command) is export {
+    my $output = '';
+    my $stdout = '';
+    my $stderr = '';
+    my $passed;
+
+    if $has-proc-async {
+        my $proc = Proc::Async.new(|@command);
+        $proc.stdout.tap(-> $chunk {
+            print $chunk;
+            $output ~= $chunk;
+            $stdout ~= $chunk;
+        });
+        $proc.stderr.tap(-> $chunk {
+            print $chunk;
+            $output ~= $chunk;
+            $stderr ~= $chunk;
+        });
+        my $p = $proc.start;
+        $passed = $p.result.exitcode == 0;
+    }
+    else {
+        my $cmd = @command.map({ qq{"$_"} }).join(' ');
+        $output ~= "$cmd\n";
+        my $p = shell("$cmd 2>&1", :out);
+        for $p.out.lines {
+            .chars && .say;
+            $output ~= "$_\n";
+        }
+        $p.out.close;
+        $passed = $p.exitcode == 0;
+    }
+
+    :$output, :$stdout, :$stderr, :$passed
+}
+
 }
 
 # vim: ft=perl6
