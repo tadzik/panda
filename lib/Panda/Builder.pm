@@ -55,7 +55,7 @@ sub build-order(@module-files) {
         next unless $module-file.Str ~~ /\.pm6?$/; # don't try to "parse" non-perl files
         my @lines = strip-pod(slurp($module-file.Str).lines);
         for @lines {
-            if /^\s* ['use'||'need'||'require'] \s+ (\w+ ['::' \w+]*)/ && $0 -> $used {
+            if /^\s* ['use'||'need'||'require'] \s+ (<[\w -]>+ ['::' <[\w -]>+]*)/ && $0 -> $used {
                 next if $used eq 'v6';
                 next if $used eq 'MONKEY_TYPING';
 
