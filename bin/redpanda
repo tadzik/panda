@@ -10,7 +10,7 @@ use JSON::Tiny;
 sub get-meta($module is copy) {
     $module ~~ s:g/'::'/;/;
     my $s = IO::Socket::INET.new(:host<feather.perl6.nl>, :port(3000));
-    $s.send("GET /module/$module HTTP/1.0\n\n");
+    $s.print("GET /module/$module HTTP/1.0\n\n");
     my ($buf, $g) = '';
     $buf ~= $g while $g = $s.get;
     my $body = $buf.split(/\r?\n\r?\n/, 2)[1];
