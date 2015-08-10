@@ -1,7 +1,7 @@
 class Panda::Tester {
 use Panda::Common;
 
-method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'prove.bat' !! 'prove', :@deps) {
+method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'prove.bat' !! 'prove') {
     indir $where, {
         my Bool $run-default = True;
         if "Build.pm".IO.f {
@@ -17,29 +17,7 @@ method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'pro
 
         if $run-default && 't'.IO ~~ :d {
             withp6lib {
-                my $output = '';
-                my $stdout = '';
-                my $stderr = '';
-
-                my $libs = '';
-
-                for @deps -> $lib {
-                    $libs ~= ' -M' ~ $lib;
-                }
-
-                my $proc = Proc::Async.new($prove-command, '-e', "$*EXECUTABLE $libs -Ilib", '-r', 't/');
-                $proc.stdout.tap(-> $chunk {
-                    print $chunk;
-                    $output ~= $chunk;
-                    $stdout ~= $chunk;
-                });
-                $proc.stderr.tap(-> $chunk {
-                    print $chunk;
-                    $output ~= $chunk;
-                    $stderr ~= $chunk;
-                });
-                my $p = $proc.start;
-                my $passed = $p.result.exitcode == 0;
+                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output($prove-command, '-e', "$*EXECUTABLE -Ilib", '-r', 't/');
 
                 if $bone {
                     $bone.test-output = $output;

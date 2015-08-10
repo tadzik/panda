@@ -55,7 +55,7 @@ sub build-order(@module-files) {
         next unless $module-file.Str ~~ /\.pm6?$/; # don't try to "parse" non-perl files
         my @lines = strip-pod(slurp($module-file.Str).lines);
         for @lines {
-            if /^\s* ['use'||'need'||'require'] \s+ (\w+ ['::' \w+]*)/ && $0 -> $used {
+            if /^\s* ['use'||'need'||'require'] \s+ (<[\w -]>+ ['::' <[\w -]>+]*)/ && $0 -> $used {
                 next if $used eq 'v6';
                 next if $used eq 'MONKEY_TYPING';
 
@@ -68,7 +68,7 @@ sub build-order(@module-files) {
     return map { %module-to-path{$_} }, @order;
 }
 
-method build($where, :$bone, :@deps) {
+method build($where, :$bone) {
     indir $where, {
         if "Build.pm".IO.f {
             @*INC.push("file#$where");   # TEMPORARY !!!
@@ -108,27 +108,7 @@ method build($where, :$bone, :@deps) {
                 #}
                 say "Compiling $file to {comptarget}";
 
-                my @pargs = [ "--target={comptarget}", "--output=$dest", $file ]<>;
-
-                for @deps -> $dep {
-                    @pargs.unshift: "-M" ~ $dep;
-                }
-
-                my $proc = Proc::Async.new($*EXECUTABLE, @pargs);
-                $output ~= "$*EXECUTABLE {@pargs}\n";
-                $proc.stdout.tap(-> $chunk {
-                    print $chunk;
-                    $output ~= $chunk;
-                    $stdout ~= $chunk;
-                });
-                $proc.stderr.tap(-> $chunk {
-                    print $chunk;
-                    $output ~= $chunk;
-                    $stderr ~= $chunk;
-                });
-                my $p = $proc.start;
-
-                my $passed = $p.result.exitcode == 0;
+                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output($*EXECUTABLE, "--target={comptarget}", "--output=$dest", $file);
 
                 if $bone {
                     $bone.build-output = $output;
