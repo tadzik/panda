@@ -68,7 +68,7 @@ sub build-order(@module-files) {
     return map { %module-to-path{$_} }, @order;
 }
 
-method build($where, :$bone) {
+method build($where, :$bone, :@deps) {
     indir $where, {
         if "Build.pm".IO.f {
             @*INC.push("file#$where");   # TEMPORARY !!!
@@ -108,7 +108,13 @@ method build($where, :$bone) {
                 #}
                 say "Compiling $file to {comptarget}";
 
-                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output($*EXECUTABLE, "--target={comptarget}", "--output=$dest", $file);
+                my @pargs = "--target={comptarget}", "--output=$dest", $file;
+
+                for @deps -> $dep {
+                    @pargs.unshift: "-M" ~ $dep;
+                }
+
+                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output($*EXECUTABLE, @pargs);
 
                 if $bone {
                     $bone.build-output = $output;
