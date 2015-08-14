@@ -1,5 +1,5 @@
 use Test;
-BEGIN { @*INC.push: 'lib' };
+
 use JSON::Fast;
 
 my @s =

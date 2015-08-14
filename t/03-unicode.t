@@ -1,5 +1,4 @@
 use v6;
-BEGIN { @*INC.push('lib') };
 
 use JSON::Fast;
 use Test;
