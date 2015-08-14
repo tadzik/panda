@@ -1,8 +1,7 @@
 use v6;
 BEGIN { @*INC.push('lib') };
 
-use JSON::Tiny::Grammar;
-use JSON::Tiny::Actions;
+use JSON::Fast;
 use Test;
 
 
@@ -10,10 +9,9 @@ my @t =
     '{ "a" : "b\u00E5" }' => { 'a' => 'bå' },
     '[ "\u2685" ]' => [ '⚅' ];
 
-plan (+@t);
+plan (+@t * 2);
 for @t -> $p {
-    my $a = JSON::Tiny::Actions.new();
-    my $o = JSON::Tiny::Grammar.parse($p.key, :actions($a));
-    is-deeply $o.ast, $p.value, "Correct data structure for «{$p.key}»"
-        or say "# Got: {$o.ast.perl}\n# Expected: {$p.value.perl}";
+    my $json = from-json($p.key);
+    is-deeply $json, $p.value, "Correct data structure for «{$p.key}»";
+    is to-json($json).lc, $p.key.lc;
 }

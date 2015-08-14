@@ -1,6 +1,6 @@
 use Test;
 BEGIN { @*INC.push: 'lib' };
-use JSON::Tiny;
+use JSON::Fast;
 
 my @s =
         'Int'            => [ 1 ],
@@ -36,8 +36,7 @@ for @s.kv -> $k, $v {
     #warn "The json is <{ to-json( .value ) }>";
     my $r = from-json( to-json( $v.value ) );
     todo('known type mismatches') if $k == 9;
-    is-deeply $r, $v.value, $v.key
-        or say "# Got: {$r.perl}\n# Expected: $v.value.perl()";
+    is-deeply $r, $v.value, $v.key;
 }
 
 # vim: ft=perl6
