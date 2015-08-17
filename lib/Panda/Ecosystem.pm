@@ -21,7 +21,7 @@ class Panda::Ecosystem {
     }
 
     submethod BUILD(:$!statefile, :$!projectsfile, :@!extra-statefiles) {
-        for $!statefile, @!extra-statefiles -> $file {
+        for flat $!statefile, @!extra-statefiles -> $file {
             if $file.IO ~~ :f {
                 my $fh = open($file);
                 for $fh.lines -> $line {

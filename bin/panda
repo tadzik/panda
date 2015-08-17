@@ -12,7 +12,7 @@ my $panda = Panda.new(:ecosystem(make-default-ecosystem));
 my %failed;
 
 # allow switches after positionals
-@*ARGS = @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
+@*ARGS = flat @*ARGS.grep(/^ '-'/), @*ARGS.grep(/^ <-[-]>/);
 
 #| Install the specified modules
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {

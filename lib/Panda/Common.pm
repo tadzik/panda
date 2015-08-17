@@ -35,7 +35,7 @@ sub comptarget is export { state $ = $*VM.precomp-target }
 
 sub topo-sort(@modules, %dependencies) is export {
     my @order;
-    my %color_of = @modules X=> 'not yet visited';
+    my %color_of = flat @modules X=> 'not yet visited';
     sub dfs-visit($module) {
         %color_of{$module} = 'visited';
         for %dependencies{$module}.list -> $used {
