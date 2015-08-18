@@ -9,7 +9,8 @@ sub path-to-module-name($path) {
 }
 
 #| Replace Pod lines with empty lines.
-sub strip-pod(@in is rw, Str :$in-block? = '') {
+sub strip-pod(@lines, Str :$in-block? = '') {
+    my @in = @lines;
     my @out;
     my $in-para = False;
     while @in.elems {
