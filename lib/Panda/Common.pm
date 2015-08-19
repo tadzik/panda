@@ -94,6 +94,7 @@ sub run-and-gather-output(*@command) is export {
             $stderr ~= $chunk;
         });
         my $p = $proc.start;
+        $p.result;
         $passed = $p.result.exitcode == 0;
     }
     else {
