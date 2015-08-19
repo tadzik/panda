@@ -108,7 +108,7 @@ sub run-and-gather-output(*@command) is export {
         $passed = $p.exitcode == 0;
     }
 
-    :$output, :$stdout, :$stderr, :$passed
+    \(:$output, :$stdout, :$stderr, :$passed)
 }
 
 }

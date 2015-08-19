@@ -27,7 +27,7 @@ my @lib = 'foo.pm', 'foo.' ~ compsuffix, 'bam.' ~ compsuffix,
           'bam.pm', 'blaz.pm', 'blaz.' ~ compsuffix, 'shazam.js';
 my @order = Panda::Installer.sort-lib-contents(@lib);
 is-deeply @order,
-          [<foo.pm bam.pm blaz.pm shazam.js>, 
+          [flat <foo.pm bam.pm blaz.pm shazam.js>,
           'foo.' ~ compsuffix, 'bam.' ~ compsuffix, 'blaz.' ~ compsuffix],
           "{compsuffix}s will get installed after rest of the things";
 
