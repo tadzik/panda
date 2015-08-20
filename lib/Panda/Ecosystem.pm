@@ -145,7 +145,7 @@ class Panda::Ecosystem {
         for self.project-list -> $p {
             if any($p.dependencies) eq $name {
                 if !$installed or self.is-installed($p) {
-                    @ret.push: $p, self.revdeps($p, :$installed);
+                    @ret.push: $p, |self.revdeps($p, :$installed);
                 }
             }
         }
