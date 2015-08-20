@@ -170,11 +170,11 @@ class Panda {
         }).grep({
             $.ecosystem.project-get-state($_) == Panda::Project::State::absent
         });
-        return () unless +@bonedeps;
+        return Empty unless +@bonedeps;
         self.announce('depends', $bone => @bonedeps».name);
         my @deps;
         for @bonedeps -> $p {
-            @deps.push: self.get-deps($p), $p;
+            @deps.push: flat self.get-deps($p), $p;
         }
         return @deps;
     }
