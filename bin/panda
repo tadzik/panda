@@ -22,6 +22,10 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     }
 }
 
+multi MAIN (*@modules, Bool :$notests, Bool :$nodeps) {
+    MAIN('install', @modules, :$notests, :$nodeps)
+}
+
 #| Install dependencies, but don't build the modules themselves
 multi MAIN ('installdeps', *@modules, Bool :$notests) {
     for @modules -> $x {
