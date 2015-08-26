@@ -1,10 +1,6 @@
 # Panda
 
-![Panda](http://modules.perl6.org/panda.png) Panda is an implementation of a Perl 6 module manager specification.
-
-## Description
-
-Panda is a module management solution for Perl 6.
+![Panda](http://modules.perl6.org/panda.png) Panda is a Perl 6 module manager.
 
 ## Installation
 
