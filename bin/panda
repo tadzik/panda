@@ -55,7 +55,7 @@ multi MAIN ('info', *@modules) {
 }
 
 #| Search the name/description
-multi MAIN ('search', $pattern) {
+multi MAIN ('search', $pattern = '') {
     search-projects($panda, $pattern);
 }
 
