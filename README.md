@@ -56,6 +56,13 @@ Alternatively, you can install a package from the local disk by supplying its pa
 
     panda install ./perl6-Acme-Meow
 
+You can also specify a git repository and panda will automatically fetch
+the code from it. It's also possible to specify a commit to checkout:
+
+    panda install git://github.com/tadzik/Net--IRC.git
+    # or
+    panda install git://github.com/tadzik/Net--IRC.git@3c5ca0db791d9ec
+
 [1] http://help.github.com/firewalls-and-proxies/
 
 [2] http://www.gnu.org/software/wget/manual/html_node/Proxies.html
