@@ -22,10 +22,6 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps) {
     }
 }
 
-multi MAIN (*@modules, Bool :$notests, Bool :$nodeps) {
-    MAIN('install', @modules, :$notests, :$nodeps)
-}
-
 #| Install dependencies, but don't build the modules themselves
 multi MAIN ('installdeps', *@modules, Bool :$notests) {
     for @modules -> $x {
@@ -86,6 +82,10 @@ multi MAIN ('look', *@modules) {
         $panda.resolve($x, :notests, :nodeps, :action<look>);
         CATCH { when X::Panda { %failed{$x}.push($_)  && say $_ } };
     }
+}
+
+multi MAIN (*@modules, Bool :$notests, Bool :$nodeps) {
+    MAIN('install', @modules, :$notests, :$nodeps)
 }
 
 END {
