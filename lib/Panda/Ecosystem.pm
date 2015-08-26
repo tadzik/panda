@@ -104,7 +104,15 @@ class Panda::Ecosystem {
     }
 
     method get-project($p as Str) {
-        %!projects{$p}
+        if %!projects{$p}:exists {
+            return %!projects{$p}
+        }
+        for %!projects.values -> $cand {
+            if $cand.metainfo<provides>.keys.grep($p) {
+                say "$cand provides the requested $p";
+                return $cand;
+            }
+        }
     }
 
     method suggest-project($p as Str) {
