@@ -3,9 +3,7 @@
     "version"     : "*",
     "description" : "A module management solution",
     "depends"     : [ "File::Find", "Shell::Command", "JSON::Tiny" ],
-    "support" : {
-        "source"  : "git://github.com/tadzik/panda.git"
-    },
+    "source-url"  : "git://github.com/tadzik/panda.git",
     "provides"    : {
         "Panda"             : "lib/Panda.pm",
         "Panda::App"        : "lib/Panda/App.pm",
