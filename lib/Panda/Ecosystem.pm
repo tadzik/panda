@@ -7,7 +7,7 @@ class Panda::Ecosystem {
     has $.statefile;
     has @.extra-statefiles;
     has $.projectsfile;
-    has %!projects;
+    has @!projects;
     has %!states;
     has %!saved-meta;
 
@@ -65,7 +65,7 @@ class Panda::Ecosystem {
     }
 
     method project-list {
-        return %!projects.values
+        return @!projects;
     }
 
     method update {
@@ -100,14 +100,20 @@ class Panda::Ecosystem {
     }
 
     method add-project(Panda::Project $p) {
-        %!projects{$p.name} = $p;
+        @!projects.push: $p;
     }
 
     method get-project($p as Str) {
-        if %!projects{$p}:exists {
-            return %!projects{$p}
+        my @cands;
+        for @!projects {
+            if .name eq $p {
+                @cands.push: $_
+            }
         }
-        for %!projects.values -> $cand {
+        if +@cands {
+            return @cands.sort(*.version).reverse[0];
+        }
+        for @!projects -> $cand {
             if $cand.metainfo<provides>.keys.grep($p) {
                 say "$cand provides the requested $p";
                 return $cand;
@@ -118,7 +124,7 @@ class Panda::Ecosystem {
     method suggest-project($p as Str) {
         my &canonical = *.subst(/ <[\- _ :]>+ /, "", :g).lc;
         my $cpname = canonical($p);
-        for %!projects.keys {
+        for @!projects.map(*.name) {
             return $_ if canonical($_) eq $cpname;
         }
         return Nil;
