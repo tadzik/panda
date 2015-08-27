@@ -18,7 +18,8 @@ sub MAIN(Str :$prefix is copy) {
 
     if not $state-file.defined {
         say "No need to rebootstrap, running normal bootstrap";
-        shell "$*EXECUTABLE bootstrap.pl --prefix=$prefix";
+        my $prefix_str = $prefix ?? "--prefix=$prefix" !! '';
+        shell "$*EXECUTABLE bootstrap.pl $prefix_str";
         exit 0;
     }
 
