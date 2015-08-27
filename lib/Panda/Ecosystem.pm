@@ -142,24 +142,6 @@ class Panda::Ecosystem {
         %!saved-meta{$p.name} = $p.metainfo;
         self.flush-states;
     }
-
-    method revdeps($name as Str, Bool :$installed) {
-        my @ret;
-        for self.project-list -> $p {
-            if any($p.dependencies) eq $name {
-                if !$installed or self.is-installed($p) {
-                    @ret.push: $p, self.revdeps($p, :$installed);
-                }
-            }
-        }
-        my %dependencies;
-        return Empty unless +@ret;
-        for @ret {
-            %dependencies{.name} = .dependencies
-        }
-        # .map is needed because topo-sort sometimes stringifies (???)
-        return topo-sort(@ret, %dependencies).map({self.get-project(~$_)});
-    }
 }
 
 # vim: ft=perl6

@@ -141,17 +141,6 @@ class Panda {
         $.installer.install(:$bone, $dir);
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
-        # Check if there's any reverse dependencies to rebuild
-        if $rebuild {
-            my @revdeps = $.ecosystem.revdeps($bone, :installed);
-            if $.ecosystem.is-installed($bone) and @revdeps {
-                self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
-                for @revdeps -> $revdep {
-                    self.install($revdep, False, $notests, False, :rebuild)
-                }
-            }
-            $.ecosystem.project-set-state($bone, $s)
-        }
         self.announce('success', $bone);
         Panda::Reporter.new( :$bone, :$reports-file ).submit;
 
