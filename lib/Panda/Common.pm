@@ -1,6 +1,15 @@
 module Panda::Common {
 use Shell::Command;
 
+sub find-meta-file(Str $dirname) is export {
+    if "$dirname/META.info".IO ~~ :f {
+        return "$dirname/META.info";
+    }
+    if "$dirname/META6.json".IO ~~ :f {
+        return "$dirname/META6.json";
+    }
+}
+
 sub dirname ($mod as Str) is export {
     $mod.subst(':', '_', :g);
 }

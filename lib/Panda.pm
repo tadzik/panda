@@ -1,4 +1,5 @@
 use v6;
+use Panda::Common;
 use Panda::Ecosystem;
 use Panda::Fetcher;
 use Panda::Builder;
@@ -51,14 +52,15 @@ class Panda {
     }
 
     method project-from-local($proj as Str) {
-        if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
+        my $metafile = find-meta-file($proj);
+        if $proj.IO ~~ :d and $metafile {
             if $proj !~~ rx{'/'|'.'|'\\'} {
                 die X::Panda.new($proj, 'resolve',
                         "Possibly ambiguous module name requested." 
                         ~ " Please specify at least one slash if you really mean to install"
                         ~ " from local directory (e.g. ./$proj)")
             }
-            my $mod = from-json slurp "$proj/META.info";
+            my $mod = from-json slurp $metafile;
             $mod<source-url>  = $proj;
             return Panda::Project.new(
                 name         => $mod<name>,
@@ -74,7 +76,7 @@ class Panda {
         if $proj ~~ m{^git\:\/\/} {
             mkpath $tmpdir;
             $.fetcher.fetch($proj, $tmpdir);
-            my $mod = from-json slurp "$tmpdir/META.info";
+            my $mod = from-json slurp find-meta-file($tmpdir);
             $mod<source-url>  = ~$tmpdir;
             return Panda::Project.new(
                 name         => $mod<name>,

@@ -7,8 +7,9 @@ sub guess-project($where, Str :$name is copy, Str :$desc is copy) {
     my $source-url;
 
     indir $where, {
-        if 'META.info'.IO.e {
-            try my $json = from-json 'META.info'.IO.slurp;
+        my $metafile = find-meta-file(".");
+        if $metafile.IO.e {
+            try my $json = from-json $metafile.IO.slurp;
             if $json {
                 $name       = $json<name>        if !$name && $json<name>;
                 $desc       = $json<description> if !$desc && $json<description>;
