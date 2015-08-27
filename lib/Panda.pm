@@ -135,7 +135,10 @@ class Panda {
         }
         unless $notests {
             self.announce('testing', $bone);
-            unless $_ = $.tester.test($dir, :$bone) {
+            my %args = %*ENV<PROVE_COMMAND>
+                ??  prove-command => %*ENV<PROVE_COMMAND>
+                !! ();
+            unless $_ = $.tester.test($dir, :$bone, |%args) {
                 die X::Panda.new($bone.name, 'test', $_, :$bone)
             }
         }
