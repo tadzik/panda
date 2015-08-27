@@ -58,6 +58,7 @@ class Panda::Ecosystem {
         self.init-states();
         my %non-ecosystem = %!saved-meta;
         for $list.list -> $mod {
+            $mod<origin> = 'ecosystem';
             my $p = Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,

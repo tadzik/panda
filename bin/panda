@@ -61,6 +61,7 @@ multi MAIN ('smoke', :$exclude = 'panda') {
     my @projects = $panda.ecosystem.project-list;
     for @projects -> $p {
         next if $p ~~ any @exclude;
+        next if ($p.metainfo<origin> // '') ne 'ecosystem';
         @exclude.push: $p;
         try {
             $panda.resolve($p, :action<install>);
