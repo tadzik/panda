@@ -1,33 +1,34 @@
 [
-   {
-      "source-type" : "local",
-      "source-url" : "_BASEDIR_/File__Find",
-      "version" : "*",
-      "name" : "File::Find",
-      "description" : "Bla bla",
-      "depends" : [],
-      "provides" : { "File::Find" : "lib/File/Find.pm" }
-   },
-   {
-      "source-type" : "local",
-      "source-url" : "_BASEDIR_/Shell__Command",
-      "version" : "*",
-      "name" : "Shell::Command",
-      "description" : "Ble ble",
-      "depends" : ["File::Find"],
-      "provides" : { "Shell::Command" : "lib/Shell/Command.pm" }
-   },
-   {
-      "source-type" : "local",
-      "source-url" : "_BASEDIR_/JSON__Tiny",
-      "version" : "*",
-      "name" : "JSON::Tiny",
-      "description" : "A minimal JSON (de)serializer",
-      "depends" : [],
-      "provides" : {
-        "JSON::Tiny" : "lib/JSON/Tiny.pm",
-        "JSON::Tiny::Actions" : "lib/JSON/Tiny/Actions.pm",
-        "JSON::Tiny::Grammar" : "lib/JSON/Tiny/Grammar.pm"
-      }
-   }
+    {
+        "source-type" : "local",
+        "source-url" : "_BASEDIR_/File__Find",
+        "version" : "*",
+        "name" : "File::Find",
+        "description" : "Bla bla",
+        "depends" : [],
+        "provides" : { "File::Find" : "lib/File/Find.pm" }
+    },
+    {
+        "source-type" : "local",
+        "source-url" : "_BASEDIR_/Shell__Command",
+        "version" : "*",
+        "name" : "Shell::Command",
+        "description" : "Ble ble",
+        "depends" : ["File::Find"],
+        "provides" : { "Shell::Command" : "lib/Shell/Command.pm" }
+    },
+    {
+        "perl" : "v6",
+        "name" : "JSON::Fast",
+        "description" : "A naive, but hopefully fast json parser; drop-in replacement for JSON::Tiny",
+        "version" : "v0.2",
+        "test-depends" : [
+            "Test"
+        ],
+        "provides" : {
+            "JSON::Fast" : "lib/JSON/Fast.pm"
+        },
+        "source-type" : "local",
+        "source-url" : "_BASEDIR_/JSON__Fast"
+    }
 ]
