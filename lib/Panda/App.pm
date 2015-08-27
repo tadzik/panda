@@ -61,7 +61,9 @@ sub listprojects($panda, :$installed, :$verbose) is export {
         }
 
         my $meta = $s ?? $es.project-get-saved-meta($x) !! $x.metainfo;
-        my $url  = $meta<source-url> // $meta<repo-url> // 'UNKNOWN';
+        my $url  = $meta<source-url>
+                // $meta<support><source>
+                // 'UNKNOWN';
         my $rev  = $meta<source-revision> // '?';
         my $ver  = $meta<version>;
 

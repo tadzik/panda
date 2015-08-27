@@ -90,10 +90,12 @@ class Panda {
         my $dir = tmpdir();
 
         self.announce('fetching', $bone);
-        unless $bone.metainfo<source-url> {
+        my $source = $bone.metainfo<source-url>
+                  // $bone.metainfo<support><source>;
+        unless $source {
             die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
         }
-        unless $_ = $.fetcher.fetch($bone.metainfo<source-url>, $dir) {
+        unless $_ = $.fetcher.fetch($source, $dir) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
 
@@ -117,10 +119,12 @@ class Panda {
         my $dir = tmpdir();
         my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
         self.announce('fetching', $bone);
-        unless $bone.metainfo<source-url> {
+        my $source = $bone.metainfo<source-url>
+                  // $bone.metainfo<support><source>;
+        unless $source {
             die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
         }
-        unless $_ = $.fetcher.fetch($bone.metainfo<source-url>, $dir) {
+        unless $_ = $.fetcher.fetch($source, $dir) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
         self.announce('building', $bone);
