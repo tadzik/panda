@@ -8,7 +8,7 @@ use Panda::Installer;
 use Panda::Bundler;
 use Panda::Reporter;
 use Shell::Command;
-use JSON::Tiny;
+use JSON::Fast;
 
 sub tmpdir {
     state $i = 0;

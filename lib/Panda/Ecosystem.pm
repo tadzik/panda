@@ -1,7 +1,7 @@
 class Panda::Ecosystem {
     use Panda::Project;
     use Panda::Common;
-    use JSON::Tiny;
+    use JSON::Fast;
     use Shell::Command;
 
     has $.statefile;

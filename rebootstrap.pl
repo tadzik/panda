@@ -31,7 +31,7 @@ my @modules;
 given open($state-file) {
     for .lines() -> $line {
         my ($name, $state) = split /\s/, $line;
-        next if $name eq any(<File::Find Shell::Command JSON::Tiny panda>);
+        next if $name eq any(<File::Find Shell::Command JSON::Fast panda>);
         if $state eq 'installed' {
             @modules.push: $name;
         }
