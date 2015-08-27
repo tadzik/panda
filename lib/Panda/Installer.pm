@@ -14,11 +14,8 @@ method sort-lib-contents(@lib) {
 
 # default install location
 method default-prefix {
-    my $ret = %*ENV<PREFIX>;
-    if defined($ret) && !$*DISTRO.is-win && $ret !~~ /^ '/' / {
-        $ret = "$*CWD/$ret" ;
-    }
-    for grep(*.defined, $ret, %*CUSTOM_LIB<site home>) -> $prefix {
+    my $ret;
+    for grep(*.defined, %*CUSTOM_LIB<site home>) -> $prefix {
 #        $ret = CompUnitRepo.new("inst#$prefix");   # TEMPORARY !!!
         $ret = $prefix;
         last if $ret.IO.w;
@@ -38,6 +35,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
     unless $to {
         $to = $.prefix;
     }
+    $to = $to.IO.absolute; # we're about to change cwd
     indir $from, {
         # check if $.prefix is under control of a CompUnitRepo
         if $to.can('install') {

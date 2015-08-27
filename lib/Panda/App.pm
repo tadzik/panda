@@ -4,9 +4,9 @@ use Panda::Ecosystem;
 use Panda::Project;
 
 # initialize the Panda object
-sub make-default-ecosystem is export {
+sub make-default-ecosystem(Str $prefix? is copy) is export {
+    my $custom-prefix = ?$prefix;
     my $pandadir;
-    my $prefix = %*ENV<PREFIX>;
     $prefix = "$*CWD/$prefix" if defined($prefix) && !$*DISTRO.is-win && $prefix !~~ /^ '/' /;
     for grep(*.defined, $prefix, %*CUSTOM_LIB<site home>) -> $target {
         $prefix  = $target;
@@ -17,9 +17,10 @@ sub make-default-ecosystem is export {
     unless $pandadir.w {
         die "Found no writable directory into which panda could be installed";
     }
+    say "Pandadir is $pandadir";
 
     my @extra-statefiles;
-    unless $prefix eq %*CUSTOM_LIB<site> {
+    unless $custom-prefix or $prefix eq %*CUSTOM_LIB<site> {
         for grep(*.defined, $prefix, %*CUSTOM_LIB<site home>) -> $target {
             unless $prefix eq $target {
                 @extra-statefiles.push("$target/panda/state");
