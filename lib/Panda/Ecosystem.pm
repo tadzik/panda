@@ -11,16 +11,9 @@ class Panda::Ecosystem {
     has %!states;
     has %!saved-meta;
 
-    method flush-states {
-        my $fh = open($!statefile, :w);
-        for %!states.kv -> $key, $val {
-            my $json = to-json %!saved-meta{$key};
-            $fh.say: "$key {$val.Str} $json";
-        }
-        $fh.close;
-    }
-
-    submethod BUILD(:$!statefile, :$!projectsfile, :@!extra-statefiles) {
+    method init-states {
+        state $done = False;
+        return if $done;
         for $!statefile, @!extra-statefiles -> $file {
             if $file.IO ~~ :f {
                 my $fh = open($file);
@@ -32,8 +25,28 @@ class Panda::Ecosystem {
                 $fh.close;
             }
         }
+        $done = True;
+    }
 
-        self.update if $!projectsfile.IO !~~ :f || $!projectsfile.IO ~~ :z;
+    method flush-states {
+        my $fh = open($!statefile, :w);
+        for %!states.kv -> $key, $val {
+            my $json = to-json %!saved-meta{$key};
+            $fh.say: "$key {$val.Str} $json";
+        }
+        $fh.close;
+    }
+
+    method project-list {
+        self.init-projects();
+        return @!projects;
+    }
+
+    method init-projects {
+        state $done = False;
+        return if $done;
+        self.update();
+
         my $contents = slurp $!projectsfile;
         my $list = try from-json $contents;
         if $! {
@@ -42,6 +55,7 @@ class Panda::Ecosystem {
         unless defined $list {
             die "An unknown error occured while reading the projects file";
         }
+        self.init-states();
         my %non-ecosystem = %!saved-meta;
         for $list.list -> $mod {
             my $p = Panda::Project.new(
@@ -62,10 +76,8 @@ class Panda::Ecosystem {
             );
             self.add-project($p);
         }
-    }
 
-    method project-list {
-        return @!projects;
+        $done = True;
     }
 
     method update {
@@ -104,6 +116,7 @@ class Panda::Ecosystem {
     }
 
     method get-project($p as Str) {
+        self.init-projects();
         my @cands;
         for @!projects {
             if .name eq $p {
@@ -122,6 +135,7 @@ class Panda::Ecosystem {
     }
 
     method suggest-project($p as Str) {
+        self.init-projects();
         my &canonical = *.subst(/ <[\- _ :]>+ /, "", :g).lc;
         my $cpname = canonical($p);
         for @!projects.map(*.name) {
@@ -131,6 +145,7 @@ class Panda::Ecosystem {
     }
 
     method project-get-state(Panda::Project $p) {
+        self.init-states();
         %!states{$p.name} // Panda::Project::State::absent
     }
 
@@ -139,11 +154,13 @@ class Panda::Ecosystem {
     }
 
     method project-get-saved-meta(Panda::Project $p) {
+        self.init-states();
         %!saved-meta{$p.name};
     }
 
     method project-set-state(Panda::Project $p,
                              Panda::Project::State $s) {
+        self.init-states();
         %!states{$p.name} = $s;
         %!saved-meta{$p.name} = $p.metainfo;
         self.flush-states;
