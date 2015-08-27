@@ -4,7 +4,7 @@ use Panda::Project;
 use File::Find;
 use Shell::Command;
 
-has $.destdir = self.default-destdir();
+has $.prefix = self.default-prefix();
 
 method sort-lib-contents(@lib) {
     my @generated = @lib.grep({ $_ ~~  / \. <{compsuffix}> $/});
@@ -13,8 +13,8 @@ method sort-lib-contents(@lib) {
 }
 
 # default install location
-method default-destdir {
-    my $ret = %*ENV<DESTDIR>;
+method default-prefix {
+    my $ret = %*ENV<PREFIX>;
     if defined($ret) && !$*DISTRO.is-win && $ret !~~ /^ '/' / {
         $ret = "$*CWD/$ret" ;
     }
@@ -36,10 +36,10 @@ sub copy($src, $dest) {
 
 method install($from, $to? is copy, Panda::Project :$bone) {
     unless $to {
-        $to = $.destdir
+        $to = $.prefix;
     }
     indir $from, {
-        # check if $.destdir is under control of a CompUnitRepo
+        # check if $.prefix is under control of a CompUnitRepo
         if $to.can('install') {
             my @files;
             if 'blib'.IO ~~ :d {

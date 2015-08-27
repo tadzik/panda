@@ -16,12 +16,12 @@ my %ENV    := %*ENV;
 my $is_win = $DISTRO.is-win;
 
 my $panda-base;
-my $destdir = %ENV<DESTDIR>;
-$destdir = "$CWD/$destdir" if defined($destdir) && $is_win && $destdir !~~ /^ '/' /;
-for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-    $destdir  = $prefix;
-    $panda-base = "$prefix/panda";
-    try mkdir $destdir;
+my $prefix = %ENV<PREFIX>;
+$prefix = "$CWD/$prefix" if defined($prefix) && $is_win && $prefix !~~ /^ '/' /;
+for grep(*.defined, $prefix, %*CUSTOM_LIB<site home>) -> $target {
+    $prefix = $target;
+    $panda-base = "$target/panda";
+    try mkdir $prefix;
     try mkpath $panda-base unless $panda-base.IO ~~ :d;
     last if $panda-base.IO.w
 }
@@ -41,9 +41,8 @@ given open "$panda-base/projects.json", :w {
 
 my $env_sep = $DISTRO.?cur-sep // $DISTRO.path-sep;
 
-#%ENV<RAKUDOLIB> = "$destdir.^name()=$destdir" if $destdir.^can('install'); # WAT?
 %ENV<PERL6LIB>  = join( $env_sep,
-  "$destdir/lib",
+  "$prefix/lib",
   "$CWD/ext/File__Find/lib",
   "$CWD/ext/Shell__Command/lib",
   "$CWD/ext/JSON__Fast/lib",
@@ -51,12 +50,12 @@ my $env_sep = $DISTRO.?cur-sep // $DISTRO.path-sep;
 );
 
 shell "$*EXECUTABLE bin/panda install $*CWD";
-if "$destdir/panda/src".IO ~~ :d {
-    rm_rf "$destdir/panda/src"; # XXX This shouldn't be necessary, I think
+if "$prefix/panda/src".IO ~~ :d {
+    rm_rf "$prefix/panda/src"; # XXX This shouldn't be necessary, I think
                                 # that src should not be kept at all, but
                                 # I figure out how to do that nicely, let's
                                 # at least free boostrap from it
 }
-say "==> Please make sure that $destdir/bin is in your PATH";
+say "==> Please make sure that $prefix/bin is in your PATH";
 
 unlink "$panda-base/projects.json";
