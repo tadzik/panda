@@ -14,7 +14,7 @@ class Panda::Ecosystem {
     method init-states {
         state $done = False;
         return if $done;
-        for $!statefile, @!extra-statefiles -> $file {
+        for flat $!statefile, @!extra-statefiles -> $file {
             if $file.IO ~~ :f {
                 my $fh = open($file);
                 for $fh.lines -> $line {
