@@ -146,6 +146,7 @@ class Panda {
         $.installer.install(:$bone, $dir);
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
+        $.ecosystem.project-set-state($bone, $s);
         self.announce('success', $bone);
         Panda::Reporter.new( :$bone, :$reports-file ).submit;
 
