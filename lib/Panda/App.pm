@@ -17,7 +17,6 @@ sub make-default-ecosystem(Str $prefix? is copy) is export {
     unless $pandadir.w {
         die "Found no writable directory into which panda could be installed";
     }
-    say "Pandadir is $pandadir";
 
     my @extra-statefiles;
     unless $custom-prefix or $prefix eq %*CUSTOM_LIB<site> {
