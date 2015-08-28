@@ -58,7 +58,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
         else {
             if 'blib'.IO ~~ :d {
                 my @lib = find(dir => 'blib', type => 'file').list;
-                for flat self.sort-lib-contents(@lib) -> $i {
+                for self.sort-lib-contents(@lib) -> $i {
                     next if $i.basename.substr(0, 1) eq '.';
                     # .substr(5) to skip 'blib/'
                     mkpath "$to/{$i.dirname.substr(5)}";
