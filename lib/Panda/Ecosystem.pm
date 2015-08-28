@@ -45,7 +45,7 @@ class Panda::Ecosystem {
     method init-projects {
         state $done = False;
         return if $done;
-        self.update();
+        self.update() unless $!projectsfile.IO.f;
 
         my $contents = slurp $!projectsfile;
         my $list = try from-json $contents;

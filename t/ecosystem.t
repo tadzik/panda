@@ -12,7 +12,6 @@ my $a = Panda::Ecosystem.new(
     projectsfile => 't/fakeprojects'
 ) but role {
     method flush-states { }
-    method update { }
 };
 
 my $b = $a.get-project('foo');
