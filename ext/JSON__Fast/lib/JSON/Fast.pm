@@ -36,7 +36,7 @@ my sub nom-ws(str $text, int $pos is rw) {
         $pos = $pos + 1;
     }
     CATCH {
-        die "reached the end of the string while looking for things";
+        die "at $pos: reached the end of the string while looking for things";
     }
 }
 
@@ -85,7 +85,7 @@ my sub parse-string(str $text, int $pos is rw) {
                 @pieces.push: chr(:16($hexstr));
                 $pos = $pos + 4;
             } else {
-                die "I don't understand the escape sequence \\$kind";
+                die "at $pos: I don't understand the escape sequence \\$kind";
             }
 
             if nqp::eqat($text, '"', $pos + 1) {
@@ -99,7 +99,7 @@ my sub parse-string(str $text, int $pos is rw) {
                 last;
             }
         } elsif $ord < 14 && ($ord == 10 || $ord == 13 || $ord == 9) {
-            die "the only whitespace allowed in json strings are spaces";
+            die "at $pos: the only whitespace allowed in json strings are spaces";
         }
     }
     
@@ -131,18 +131,8 @@ my sub parse-numeric(str $text, int $pos is rw) {
         $pos = $pos + 1 while nqp::iscclass(nqp::const::CCLASS_NUMERIC, $text, $pos);
     }
 
-    +(my $result := nqp::substr($text, $startpos - 1, $pos - $startpos + 1)) // die "invalid number token $result.perl()";
+    +(my $result := nqp::substr($text, $startpos - 1, $pos - $startpos + 1)) // die "at $pos: invalid number token $result.perl()";
 }
-
-my sub parse-null(str $text, int $pos is rw) {
-    if nqp::eqat($text, 'ull', $pos) {
-        $pos += 3;
-        Any;
-    } else {
-        die "i was expecting a 'null' at $pos, but there wasn't one: { nqp::substr($text, $pos - 1, 10) }"
-    }
-}
-
 
 my sub parse-obj(str $text, int $pos is rw) {
     my %result;
@@ -168,7 +158,7 @@ my sub parse-obj(str $text, int $pos is rw) {
                     $pos = $pos + 1;
                     $thing = parse-string($text, $pos)
                 } else {
-                    die "json requires object keys to be strings";
+                    die "at $pos: json requires object keys to be strings";
                 }
             }
             nom-ws($text, $pos);
@@ -221,7 +211,7 @@ my sub parse-array(str $text, int $pos is rw) {
             } elsif $partitioner eq "," {
                 @result.push: $thing;
             } else {
-                die "unexpected $partitioner inside list of things in an array";
+                die "at $pos, unexpected $partitioner inside list of things in an array";
             }
         }
         @result;
@@ -244,19 +234,28 @@ my sub parse-thing(str $text, int $pos is rw) {
     } elsif nqp::iscclass(nqp::const::CCLASS_NUMERIC, $initial, 0) || $initial eq '-' {
         parse-numeric($text, $pos);
     } elsif $initial eq 'n' {
-        parse-null($text, $pos);
+        if nqp::eqat($text, 'ull', $pos) {
+            $pos += 3;
+            Any;
+        } else {
+            die "at $pos: i was expecting a 'null' but there wasn't one: { nqp::substr($text, $pos - 1, 10) }"
+        }
     } elsif $initial eq 't' {
         if nqp::eqat($text, 'rue', $pos) {
             $pos = $pos + 3;
             True
+        } else {
+            die "at $pos: expected 'true', found { $initial ~ nqp::substr($text, $pos, 3) } instead.";
         }
     } elsif $initial eq 'f' {
         if nqp::eqat($text, 'alse', $pos) {
             $pos = $pos + 4;
             False
+        } else {
+            die "at $pos: expected 'false', found { $initial ~ nqp::substr($text, $pos, 4) } instead.";
         }
     } else {
-        die "can't parse objects starting in $initial yet."
+        die "at $pos: can't parse objects starting in $initial yet"
     }
 }
 
