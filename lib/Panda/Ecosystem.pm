@@ -61,7 +61,7 @@ class Panda::Ecosystem {
             my $p = Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => [($mod<depends>//Empty (|) $mod<test-depends>//Empty (|) $mod<build-depends>//Empty).list.flat],
+                dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
                 metainfo     => $mod,
             );
             self.add-project($p);
@@ -71,7 +71,7 @@ class Panda::Ecosystem {
             my $p = Panda::Project.new(
                 name         => $name,
                 version      => $mod<version>,
-                dependencies => [($mod<depends>//Empty (|) $mod<test-depends>//Empty (|) $mod<build-depends>//Empty).list.flat],
+                dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
                 metainfo     => $mod,
             );
             self.add-project($p);
