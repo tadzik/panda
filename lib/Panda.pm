@@ -1,4 +1,5 @@
 use v6;
+use Panda::Common;
 use Panda::Ecosystem;
 use Panda::Fetcher;
 use Panda::Builder;
@@ -7,7 +8,7 @@ use Panda::Installer;
 use Panda::Bundler;
 use Panda::Reporter;
 use Shell::Command;
-use JSON::Tiny;
+use JSON::Fast;
 
 sub tmpdir {
     state $i = 0;
@@ -51,19 +52,20 @@ class Panda {
     }
 
     method project-from-local($proj as Str) {
-        if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
+        my $metafile = find-meta-file($proj);
+        if $proj.IO ~~ :d and $metafile {
             if $proj !~~ rx{'/'|'.'|'\\'} {
                 die X::Panda.new($proj, 'resolve',
                         "Possibly ambiguous module name requested." 
                         ~ " Please specify at least one slash if you really mean to install"
                         ~ " from local directory (e.g. ./$proj)")
             }
-            my $mod = from-json slurp "$proj/META.info";
+            my $mod = from-json slurp $metafile;
             $mod<source-url>  = $proj;
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).keys.flat],
+                dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
                 metainfo     => $mod,
             );
         }
@@ -74,12 +76,16 @@ class Panda {
         if $proj ~~ m{^git\:\/\/} {
             mkpath $tmpdir;
             $.fetcher.fetch($proj, $tmpdir);
-            my $mod = from-json slurp "$tmpdir/META.info";
+            my $mod = from-json slurp find-meta-file($tmpdir);
             $mod<source-url>  = ~$tmpdir;
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
+<<<<<<< HEAD
                 dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).keys.flat],
+=======
+                dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
+>>>>>>> master
                 metainfo     => $mod,
             );
         }
@@ -90,10 +96,12 @@ class Panda {
         my $dir = tmpdir();
 
         self.announce('fetching', $bone);
-        unless $bone.metainfo<source-url> {
+        my $source = $bone.metainfo<source-url>
+                  // $bone.metainfo<support><source>;
+        unless $source {
             die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
         }
-        unless $_ = $.fetcher.fetch($bone.metainfo<source-url>, $dir) {
+        unless $_ = $.fetcher.fetch($source, $dir) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
 
@@ -111,16 +119,18 @@ class Panda {
         }
     }
 
-    method install(Panda::Project $bone, $nodeps,
-                   $notests, $isdep as Bool, :$rebuild = True) {
+    method install(Panda::Project $bone, $nodeps, $notests,
+                   $isdep as Bool, :$rebuild = True, :$prefix) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
         my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
         self.announce('fetching', $bone);
-        unless $bone.metainfo<source-url> {
+        my $source = $bone.metainfo<source-url>
+                  // $bone.metainfo<support><source>;
+        unless $source {
             die X::Panda.new($bone.name, 'fetch', 'source-url meta info missing')
         }
-        unless $_ = $.fetcher.fetch($bone.metainfo<source-url>, $dir) {
+        unless $_ = $.fetcher.fetch($source, $dir) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
         self.announce('building', $bone);
@@ -129,25 +139,18 @@ class Panda {
         }
         unless $notests {
             self.announce('testing', $bone);
-            unless $_ = $.tester.test($dir, :$bone) {
+            my %args = %*ENV<PROVE_COMMAND>
+                ??  prove-command => %*ENV<PROVE_COMMAND>
+                !! ();
+            unless $_ = $.tester.test($dir, :$bone, |%args) {
                 die X::Panda.new($bone.name, 'test', $_, :$bone)
             }
         }
         self.announce('installing', $bone);
-        $.installer.install(:$bone, $dir);
+        $.installer.install($dir, $prefix, :$bone);
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
-        # Check if there's any reverse dependencies to rebuild
-        if $rebuild {
-            my @revdeps = $.ecosystem.revdeps($bone, :installed);
-            if $.ecosystem.is-installed($bone) and @revdeps {
-                self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
-                for @revdeps -> $revdep {
-                    self.install($revdep, False, $notests, False, :rebuild)
-                }
-            }
-            $.ecosystem.project-set-state($bone, $s)
-        }
+        $.ecosystem.project-set-state($bone, $s);
         self.announce('success', $bone);
         Panda::Reporter.new( :$bone, :$reports-file ).submit;
 
@@ -179,7 +182,8 @@ class Panda {
         return @deps;
     }
 
-    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, :$action='install') {
+    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests,
+                   :$action = 'install', Str :$prefix) {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         mkpath $tmpdir;
@@ -215,7 +219,9 @@ class Panda {
         }
 
         given $action {
-            when 'install' { self.install($bone, $nodeps, $notests, 0); }
+            when 'install' {
+                self.install($bone, $nodeps, $notests, 0, :$prefix);
+            }
             when 'install-deps-only' { }
             when 'look'    { self.look($bone) };
         }

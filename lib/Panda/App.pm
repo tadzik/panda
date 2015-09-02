@@ -4,13 +4,13 @@ use Panda::Ecosystem;
 use Panda::Project;
 
 # initialize the Panda object
-sub make-default-ecosystem is export {
+sub make-default-ecosystem(Str $prefix? is copy) is export {
+    my $custom-prefix = ?$prefix;
     my $pandadir;
-    my $destdir = %*ENV<DESTDIR>;
-    $destdir = "$*CWD/$destdir" if defined($destdir) && !$*DISTRO.is-win && $destdir !~~ /^ '/' /;
-    for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-        $destdir  = $prefix;
-        $pandadir = "$prefix/panda".IO;
+    $prefix = "$*CWD/$prefix" if defined($prefix) && !$*DISTRO.is-win && $prefix !~~ /^ '/' /;
+    for grep(*.defined, $prefix, %*CUSTOM_LIB<site home>) -> $target {
+        $prefix  = $target;
+        $pandadir = "$target/panda".IO;
         try mkpath $pandadir unless $pandadir ~~ :d;
         last if $pandadir.w;
     }
@@ -19,22 +19,22 @@ sub make-default-ecosystem is export {
     }
 
     my @extra-statefiles;
-    unless $destdir eq %*CUSTOM_LIB<site> {
-        for grep(*.defined, $destdir, %*CUSTOM_LIB<site home>) -> $prefix {
-            unless $destdir eq $prefix {
-                @extra-statefiles.push("$prefix/panda/state");
+    unless $custom-prefix or $prefix eq %*CUSTOM_LIB<site> {
+        for grep(*.defined, $prefix, %*CUSTOM_LIB<site home>) -> $target {
+            unless $prefix eq $target {
+                @extra-statefiles.push("$target/panda/state");
             }
         }
     }
 
     # Add the path we're installing to @*INC
     #
-    # If we're installing to a custom destdir or we're installing to a standard
+    # If we're installing to a custom prefix or we're installing to a standard
     # dir that did not exist, it isn't in @*INC (which will make Build.pm
     # files that depend on the modules we just installed break).
     #
     # If this is already in @*INC, it doesn't harm anything to re-add it.
-    @*INC.push("file#" ~ $destdir ~ '/lib');   # TEMPORARY !!!
+    @*INC.push("file#" ~ $prefix ~ '/lib');   # TEMPORARY !!!
 
     return Panda::Ecosystem.new(
         statefile    => "$pandadir/state",
@@ -61,7 +61,9 @@ sub listprojects($panda, :$installed, :$verbose) is export {
         }
 
         my $meta = $s ?? $es.project-get-saved-meta($x) !! $x.metainfo;
-        my $url  = $meta<source-url> // $meta<repo-url> // 'UNKNOWN';
+        my $url  = $meta<source-url>
+                // $meta<support><source>
+                // 'UNKNOWN';
         my $rev  = $meta<source-revision> // '?';
         my $ver  = $meta<version>;
 
@@ -133,10 +135,6 @@ sub projectinfo($panda, @args) is export {
             say "Project '$p' not found"
         }
     }
-}
-
-sub revdep($panda, $name, :$installed) is export {
-    say $panda.ecosystem.revdeps($name, :$installed).join("\n");
 }
 
 }

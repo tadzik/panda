@@ -1,6 +1,15 @@
 module Panda::Common {
 use Shell::Command;
 
+sub find-meta-file(Str $dirname) is export {
+    if "$dirname/META.info".IO ~~ :f {
+        return "$dirname/META.info";
+    }
+    if "$dirname/META6.json".IO ~~ :f {
+        return "$dirname/META6.json";
+    }
+}
+
 sub dirname ($mod as Str) is export {
     $mod.subst(':', '_', :g);
 }
@@ -32,27 +41,6 @@ sub withp6lib(&what) is export {
 sub compsuffix is export { state $ = $*VM.precomp-ext }
 
 sub comptarget is export { state $ = $*VM.precomp-target }
-
-sub topo-sort(@modules, %dependencies) is export {
-    my @order;
-    my %color_of = flat @modules X=> 'not yet visited';
-    sub dfs-visit($module) {
-        %color_of{$module} = 'visited';
-        for %dependencies{$module}.list -> $used {
-            if (%color_of{$used} // '') eq 'not yet visited' {
-                dfs-visit($used);
-            }
-        }
-        push @order, $module;
-    }
-
-    for @modules -> $module {
-        if %color_of{$module} eq 'not yet visited' {
-            dfs-visit($module);
-        }
-    }
-    @order;
-}
 
 class X::Panda is Exception {
     has $.module is rw;
@@ -94,6 +82,8 @@ sub run-and-gather-output(*@command) is export {
             $stderr ~= $chunk;
         });
         my $p = $proc.start;
+        # workaround for OSX, see RT125758
+        $p.result;
         $passed = $p.result.exitcode == 0;
     }
     else {

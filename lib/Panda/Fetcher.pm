@@ -36,7 +36,13 @@ method fetch($from is copy, $to) {
     return True;
 }
 
-sub git-fetch($from, $to, $commit?) {
+sub git-fetch($from is copy, $to, $commit?) {
+    # since this is what the ecosystem uses by default
+    # and there's always the issue of restrictive
+    # firewalls, we allow to override the protocol
+    if %*ENV<GIT_PROTOCOL> {
+        $from ~~ s/^git/%*ENV<GIT_PROTOCOL>/
+    }
     shell "git clone -q $from \"$to\""
         or fail "Failed cloning git repository '$from'";
     if $commit {
@@ -51,7 +57,7 @@ sub local-fetch($from, $to) {
     # copy files to a subdirectory of $from
     my $cleanup       = $from.IO.cleanup;
     my $cleanup_chars = $cleanup.chars;
-    for eager find(dir => $from, exclude => "$from/.git").list {
+    for eager find(dir => $from, exclude => "$from/.git".IO).list {
         my $io = .IO;
         my $d  = $*SPEC.catpath($io.volume, $io.dirname, '');
         # We need to cleanup the path, because the returned elems are too.

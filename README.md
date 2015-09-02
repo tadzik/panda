@@ -1,10 +1,6 @@
 # Panda
 
-![Panda](http://modules.perl6.org/panda.png) Panda is an implementation of a Perl 6 module manager specification.
-
-## Description
-
-Panda is a module management solution for Perl 6.
+![Panda](http://modules.perl6.org/panda.png) Panda is a Perl 6 module manager.
 
 ## Installation
 
@@ -20,9 +16,6 @@ perl6 installed in order to run bootstrap.pl
 
 Since the bootstrap step currently runs tests with prove, you will need a
 recent TAP::Harness (3.x) for it to work properly.
-
-If you are behind a proxy, you need to [configure git](http://help.github.com/firewalls-and-proxies/)
-and [configure wget](http://www.gnu.org/software/wget/manual/html_node/Proxies.html) to use the proxy.
 
 After a successful bootstrap, a message will show up saying what path should be added
 to PATH env variable in order to be able to run panda from the command line. For example:
@@ -55,6 +48,21 @@ Panda can be used like:
 Alternatively, you can install a package from the local disk by supplying its path:
 
     panda install ./perl6-Acme-Meow
+
+You can also specify a git repository and panda will automatically fetch
+the code from it. It's also possible to specify a commit to checkout:
+
+    panda install git://github.com/tadzik/Net--IRC.git
+    # or
+    panda install git://github.com/tadzik/Net--IRC.git@3c5ca0db791d9ec
+
+If you are behind a proxy, you need to [configure git](http://help.github.com/firewalls-and-proxies/) and have HTTP::UserAgent installed which
+supports proxies. Panda's built-in HTTP client does not.
+
+You can also use the GIT_PROTOCOL environment variable to specify another
+protocol if git is blocked on your network:
+
+    GIT_PROTOCOL=https panda install Acme::Meow
 
 [1] http://help.github.com/firewalls-and-proxies/
 

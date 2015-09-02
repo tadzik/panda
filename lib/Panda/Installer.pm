@@ -4,7 +4,7 @@ use Panda::Project;
 use File::Find;
 use Shell::Command;
 
-has $.destdir = self.default-destdir();
+has $.prefix = self.default-prefix();
 
 method sort-lib-contents(@lib) {
     my @generated = @lib.grep({ $_ ~~  / \. <{compsuffix}> $/});
@@ -13,12 +13,9 @@ method sort-lib-contents(@lib) {
 }
 
 # default install location
-method default-destdir {
-    my $ret = %*ENV<DESTDIR>;
-    if defined($ret) && !$*DISTRO.is-win && $ret !~~ /^ '/' / {
-        $ret = "$*CWD/$ret" ;
-    }
-    for grep(*.defined, $ret, %*CUSTOM_LIB<site home>) -> $prefix {
+method default-prefix {
+    my $ret;
+    for grep(*.defined, %*CUSTOM_LIB<site home>) -> $prefix {
 #        $ret = CompUnitRepo.new("inst#$prefix");   # TEMPORARY !!!
         $ret = $prefix;
         last if $ret.IO.w;
@@ -36,10 +33,11 @@ sub copy($src, $dest) {
 
 method install($from, $to? is copy, Panda::Project :$bone) {
     unless $to {
-        $to = $.destdir
+        $to = $.prefix;
     }
+    $to = $to.IO.absolute; # we're about to change cwd
     indir $from, {
-        # check if $.destdir is under control of a CompUnitRepo
+        # check if $.prefix is under control of a CompUnitRepo
         if $to.can('install') {
             my @files;
             if 'blib'.IO ~~ :d {
@@ -60,7 +58,7 @@ method install($from, $to? is copy, Panda::Project :$bone) {
         else {
             if 'blib'.IO ~~ :d {
                 my @lib = find(dir => 'blib', type => 'file').list;
-                for flat self.sort-lib-contents(@lib) -> $i {
+                for self.sort-lib-contents(@lib) -> $i {
                     next if $i.basename.substr(0, 1) eq '.';
                     # .substr(5) to skip 'blib/'
                     mkpath "$to/{$i.dirname.substr(5)}";
