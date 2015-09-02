@@ -63,7 +63,7 @@ class Panda {
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
+                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).keys.flat],
                 metainfo     => $mod,
             );
         }
@@ -79,7 +79,7 @@ class Panda {
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
+                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).keys.flat],
                 metainfo     => $mod,
             );
         }
