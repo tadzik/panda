@@ -81,11 +81,7 @@ class Panda {
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-<<<<<<< HEAD
-                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).keys.flat],
-=======
                 dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
->>>>>>> master
                 metainfo     => $mod,
             );
         }
