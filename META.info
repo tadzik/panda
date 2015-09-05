@@ -4,5 +4,23 @@
     "description" : "File::Find for Perl 6",
     "depends"     : [],
     "provides"    : { "File::Find" : "lib/File/Find.pm" },
+    "authors" : [
+        "Tadeusz “tadzik” Sośnierz",
+        "Dagur Valberg Johansson",
+        "Elizabeth Mattijsen",
+        "Filip Sergot",
+        "GlitchMr",
+        "Heather",
+        "isleofmax",
+        "Moritz Lenz",
+        "Paul Cochrane",
+        "Steve Mynott",
+        "timo",
+        "Tobias Leich"
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tadzik/File-Find/issues",
+        "source" : "git://github.com/tadzik/File-Find.git"
+    },
     "source-url"  : "git://github.com/tadzik/File-Find.git"
 }

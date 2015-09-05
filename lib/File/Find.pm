@@ -100,6 +100,11 @@ Exclude is meant to be used for skipping certain big and uninteresting
 directories, like '.git'. Neither them nor any of their contents will be
 returned, saving a significant amount of time.
 
+The value of C<exclude> will be smartmatched against each IO object
+found by File::Find. It's recommended that it's passed as an IO object
+(or a Junction of those) so we avoid silly things like slashes
+vs backslashes on different platforms.
+
 =head2 keep-going
 
 Parameter C<keep-going> tells C<find()> to not stop finding files
