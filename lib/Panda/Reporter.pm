@@ -96,7 +96,7 @@ method to-json {
             :precomp-target($*VM.precomp-target),
             :prefix($*VM.prefix.Str),
         }),
-    }
+    }, :pretty;
 }
 
 }

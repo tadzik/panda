@@ -31,7 +31,7 @@ class Panda::Ecosystem {
     method flush-states {
         my $fh = open($!statefile, :w);
         for %!states.kv -> $key, $val {
-            my $json = to-json %!saved-meta{$key};
+            my $json = to-json %!saved-meta{$key}, :!pretty;
             $fh.say: "$key {$val.Str} $json";
         }
         $fh.close;
