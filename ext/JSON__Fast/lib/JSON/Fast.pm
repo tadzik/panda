@@ -2,31 +2,45 @@ use nqp;
 
 unit module JSON::Fast;
 
-proto to-json($) is export {*}
-
-multi to-json(Real:D $d) { ~$d }
-multi to-json(Bool:D $d) { $d ?? 'true' !! 'false'; }
-multi to-json(Str:D  $d) {
-    '"'
-    ~ $d.trans(['"',  '\\',   "\b", "\f", "\n", "\r", "\t"]
-            => ['\"', '\\\\', '\b', '\f', '\n', '\r', '\t'])\
-            .subst(/<-[\c32..\c126]>/, { ord(~$_).fmt('\u%04x') }, :g)
-    ~ '"'
-}
-multi to-json(Positional:D $d) {
-    return  '[ '
-            ~ $d.map(&to-json).join(', ')
-            ~ ' ]';
-}
-multi to-json(Associative:D  $d) {
-    return '{ '
-            ~ $d.map({ to-json(.key) ~ ' : ' ~ to-json(.value) }).join(', ')
-            ~ ' }';
+sub str-escape(str $text) {
+  return $text.subst(/'\\'/, '\\\\', :g)\ 
+              .subst(/"\n"/, '\\n',  :g)\
+              .subst(/"\r"/, '\\r',  :g)\
+              .subst(/"\t"/, '\\t',  :g)\
+              .subst(/'"'/,  '\\"',  :g);  
 }
 
-multi to-json(Mu:U $) { 'null' }
-multi to-json(Mu:D $s) {
-    die "Can't serialize an object of type " ~ $s.WHAT.perl
+sub to-json($obj, Bool :$pretty = True, Int :$level = 0, Int :$spacing = 2) is export {
+    return "{$obj}" if $obj ~~ Int|Rat;
+    return "{$obj ?? 'true' !! 'false'}" if $obj ~~ Bool;
+    return "\"{str-escape($obj)}\"" if $obj ~~ Str;
+
+    my int  $lvl  = $level;
+    my Bool $arr  = $obj ~~ Array;
+    my str  $out ~= $arr ?? '[' !! '{';
+    my $spacer   := sub {
+        $out ~= "\n" ~ (' ' x $lvl*$spacing) if $pretty;
+    };
+
+    $lvl++;
+    $spacer();
+    if $arr {
+        for @($obj) -> $i {
+          $out ~= to-json($i, :level($level+1), :$spacing, :$pretty) ~ ',';
+          $spacer();
+        }
+    }
+    else {
+        for $obj.keys -> $key {
+            $out ~= "\"{$key ~~ Str ?? str-escape($key) !! $key}\": " ~ to-json($obj{$key}, :level($level+1), :$spacing, :$pretty) ~ ',';
+            $spacer();
+        }
+    }
+    $out .=subst(/',' \s* $/, '');
+    $lvl--;
+    $spacer();
+    $out ~= $arr ?? ']' !! '}';
+    return $out;
 }
 
 my sub nom-ws(str $text, int $pos is rw) {
@@ -289,3 +303,5 @@ sub from-json(Str() $text) is export {
 
     $result;
 }
+
+# vi:syntax=perl6
