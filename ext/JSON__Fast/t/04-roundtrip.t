@@ -7,7 +7,7 @@ my @s =
         'Rat'            => [ 3.2 ],
         'Str'            => [ 'one' ],
         'Str with quote' => [ '"foo"'],
-        'Undef'          => [ Any, 1 ],
+        'Undef'          => [ {}, 1 ],
         'other escapes'  => [ "\\/\"\n\r\tfoo\\"],
         'Non-ASCII'      => [ 'möp stüff' ],
         'Empty Array'    => [ ],
@@ -33,8 +33,7 @@ my @s =
 plan +@s;
 
 for @s.kv -> $k, $v {
-    #warn "The json is <{ to-json( .value ) }>";
-    my $r = from-json( to-json( $v.value ) );
+    my $r = from-json( to-json( $v.value, :!pretty ) );
     todo('known type mismatches') if $k == 9;
     is-deeply $r, $v.value, $v.key;
 }

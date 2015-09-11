@@ -130,7 +130,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
             support        => {
                 source => ~$bone.metainfo<source-url>,
             }
-        }) ~ "\n";
+        }, :pretty) ~ "\n";
 
         CATCH {
             try unlink %*ENV<PANDA_DEPTRACKER_FILE> if %*ENV<PANDA_DEPTRACKER_FILE>.IO.e;
