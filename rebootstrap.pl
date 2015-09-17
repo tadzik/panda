@@ -8,7 +8,7 @@ use Shell::Command;
 sub MAIN(Str :$prefix is copy) {
     # Find old state file
     my ($state-file, $reports-file);
-    for grep(*.defined, $prefix, %*CUSTOM_LIB<site home>) {
+    for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>) {
         if "$_/panda/state".IO.e {
             $prefix = $_;
             $state-file   = "$_/panda/state";
