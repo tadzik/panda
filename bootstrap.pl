@@ -18,7 +18,7 @@ sub MAIN(Str :$prefix is copy) {
 
     my $panda-base;
     $prefix = "$CWD/$prefix" if defined($prefix) && $is_win && $prefix !~~ /^ '/' /;
-    for grep(*.defined, $prefix, %*CUSTOM_LIB<site home>) -> $target {
+    for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>) -> $target {
         $prefix = $target;
         $panda-base = "$target/panda";
         try mkdir $prefix;
