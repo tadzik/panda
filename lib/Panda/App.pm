@@ -36,11 +36,13 @@ sub make-default-ecosystem(Str $prefix? is copy) is export {
     # If this is already in @*INC, it doesn't harm anything to re-add it.
     @*INC.push("file#" ~ $prefix ~ '/lib');   # TEMPORARY !!!
 
-    return Panda::Ecosystem.new(
+    my $panda-ecosystem = Panda::Ecosystem.new(
         statefile    => "$pandadir/state",
         projectsfile => "$pandadir/projects.json",
         extra-statefiles => @extra-statefiles
     );
+
+    return $panda-ecosystem;
 }
 
 sub listprojects($panda, :$installed, :$verbose) is export {
