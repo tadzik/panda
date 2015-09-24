@@ -1,5 +1,5 @@
 class Panda::Reporter {
-
+use JSON::Fast;
 has $.bone is rw;
 has $.reports-file is rw;
 

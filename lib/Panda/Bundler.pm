@@ -2,6 +2,7 @@ class Panda::Bundler {
 use Panda::Common;
 use Panda::Project;
 use File::Find;
+use JSON::Fast;
 
 sub guess-project($where, Str :$name is copy, Str :$desc is copy) {
     my $source-url;
