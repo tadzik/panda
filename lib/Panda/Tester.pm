@@ -21,7 +21,7 @@ method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'pro
                 for @deps -> $lib {
                     $libs ~= ' -M' ~ $lib;
                 }
-                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output($prove-command, '-e', "$*EXECUTABLE $libs -Ilib", '-r', 't/');
+                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output($prove-command, '-e', "$*EXECUTABLE $libs -Ilib", "--norc", '-r', 't/');
 
                 if $bone {
                     $bone.test-output = $output;
