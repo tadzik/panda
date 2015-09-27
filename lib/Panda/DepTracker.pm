@@ -1,7 +1,7 @@
 use nqp;
 
 my class DepTracker is CompUnitRepo {
-    method load_module($module_name, %opts, *@GLOBALish is rw, Any :$line, Any :$file, :%chosen) {
+    method load_module($module_name, %opts, *@GLOBALish, Any :$line, Any :$file, :%chosen) {
         my $r := CompUnitRepo.load_module($module_name, %opts, @GLOBALish, :$line, :$file, :%chosen);
 
         # get our hands on the candidate that was loaded right before.
