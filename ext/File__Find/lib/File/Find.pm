@@ -41,7 +41,7 @@ sub find (:$dir!, :$name, :$type, :$exclude = False, Bool :$recursive = True,
         take $elem if checkrules($elem, { :$name, :$type, :$exclude });
         if $recursive {
             if $elem.IO ~~ :d {
-                @targets.push: dir($elem);
+                @targets.append: dir($elem);
                 CATCH { when X::IO::Dir {
                     $_.throw unless $keep-going;
                     next;

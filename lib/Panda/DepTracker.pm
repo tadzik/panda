@@ -42,7 +42,7 @@ sub symbols($source, $key is copy = '') {
 
         if $is_stub {
             for symbols($_.value, $key ~ $_.key) -> $sym {
-                $symbols.push: $sym.flat
+                $symbols.append: $sym.flat
             }
         }
         else {
