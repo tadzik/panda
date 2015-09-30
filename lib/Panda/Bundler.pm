@@ -65,7 +65,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
         if %*ENV<PANDA_DEPTRACKER_FILE>.IO.e {
             my $test = EVAL %*ENV<PANDA_DEPTRACKER_FILE>.IO.slurp;
             for $test.list -> $m {
-                $bone.metainfo<build-depends>.push: $m<module_name> unless $m<file> ~~ /^"$dir" [ [\/|\\] blib ]? [\/|\\] lib [\/|\\]/ # XXX :auth/:ver/:from/...
+                $bone.metainfo<build-depends>.append: $m<module_name> unless $m<file> ~~ /^"$dir" [ [\/|\\] blib ]? [\/|\\] lib [\/|\\]/ # XXX :auth/:ver/:from/...
             }
             %*ENV<PANDA_DEPTRACKER_FILE>.IO.spurt: ''
         }
@@ -90,7 +90,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
             if %*ENV<PANDA_DEPTRACKER_FILE>.IO.e {
                 my $test = EVAL %*ENV<PANDA_DEPTRACKER_FILE>.IO.slurp;
                 for $test.list -> $m {
-                    $bone.metainfo<test-depends>.push: $m<module_name> unless $m<file> ~~ /^"$dir" [ [\/|\\] blib ]? [\/|\\] lib [\/|\\]/ # XXX :auth/:ver/:from/...
+                    $bone.metainfo<test-depends>.append: $m<module_name> unless $m<file> ~~ /^"$dir" [ [\/|\\] blib ]? [\/|\\] lib [\/|\\]/ # XXX :auth/:ver/:from/...
                 }
                 $bone.metainfo<test-depends> = [$bone.metainfo<test-depends>.list.unique];
             }

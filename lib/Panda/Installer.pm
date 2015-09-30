@@ -41,13 +41,13 @@ method install($from, $to? is copy, Panda::Project :$bone) {
         if $to.can('install') {
             my @files;
             if 'blib'.IO ~~ :d {
-                @files.push: find(dir => 'blib', type => 'file').list.grep( -> $lib {
+                @files.append: find(dir => 'blib', type => 'file').list.grep( -> $lib {
                     next if $lib.basename.substr(0, 1) eq '.';
                     $lib
                 } )
             }
             if 'bin'.IO ~~ :d {
-                @files.push: find(dir => 'bin', type => 'file').list.grep( -> $bin {
+                @files.append: find(dir => 'bin', type => 'file').list.grep( -> $bin {
                     next if $bin.basename.substr(0, 1) eq '.';
                     next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;
                     $bin
