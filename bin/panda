@@ -91,10 +91,6 @@ multi MAIN ('look', *@modules, Str :$prefix) {
 #| prints USAGE and exits
 multi sub MAIN('help') { USAGE }
 
-multi MAIN (Bool :$notests, Bool :$nodeps, Str :$prefix, *@modules where * > 0) {
-    MAIN('install', @modules, :$notests, :$nodeps)
-}
-
 sub USAGE {
     note q:to/END_USAGE/.chomp; # 'note' adds a newline, so get rid of heredoc's
 Panda -- Perl 6 Module Installer
