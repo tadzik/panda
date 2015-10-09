@@ -88,8 +88,58 @@ multi MAIN ('look', *@modules, Str :$prefix) {
     }
 }
 
-multi MAIN (Bool :$notests, Bool :$nodeps, Str :$prefix, *@modules where * > 0) {
-    MAIN('install', @modules, :$notests, :$nodeps)
+#| prints USAGE and exits
+multi sub MAIN('help') { USAGE }
+
+sub USAGE {
+    note q:to/END_USAGE/.chomp; # 'note' adds a newline, so get rid of heredoc's
+Panda -- Perl 6 Module Installer
+
+Usage:
+    panda <action> [options]
+
+Common options:
+    --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
+
+Actions:
+    install        Installs the modules listed on the command line, and their
+                   dependencies.
+        --notests    Don't run tests for the modules being installed.
+        --nodeps     Skip installing modules' dependencies.
+
+    installdeps    Installs the dependencies of the listed modules, but not the
+                   modules themselves.
+        --notests    Don't run tests for the dependencies being installed.
+
+    list           Lists all the modules available.
+        --verbose      Provide verbose output
+        --installed    List only installed modules
+
+    update         Updates the local copy of the module database.
+
+    info           Lists information available on given modules.
+
+    search         Searches the database for module names/descriptions matching
+                   the given substring.
+
+    gen-meta       Generates a META.info with supplied options (see below).
+        --notests          Specifies that the module whose META.info is being
+                           generated doesn't have tests(?)
+        --name=A::Name     Specify the module's name
+        --auth=JRandom     Specify the author's name
+        --ver=v0.1         Specify the module version
+        --desc="A desc"    Specify the module description
+
+    smoke          Tests and installs all packages. (Not for typical use.)
+        --exclude=A::Name    Specifies a package to skip testing.
+
+    look           Downloads and unpacks the listed modules, afterwards going to
+                   them with your shell.
+
+'list', 'update', and 'smoke' don't take a list of module names to
+install. 'search' takes a string to search case-insensitively for in the
+database.
+END_USAGE
 }
 
 END {
