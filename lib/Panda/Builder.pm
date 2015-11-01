@@ -6,13 +6,13 @@ use Shell::Command;
 method build($where, :$bone, :@deps) {
     indir $where, {
         if "Build.pm".IO.f {
-            @*INC.push("file#$where");   # TEMPORARY !!!
+            PROCESS::<$REPO> := CompUnitRepo.new("file#$where", :next-repo($*REPO)); # TEMPORARY !!!
             GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Builder) {
                 ::('Build').new.build($where);
             }
-            @*INC.pop;
+            PROCESS::<$REPO> := $*REPO.next-repo;
         }
 
         my @files;
