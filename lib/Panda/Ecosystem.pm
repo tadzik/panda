@@ -101,6 +101,8 @@ class Panda::Ecosystem {
                 die "can't download projects file: $http-header";
             }
 
+            $buf = $http-header;
+
             $buf ~= $g while $g = $s.get;
 
             $!projectsfile.IO.spurt: $buf.split(/\r?\n\r?\n/, 2)[1];
