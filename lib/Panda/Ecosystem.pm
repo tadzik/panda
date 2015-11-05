@@ -101,11 +101,24 @@ class Panda::Ecosystem {
                 die "can't download projects file: $http-header";
             }
 
-            $buf = $http-header;
+            # for the time being we're going to throw this away
+            my Str $head-stuff;
 
-            $buf ~= $g while $g = $s.get;
+            while $g = $s.get {
+               $head-stuff ~= $g;
+            }
 
-            $!projectsfile.IO.spurt: $buf.split(/\r?\n\r?\n/, 2)[1];
+
+            # unconditionally get the gap
+            $buf ~= $s.get;
+
+            # get all the lines remaining
+            while $g = $s.get {
+               $buf ~= $g;
+            }
+
+
+            $!projectsfile.IO.spurt: $buf;
         }
 
         CATCH {
