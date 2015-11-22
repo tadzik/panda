@@ -14,7 +14,8 @@ method sort-lib-contents(@lib) {
 
 # default install location
 method default-prefix {
-    my $ret;
+    my $ret = $*REPO.repo-chain.grep(CompUnit::Repository::Installable).first(*.can-install);
+    return $ret if $ret;
     for grep(*.defined, %*CUSTOM_LIB<site home>) -> $prefix {
 #        $ret = CompUnitRepo.new("inst#$prefix");   # TEMPORARY !!!
         $ret = $prefix;
@@ -35,9 +36,12 @@ method install($from, $to? is copy, Panda::Project :$bone) {
     unless $to {
         $to = $.prefix;
     }
-    $to = $to.IO.absolute; # we're about to change cwd
+    $to = $to.IO.absolute if $to ~~ IO::Path; # we're about to change cwd
+    if $to !~~ CompUnit::Repository and INCLUDE-SPEC2CUR($to, :next-repo($*REPO)) -> $cur {
+        $to = $cur;
+    }
     indir $from, {
-        # check if $.prefix is under control of a CompUnitRepo
+        # check if $.prefix is under control of a CompUnit::Repository
         if $to.can('install') {
             my @files;
             if 'blib'.IO ~~ :d {

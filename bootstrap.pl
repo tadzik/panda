@@ -17,12 +17,23 @@ sub MAIN(Str :$prefix is copy) {
     my $is_win = $DISTRO.is-win;
 
     my $panda-base;
+    my $repo;
     $prefix = "$CWD/$prefix" if defined($prefix) && $is_win && $prefix !~~ /^ '/' /;
-    for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>) -> $target {
-        $prefix = $target;
-        $panda-base = "$target/panda";
-        try mkdir $prefix;
-        try mkpath $panda-base unless $panda-base.IO ~~ :d;
+    my @repos = $*REPO.repo-chain.grep(CompUnit::Repository::Installable).grep(*.can-install);
+    for grep(*.defined, flat $prefix, @repos, %*CUSTOM_LIB<site home>) -> $target {
+        if $target ~~ CompUnit::Repository {
+            $prefix = $target.path-spec;
+            $repo   = $prefix;
+            $panda-base = "{$target.prefix}/panda";
+            try mkdir $panda-base unless $panda-base.IO.d;
+        }
+        else {
+            $prefix = $target;
+            $repo   = "$target/lib";
+            $panda-base = "$target/panda";
+            try mkdir $prefix;
+            try mkpath $panda-base unless $panda-base.IO ~~ :d;
+        }
         last if $panda-base.IO.w
     }
     unless $panda-base.IO.w {
@@ -42,16 +53,18 @@ sub MAIN(Str :$prefix is copy) {
     my $env_sep = $DISTRO.?cur-sep // $DISTRO.path-sep;
 
     %ENV<PERL6LIB>  = join( $env_sep,
-      "$prefix/lib",
-      "$CWD/ext/File__Find/lib",
-      "$CWD/ext/Shell__Command/lib",
-      "$CWD/ext/JSON__Fast/lib",
-      "$CWD/lib",
+      $repo,
+      "file#$CWD/ext/File__Find/lib",
+      "file#$CWD/ext/Shell__Command/lib",
+      "file#$CWD/ext/JSON__Fast/lib",
+      "file#$CWD/lib",
     );
 
     my $prefix_str = $prefix ?? "--prefix=$prefix" !! '';
-    shell "$*EXECUTABLE bin/panda $prefix_str install $*CWD";
+    shell "$*EXECUTABLE --ll-exception bin/panda $prefix_str install $*CWD";
     say "==> Please make sure that $prefix/bin is in your PATH";
 
     unlink "$panda-base/projects.json";
 }
+
+# vim: ft=perl6
