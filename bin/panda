@@ -96,7 +96,7 @@ sub USAGE {
 Panda -- Perl 6 Module Installer
 
 Usage:
-    panda <action> [options]
+    panda [options] <action> 
 
 Common options:
     --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
