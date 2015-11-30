@@ -8,7 +8,7 @@ sub make-default-ecosystem(Str $prefix? is copy) is export {
     my $custom-prefix = ?$prefix;
     my $pandadir;
     $prefix = "$*CWD/$prefix" if defined($prefix) && !$*DISTRO.is-win && $prefix !~~ /^ '/' /;
-    for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>) -> $target {
+    for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>.map(*.prefix.Str)) -> $target {
         $prefix  = $target;
         $pandadir = "$target/panda".IO;
         try mkpath $pandadir unless $pandadir ~~ :d;
@@ -19,8 +19,8 @@ sub make-default-ecosystem(Str $prefix? is copy) is export {
     }
 
     my @extra-statefiles;
-    unless $custom-prefix or $prefix eq %*CUSTOM_LIB<site> {
-        for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>) -> $target {
+    unless $custom-prefix or $prefix eq %*CUSTOM_LIB<site>.prefix {
+        for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>.map(*.prefix.Str)) -> $target {
             unless $prefix eq $target {
                 @extra-statefiles.push("$target/panda/state");
             }

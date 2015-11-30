@@ -14,14 +14,12 @@ method sort-lib-contents(@lib) {
 
 # default install location
 method default-prefix {
+    for grep(*.defined, %*CUSTOM_LIB<site home>).grep(*.can-install) -> $repo {
+        return $repo;
+    }
     my $ret = $*REPO.repo-chain.grep(CompUnit::Repository::Installable).first(*.can-install);
     return $ret if $ret;
-    for grep(*.defined, %*CUSTOM_LIB<site home>) -> $prefix {
-#        $ret = CompUnitRepo.new("inst#$prefix");   # TEMPORARY !!!
-        $ret = $prefix;
-        last if $ret.IO.w;
-    }
-    return $ret;
+    fail "Could not find a repository to install to";
 }
 
 sub copy($src, $dest) {
