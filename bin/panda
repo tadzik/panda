@@ -11,11 +11,11 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 my %failed;
 
 #| Install the specified modules
-multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps,
+multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force,
             Str :$prefix) {
     my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
     for @modules -> $x {
-        $panda.resolve($x, :$notests, :$nodeps, :action<install>,
+        $panda.resolve($x, :$notests, :$nodeps, :action<install>, :$force,
                        :$prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }

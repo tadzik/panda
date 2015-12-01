@@ -30,7 +30,7 @@ sub copy($src, $dest) {
     $src.copy($dest);
 }
 
-method install($from, $to? is copy, Panda::Project :$bone) {
+method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
     unless $to {
         $to = $.prefix;
     }
@@ -51,7 +51,12 @@ method install($from, $to? is copy, Panda::Project :$bone) {
                     %scripts{$basename} = ~$bin.IO.absolute;
                 }
             }
-            $to.install(CompUnitRepo::Distribution.new(|$bone.metainfo), %sources, %scripts);
+            $to.install(
+                CompUnitRepo::Distribution.new(|$bone.metainfo),
+                %sources,
+                %scripts,
+                :$force,
+            );
         }
         else {
             if 'blib'.IO ~~ :d {
