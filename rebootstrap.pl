@@ -10,7 +10,7 @@ sub MAIN(Str :$prefix is copy) {
     my ($state-file, $reports-file);
     for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>) {
         if "$_/panda/state".IO.e {
-            $prefix = $_;
+            $prefix = ~$_;
             $state-file   = "$_/panda/state";
             $reports-file = "$_/panda/reports.{$*PERL.compiler.version}" if "$_/panda/reports.{$*PERL.compiler.version}".IO.e;
         }
