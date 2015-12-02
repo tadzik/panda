@@ -53,11 +53,11 @@ sub MAIN(Str :$prefix is copy) {
     my $env_sep = $DISTRO.?cur-sep // $DISTRO.path-sep;
 
     %ENV<PERL6LIB>  = join( $env_sep,
-      $repo,
       "file#$CWD/ext/File__Find/lib",
       "file#$CWD/ext/Shell__Command/lib",
       "file#$CWD/ext/JSON__Fast/lib",
       "file#$CWD/lib",
+      $repo,
     );
 
     my $prefix_str = $prefix ?? "--prefix=$prefix" !! '';
