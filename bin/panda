@@ -96,7 +96,7 @@ sub USAGE {
 Panda -- Perl 6 Module Installer
 
 Usage:
-    panda [options] <action> 
+    panda [options] <action>
 
 Common options:
     --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
@@ -104,6 +104,7 @@ Common options:
 Actions:
     install        Installs the modules listed on the command line, and their
                    dependencies.
+        --force      Install even if the same version of the module is already installed
         --notests    Don't run tests for the modules being installed.
         --nodeps     Skip installing modules' dependencies.
 
