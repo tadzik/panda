@@ -98,6 +98,10 @@ Panda -- Perl 6 Module Installer
 Usage:
     panda [options] <action>
 
+Examples:
+    panda --installed list           List only installed modules
+    panda --force install Foo::Bar   Reinstall module
+
 Common options:
     --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
 
