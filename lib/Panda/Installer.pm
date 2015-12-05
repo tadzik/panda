@@ -41,6 +41,7 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
     indir $from, {
         # check if $.prefix is under control of a CompUnit::Repository
         if $to.can('install') {
+            fail "'provides' key mandatory in META information" unless $bone.metainfo<provides>:exists;
             my %sources = $bone.metainfo<provides>.map({ $_.key => ~$_.value.IO.absolute });
             my %scripts;
             if 'bin'.IO ~~ :d {
