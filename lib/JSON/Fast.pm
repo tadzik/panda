@@ -48,11 +48,12 @@ sub to-json($obj is copy, Bool :$pretty = True, Int :$level = 0, Int :$spacing =
 }
 
 my sub nom-ws(str $text, int $pos is rw) {
-    loop {
-        my int $wsord = nqp::ordat($text, $pos);
+    my int $wsord;
+    STATEMENT_LIST(
+        $wsord = nqp::ordat($text, $pos);
         last unless $wsord == 32 || $wsord == 10 || $wsord == 13 || $wsord == 9;
         $pos = $pos + 1;
-    }
+    ) while True;
     CATCH {
         die "at $pos: reached the end of the string while looking for things";
     }
@@ -65,7 +66,7 @@ my sub parse-string(str $text, int $pos is rw) {
     my str $result;
 
     loop {
-        my $ord := nqp::ordat($text, $pos);
+        my int $ord = nqp::ordat($text, $pos);
         $pos = $pos + 1;
 
         if $ord == 34 { # "
@@ -77,25 +78,24 @@ my sub parse-string(str $text, int $pos is rw) {
             $result = substr($text, $startpos, $pos - 1 - $startpos);
             @pieces.push: $result;
 
-            my $kind := nqp::substr($text, $pos, 1);
-
-            if $kind eq '"' {
+            die "reached end of string while looking for end of quoted string." if $pos > nqp::chars($text);
+            if nqp::eqat($text, '"', $pos) {
                 @pieces.push: '"';
-            } elsif $kind eq '\\' {
+            } elsif nqp::eqat($text, '\\', $pos) {
                 @pieces.push: '\\';
-            } elsif $kind eq '/' {
+            } elsif nqp::eqat($text, '/', $pos) {
                 @pieces.push: '/';
-            } elsif $kind eq 'b' {
+            } elsif nqp::eqat($text, 'b', $pos) {
                 @pieces.push: "\b";
-            } elsif $kind eq 'f' {
+            } elsif nqp::eqat($text, 'f', $pos) {
                 @pieces.push: chr(0x0c);
-            } elsif $kind eq 'n' {
+            } elsif nqp::eqat($text, 'n', $pos) {
                 @pieces.push: "\n";
-            } elsif $kind eq 'r' {
+            } elsif nqp::eqat($text, 'r', $pos) {
                 @pieces.push: "\r";
-            } elsif $kind eq 't' {
+            } elsif nqp::eqat($text, 't', $pos) {
                 @pieces.push: "\t";
-            } elsif $kind eq 'u' {
+            } elsif nqp::eqat($text, 'u', $pos) {
                 my $hexstr := nqp::substr($text, $pos + 1, 4);
                 if nqp::chars($hexstr) != 4 {
                     die "expected exactly four alnum digits after \\u";
@@ -103,7 +103,7 @@ my sub parse-string(str $text, int $pos is rw) {
                 @pieces.push: chr(:16($hexstr));
                 $pos = $pos + 4;
             } else {
-                die "at $pos: I don't understand the escape sequence \\$kind";
+                die "at $pos: I don't understand the escape sequence \\{ nqp::substr($text, $pos, 1) }";
             }
 
             if nqp::eqat($text, '"', $pos + 1) {
@@ -120,7 +120,7 @@ my sub parse-string(str $text, int $pos is rw) {
             die "at $pos: the only whitespace allowed in json strings are spaces";
         }
     }
-    
+
     $result;
 }
 
@@ -176,31 +176,35 @@ my sub parse-obj(str $text, int $pos is rw) {
                     $pos = $pos + 1;
                     $thing = parse-string($text, $pos)
                 } else {
+                    die "at end of string: expected a quoted string for an object key" if $pos == nqp::chars($text);
                     die "at $pos: json requires object keys to be strings";
                 }
             }
             nom-ws($text, $pos);
 
-            my $partitioner := nqp::substr($text, $pos, 1);
-            $pos = $pos + 1;
+            #my str $partitioner = nqp::substr($text, $pos, 1);
 
-            if $partitioner eq ':'      and not defined $key and not defined $value {
+            if nqp::eqat($text, ':', $pos)      and not defined $key and not defined $value {
                 $key = $thing;
-            } elsif $partitioner eq ',' and     defined $key and not defined $value {
+            } elsif nqp::eqat($text, ',', $pos) and     defined $key and not defined $value {
                 $value = $thing;
 
                 %result{$key} = $value;
 
                 $key   = Nil;
                 $value = Nil;
-            } elsif $partitioner eq '}' and     defined $key and not defined $value {
+            } elsif nqp::eqat($text, '}', $pos) and     defined $key and not defined $value {
                 $value = $thing;
 
                 %result{$key} = $value;
+                $pos = $pos + 1;
                 last;
             } else {
-                die "unexpected $partitioner in an object at $pos";
+                die "at end of string: unexpected end of object." if $pos == nqp::chars($text);
+                die "unexpected { nqp::substr($text, $pos, 1) } in an object at $pos";
             }
+
+            $pos = $pos + 1;
         }
 
         %result;
