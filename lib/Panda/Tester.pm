@@ -5,7 +5,7 @@ method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'pro
     indir $where, {
         my Bool $run-default = True;
         if "Build.pm".IO.f {
-            PROCESS::<$REPO> := CompUnitRepo.new("file#.", :next-repo($*REPO)); # TEMPORARY !!!
+            PROCESS::<$REPO> := CompUnit::RepositoryRegistry.new("file#.", :next-repo($*REPO)); # TEMPORARY !!!
             GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Tester) {
