@@ -54,7 +54,7 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
             }
             my %resources = ($bone.metainfo<resources> // []).map({ $_ => ~"resources/$_".IO.absolute });
             $to.install(
-                CompUnitRepo::Distribution.new(|$bone.metainfo),
+                Distribution.new(|$bone.metainfo),
                 %sources,
                 %scripts,
                 %resources,
