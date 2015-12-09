@@ -68,6 +68,7 @@ my sub parse-string(str $text, int $pos is rw) {
     loop {
         my int $ord = nqp::ordat($text, $pos);
         $pos = $pos + 1;
+        die "reached end of string while looking for end of quoted string." if $pos > nqp::chars($text);
 
         if $ord == 34 { # "
             $result = nqp::substr($text, $startpos, $pos - 1 - $startpos);
@@ -78,7 +79,6 @@ my sub parse-string(str $text, int $pos is rw) {
             $result = substr($text, $startpos, $pos - 1 - $startpos);
             @pieces.push: $result;
 
-            die "reached end of string while looking for end of quoted string." if $pos > nqp::chars($text);
             if nqp::eqat($text, '"', $pos) {
                 @pieces.push: '"';
             } elsif nqp::eqat($text, '\\', $pos) {
