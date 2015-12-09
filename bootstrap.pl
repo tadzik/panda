@@ -20,7 +20,8 @@ sub MAIN(Str :$prefix is copy) {
     my $repo;
     $prefix = "$CWD/$prefix" if defined($prefix) && $is_win && $prefix !~~ /^ '/' /;
     my @repos = $*REPO.repo-chain.grep(CompUnit::Repository::Installable).grep(*.can-install);
-    for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>, @repos) -> $target {
+    my @custom-lib = <site home>.map({CompUnit::RepositoryRegistry.repository-for-name($_)});
+    for grep(*.defined, flat $prefix, @custom-lib, @repos) -> $target {
         if $target ~~ CompUnit::Repository {
             $prefix = $target.path-spec;
             $repo   = $prefix;

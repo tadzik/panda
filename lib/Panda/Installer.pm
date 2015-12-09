@@ -14,7 +14,8 @@ method sort-lib-contents(@lib) {
 
 # default install location
 method default-prefix {
-    for grep(*.defined, %*CUSTOM_LIB<site home>).grep(*.can-install) -> $repo {
+    my @custom-lib = <site home>.map({CompUnit::RepositoryRegistry.repository-for-name($_)}).grep(*.defined);
+    for @custom-lib.grep(*.can-install) -> $repo {
         return $repo;
     }
     my $ret = $*REPO.repo-chain.grep(CompUnit::Repository::Installable).first(*.can-install);
@@ -35,7 +36,7 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
         $to = $.prefix;
     }
     $to = $to.IO.absolute if $to ~~ IO::Path; # we're about to change cwd
-    if $to !~~ CompUnit::Repository and INCLUDE-SPEC2CUR($to, :next-repo($*REPO)) -> $cur {
+    if $to !~~ CompUnit::Repository and CompUnit::RepositoryRegistry.repository-for-spec($to, :next-repo($*REPO)) -> $cur {
         $to = $cur;
     }
     indir $from, {

@@ -8,7 +8,8 @@ sub make-default-ecosystem(Str $prefix? is copy) is export {
     my $custom-prefix = ?$prefix;
     my $pandadir;
     $prefix = "$*CWD/$prefix" if defined($prefix) && !$*DISTRO.is-win && $prefix !~~ /^ '/' /;
-    for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>.grep(*.defined).map(*.prefix.Str)) -> $target {
+    my @custom-lib = <site home>.map({CompUnit::RepositoryRegistry.repository-for-name($_)}).grep(*.defined).map(*.prefix.Str);
+    for grep(*.defined, flat $prefix, @custom-lib) -> $target {
         $prefix  = $target;
         $pandadir = "$target/panda".IO;
         try mkpath $pandadir unless $pandadir ~~ :d;
@@ -19,8 +20,8 @@ sub make-default-ecosystem(Str $prefix? is copy) is export {
     }
 
     my @extra-statefiles;
-    unless $custom-prefix or $prefix eq %*CUSTOM_LIB<site>.prefix {
-        for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>.grep(*.defined).map(*.prefix.Str)) -> $target {
+    unless $custom-prefix or $prefix eq CompUnit::RepositoryRegistry.repository-for-name('site').prefix {
+        for grep(*.defined, flat $prefix, @custom-lib) -> $target {
             unless $prefix eq $target {
                 @extra-statefiles.push("$target/panda/state");
             }
