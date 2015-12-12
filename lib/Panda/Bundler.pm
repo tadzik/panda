@@ -87,13 +87,6 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
             unless $_ = $panda.tester.test($dir, :deps(['Panda::DepTracker'])) {
                 die X::Panda.new($bone.name, 'test', $_)
             }
-            if %*ENV<PANDA_DEPTRACKER_FILE>.IO.e {
-                my $test = EVAL %*ENV<PANDA_DEPTRACKER_FILE>.IO.slurp;
-                for $test.list -> $m {
-                    $bone.metainfo<test-depends>.append: $m<module_name> unless $m<file> ~~ /^"$dir" [ [\/|\\] blib ]? [\/|\\] lib [\/|\\]/ # XXX :auth/:ver/:from/...
-                }
-                $bone.metainfo<test-depends> = [$bone.metainfo<test-depends>.list.unique];
-            }
             if %*ENV<PANDA_PROTRACKER_FILE>.IO.e {
                 my $test = EVAL %*ENV<PANDA_PROTRACKER_FILE>.IO.slurp;
                 for $test.list -> $m {

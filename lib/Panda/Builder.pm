@@ -6,7 +6,10 @@ use Shell::Command;
 method build($where, :$bone, :@deps) {
     indir $where, {
         if "Build.pm".IO.f {
-            PROCESS::<$REPO> := CompUnitRepo.new("file#$where", :next-repo($*REPO)); # TEMPORARY !!!
+            PROCESS::<$REPO> := CompUnit::RepositoryRegistry.repository-for-spec(
+                "file#$where",
+                :next-repo($*REPO)
+            ); # TEMPORARY !!!
             GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Builder) {

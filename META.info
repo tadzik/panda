@@ -58,7 +58,6 @@
         "Panda::Builder"    : "lib/Panda/Builder.pm",
         "Panda::Bundler"    : "lib/Panda/Bundler.pm",
         "Panda::Common"     : "lib/Panda/Common.pm",
-        "Panda::DepTracker" : "lib/Panda/DepTracker.pm",
         "Panda::Ecosystem"  : "lib/Panda/Ecosystem.pm",
         "Panda::Fetcher"    : "lib/Panda/Fetcher.pm",
         "Panda::Installer"  : "lib/Panda/Installer.pm",
