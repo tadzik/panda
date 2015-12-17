@@ -12,19 +12,6 @@ method build($where, :$bone, :@deps) {
                 ::('Build').new.build($where);
             }
         }
-
-        my @files;
-        if 'lib'.IO.d {
-            @files = find(dir => 'lib', type => 'file').map({
-                my $io = .IO;
-                $io if $io.basename.substr(0, 1) ne '.';
-            });
-        }
-        my @dirs = @files.map(*.dirname).unique;
-        mkpath "blib/$_" for @dirs;
-        for @files -> $file {
-            $file.copy: "blib/$file";
-        }
     };
     return True;
 }

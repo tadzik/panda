@@ -54,18 +54,18 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
             die X::Panda.new($bone.name, 'build', $_)
         }
 
-        if "$dir/blib/lib".IO ~~ :d {
-            find(dir => "$dir/blib/lib", type => 'file').list.grep( -> $lib is copy {
+        if "$dir/lib".IO ~~ :d {
+            find(dir => "$dir/lib", type => 'file').list.grep( -> $lib is copy {
                 next unless $lib.basename ~~ / \.pm6? $/;
                 $lib = file_to_symbol($lib);
-                try shell "$*EXECUTABLE -Iblib/lib -M$lib -e1 " ~ ($*DISTRO.is-win ?? ' >NIL 2>&1' !! ' >/dev/null 2>&1');
+                try shell "$*EXECUTABLE -Ilib -M$lib -e1 " ~ ($*DISTRO.is-win ?? ' >NIL 2>&1' !! ' >/dev/null 2>&1');
             } )
         }
 
         if %*ENV<PANDA_DEPTRACKER_FILE>.IO.e {
             my $test = EVAL %*ENV<PANDA_DEPTRACKER_FILE>.IO.slurp;
             for $test.list -> $m {
-                $bone.metainfo<build-depends>.append: $m<module_name> unless $m<file> ~~ /^"$dir" [ [\/|\\] blib ]? [\/|\\] lib [\/|\\]/ # XXX :auth/:ver/:from/...
+                $bone.metainfo<build-depends>.append: $m<module_name> unless $m<file> ~~ /^"$dir" [ [\/|\\] lib ]? [\/|\\] lib [\/|\\]/ # XXX :auth/:ver/:from/...
             }
             %*ENV<PANDA_DEPTRACKER_FILE>.IO.spurt: ''
         }
@@ -74,7 +74,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
             my $test = EVAL %*ENV<PANDA_PROTRACKER_FILE>.IO.slurp;
             for $test.list -> $m {
                 for ($m<symbols> (-) $bone.metainfo<build-depends>).list.grep(/^<-[&]>*$/) {
-                    if $m<file> && $m<file>.match(/^"$dir" [ [\/|\\] blib [\/|\\] ]? <?before 'lib' [\/|\\] > $<relname>=.+/) -> $match {
+                    if $m<file> && $m<file>.match(/^"$dir" [ [\/|\\] lib [\/|\\] ]? <?before 'lib' [\/|\\] > $<relname>=.+/) -> $match {
                         $bone.metainfo<build-provides>{$_ || file_to_symbol(~$match<relname>)} = ~$match<relname>
                     }
                 }
@@ -91,7 +91,7 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
                 my $test = EVAL %*ENV<PANDA_PROTRACKER_FILE>.IO.slurp;
                 for $test.list -> $m {
                     for ($m<symbols> (-) $bone.metainfo<build-depends>).list.grep(/^<-[&]>*$/) {
-                        if $m<file> && $m<file>.match(/^"$dir" [ [\/|\\] blib [\/|\\] ]? <?before 'lib' [\/|\\] > $<relname>=.+/) -> $match {
+                        if $m<file> && $m<file>.match(/^"$dir" [ [\/|\\] lib [\/|\\] ]? <?before 'lib' [\/|\\] > $<relname>=.+/) -> $match {
                             $bone.metainfo<test-provides>{$_ || file_to_symbol(~$match<relname>)} = ~$match<relname>
                         }
                     }
@@ -140,7 +140,6 @@ method bundle($panda, :$notests, Str :$name, Str :$auth, Str :$ver, Str :$desc) 
 
 sub file_to_symbol($file) {
     my @names = $file.IO.relative.subst(/ \.pm6? $/, '').split(/<[\\\/]>/);
-    shift @names if @names && @names[0] eq 'blib';
     shift @names if @names && @names[0] eq 'lib';
     @names.join('::');
 }

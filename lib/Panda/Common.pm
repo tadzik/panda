@@ -32,7 +32,6 @@ sub withp6lib(&what) is export {
     }
     my $sep = $*DISTRO.?cur-sep // $*DISTRO.path-sep;
     %*ENV<PERL6LIB> = join $sep,
-        $*CWD ~ '/blib/lib',
         $*CWD ~ '/lib',
         %*ENV<PERL6LIB> // ();
     what();

@@ -63,13 +63,12 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
             );
         }
         else {
-            if 'blib'.IO ~~ :d {
-                my @lib = find(dir => 'blib', type => 'file').list;
+            if 'lib'.IO ~~ :d {
+                my @lib = find(dir => 'lib', type => 'file').list;
                 for self.sort-lib-contents(@lib) -> $i {
                     next if $i.basename.substr(0, 1) eq '.';
-                    # .substr(5) to skip 'blib/'
-                    mkpath "$to/{$i.dirname.substr(5)}";
-                    copy($i, "$to/{$i.substr(5)}");
+                    mkpath "$to/{$i.dirname}";
+                    copy($i, "$to/{$i}");
                 }
             }
             if 'bin'.IO ~~ :d {
