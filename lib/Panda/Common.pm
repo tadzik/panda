@@ -10,7 +10,7 @@ sub find-meta-file(Str $dirname) is export {
     }
 }
 
-sub dirname ($mod as Str) is export {
+sub dirname (Str() $mod) is export {
     $mod.subst(':', '_', :g);
 }
 

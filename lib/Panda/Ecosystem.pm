@@ -130,7 +130,7 @@ class Panda::Ecosystem {
         @!projects.push: $p;
     }
 
-    method get-project($p as Str) {
+    method get-project(Str() $p) {
         self.init-projects();
         my @cands;
         for @!projects {
@@ -149,7 +149,7 @@ class Panda::Ecosystem {
         }
     }
 
-    method suggest-project($p as Str) {
+    method suggest-project(Str() $p) {
         self.init-projects();
         my &canonical = *.subst(/ <[\- _ :]>+ /, "", :g).lc;
         my $cpname = canonical($p);
