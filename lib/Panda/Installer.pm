@@ -53,7 +53,11 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
                     %scripts{$basename} = ~$bin.IO.absolute;
                 }
             }
-            my %resources = ($bone.metainfo<resources> // []).map({ $_ => ~"resources/$_".IO.absolute });
+            my %resources = ($bone.metainfo<resources> // []).map({
+                $_ => $_ ~~ m/^libraries\/(.*)/
+                    ?? ~"resources/libraries".IO.child($*VM.platform-library-name($0.Str.IO))
+                    !! ~"resources/$_".IO.absolute
+            });
             $to.install(
                 Distribution.new(|$bone.metainfo),
                 %sources,
