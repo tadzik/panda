@@ -11,7 +11,7 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 my %failed;
 
 #| Install the specified modules
-multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force,
+multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force = False,
             Str :$prefix) {
     my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
     for @modules -> $x {
