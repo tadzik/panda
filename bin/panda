@@ -96,11 +96,11 @@ sub USAGE {
 Panda -- Perl 6 Module Installer
 
 Usage:
-    panda [options] <action>
+    panda [options] <action> # OPTIONS GO IN FRONT!! Not like git.
 
 Examples:
-    panda --installed list           List only installed modules
-    panda --force install Foo::Bar   Reinstall module
+    panda --installed list           # List only installed modules
+    panda --force install Foo::Bar   # Reinstall module
 
 Common options:
     --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
