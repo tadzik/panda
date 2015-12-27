@@ -4,6 +4,10 @@
 
 ## Installation
 
+> Note: the most common way to install panda is via
+> [rakudobrew](https://github.com/tadzik/rakudobrew): `rakudobrew build-panda`.
+> The instructions below are for installing it manually.
+
 To install Panda along with all its dependencies, simply run the script
 bootstrap.pl in the root of the panda git repo. You must have
 perl6 installed in order to run bootstrap.pl
