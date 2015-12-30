@@ -22,10 +22,10 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force = 
 }
 
 #| Install dependencies, but don't build the modules themselves
-multi MAIN ('installdeps', *@modules, Bool :$notests, Str :$prefix) {
+multi MAIN ('installdeps', *@modules, Bool :$notests, Bool :$force = False, Str :$prefix) {
     my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
     for @modules -> $x {
-        $panda.resolve($x, :$notests, :action<install-deps-only>,
+        $panda.resolve($x, :$notests, :action<install-deps-only>, :$force,
                        :$prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
