@@ -2,3 +2,4 @@ blib/*
 lib/*.pir
 Makefile
 *~
+.precomp
