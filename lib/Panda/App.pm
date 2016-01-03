@@ -4,14 +4,18 @@ use Panda::Ecosystem;
 use Panda::Project;
 
 # initialize the Panda object
-sub make-default-ecosystem(Str $prefix? is copy) is export {
-    my $custom-prefix = ?$prefix;
+sub make-default-ecosystem(Str $prefix?) is export {
     my $pandadir;
-    $prefix = "$*CWD/$prefix" if defined($prefix) && !$*DISTRO.is-win && $prefix !~~ /^ '/' /;
-    my @custom-lib = <site home>.map({CompUnit::RepositoryRegistry.repository-for-name($_)}).grep(*.defined).map(*.prefix.Str);
-    for grep(*.defined, flat $prefix, @custom-lib) -> $target {
-        $prefix  = $target;
-        $pandadir = "$target/panda".IO;
+    my CompUnit::Repository $target;
+    my CompUnit::Repository @repos;
+    if defined $prefix {
+        @repos.push: CompUnit::RepositoryRegistry.repository-for-spec($prefix);
+    }
+    @repos.append: <site home>.map({CompUnit::RepositoryRegistry.repository-for-name($_)});
+    @repos.=grep(*.defined);
+    for @repos {
+        $target = $_;
+        $pandadir = $target.prefix.child('panda');
         try $pandadir.mkdir;
         last if $pandadir.w;
     }
@@ -20,17 +24,17 @@ sub make-default-ecosystem(Str $prefix? is copy) is export {
     }
 
     my @extra-statefiles;
-    unless $custom-prefix or $prefix eq CompUnit::RepositoryRegistry.repository-for-name('site').prefix {
-        for grep(*.defined, flat $prefix, @custom-lib) -> $target {
-            unless $prefix eq $target {
-                @extra-statefiles.push("$target/panda/state");
+    unless $prefix or $target eq CompUnit::RepositoryRegistry.repository-for-name('site') {
+        for @repos {
+            unless $target eq $_ {
+                @extra-statefiles.push($target.prefix.child('panda').child('state'));
             }
         }
     }
 
     my $panda-ecosystem = Panda::Ecosystem.new(
-        statefile    => "$pandadir/state",
-        projectsfile => "$pandadir/projects.json",
+        statefile    => $pandadir.child('state'),
+        projectsfile => $pandadir.child('projects.json'),
         extra-statefiles => @extra-statefiles
     );
 

@@ -15,8 +15,8 @@ class Panda::Ecosystem {
         state $done = False;
         return if $done;
         for flat $!statefile, @!extra-statefiles -> $file {
-            if $file.IO ~~ :f {
-                my $fh = open($file);
+            if $file ~~ :f {
+                my $fh = $file.open;
                 for $fh.lines -> $line {
                     my ($mod, $state, $json) = split ' ', $line, 3;
                     %!states{$mod} = ::("Panda::Project::State::$state");

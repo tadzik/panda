@@ -8,8 +8,8 @@ my $installed = Panda::Project::installed;
 
 't/fakestate'.IO.copy('REMOVEME');
 my $a = Panda::Ecosystem.new(
-    statefile    => "$*CWD/REMOVEME",
-    projectsfile => 't/fakeprojects'
+    statefile    => $*CWD.child('REMOVEME'),
+    projectsfile => 't/fakeprojects'.IO
 ) but role {
     method flush-states { }
 };
