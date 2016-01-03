@@ -43,20 +43,20 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
         # check if $.prefix is under control of a CompUnit::Repository
         if $to.can('install') {
             fail "'provides' key mandatory in META information" unless $bone.metainfo<provides>:exists;
-            my %sources = $bone.metainfo<provides>.map({ $_.key => ~$_.value.IO.absolute });
+            my %sources = $bone.metainfo<provides>.map({ $_.key => ~$_.value.IO });
             my %scripts;
             if 'bin'.IO ~~ :d {
                 for find(dir => 'bin', type => 'file').list -> $bin {
                     my $basename = $bin.basename;
                     next if $basename.substr(0, 1) eq '.';
                     next if !$*DISTRO.is-win and $basename ~~ /\.bat$/;
-                    %scripts{$basename} = ~$bin.IO.absolute;
+                    %scripts{$basename} = ~$bin.IO;
                 }
             }
             my %resources = ($bone.metainfo<resources> // []).map({
                 $_ => $_ ~~ m/^libraries\/(.*)/
                     ?? ~"resources/libraries".IO.child($*VM.platform-library-name($0.Str.IO))
-                    !! ~"resources/$_".IO.absolute
+                    !! ~"resources/$_".IO
             });
             $to.install(
                 Distribution.new(|$bone.metainfo),
