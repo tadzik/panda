@@ -211,7 +211,7 @@ class Panda {
                 $.ecosystem.project-get-state($_)
                     == Panda::Project::absent
             };
-            self.install($_, $nodeps, $notests, 1, :$force) for @deps;
+            self.install($_, $nodeps, $notests, 1, :$prefix, :$force) for @deps;
         }
 
         given $action {
