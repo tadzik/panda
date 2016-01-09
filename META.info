@@ -1,6 +1,7 @@
 {
     "name"        : "panda",
-    "version"     : "*",
+    "version"     : "0.1",
+    "perl"	  : "6.c",
     "description" : "A module manager",
     "depends"     : [ "File::Find", "Shell::Command", "JSON::Fast" ],
     "source-url"  : "git://github.com/tadzik/panda.git",
