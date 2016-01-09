@@ -115,6 +115,18 @@ class Panda {
         }
     }
 
+    method !check-perl-version(Panda::Project $bone) {
+        if $bone.metainfo<perl> -> $perl-version-str is copy {
+            note "Please remove leading 'v' from perl version in {$bone.Str}'s meta info."
+                if $perl-version-str ~~ s/^v//; # remove superfluous leading "v"
+            my $perl-version = Version.new($perl-version-str);
+            use MONKEY-SEE-NO-EVAL;
+            my Bool $supported = try { EVAL "use { $perl-version.gist }"; True };
+            die "$bone requires Perl version $perl-version-str. Cannot continue."
+                unless $supported;
+        }
+    }
+
     method install(Panda::Project $bone, $nodeps, $notests,
                    Bool() $isdep, :$rebuild = True, :$prefix, Bool :$force) {
         my $cwd = $*CWD;
@@ -129,6 +141,8 @@ class Panda {
         unless $_ = $.fetcher.fetch($source, $dir) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
+
+        self!check-perl-version($bone);
         self.announce('building', $bone);
         unless $_ = $.builder.build($dir, :$bone) {
             die X::Panda.new($bone.name, 'build', $_)
