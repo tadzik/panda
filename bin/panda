@@ -12,21 +12,21 @@ my %failed;
 
 #| Install the specified modules
 multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force = False,
-            Str :$prefix) {
+            Str :$prefix, Str :$bin-prefix) {
     my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
     for @modules -> $x {
         $panda.resolve($x, :$notests, :$nodeps, :action<install>, :$force,
-                       :$prefix);
+                       :$prefix, :$bin-prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
 }
 
 #| Install dependencies, but don't build the modules themselves
-multi MAIN ('installdeps', *@modules, Bool :$notests, Bool :$force = False, Str :$prefix) {
+multi MAIN ('installdeps', *@modules, Bool :$notests, Bool :$force = False, Str :$prefix, Str :$bin-prefix) {
     my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
     for @modules -> $x {
         $panda.resolve($x, :$notests, :action<install-deps-only>, :$force,
-                       :$prefix);
+                       :$prefix, :$bin-prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
 }
@@ -104,6 +104,7 @@ Examples:
 
 Common options:
     --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
+    --prefix=/path/to/scripts    Place to put executable scripts, overrides --prefix
 
 Actions:
     install        Installs the modules listed on the command line, and their

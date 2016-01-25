@@ -31,7 +31,7 @@ sub copy($src, $dest) {
     $src.copy($dest);
 }
 
-method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
+method install($from, $to? is copy, Panda::Project :$bone, Bool :$force, :$bin-prefix) {
     unless $to {
         $to = $.prefix;
     }
@@ -58,6 +58,7 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
                     ?? ~"resources/libraries".IO.child($*VM.platform-library-name($0.Str.IO))
                     !! ~"resources/$_".IO
             });
+            $to.bindir = $bin-prefix.IO if $bin-prefix;
             $to.install(
                 Distribution.new(|$bone.metainfo),
                 %sources,
@@ -76,6 +77,7 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
                 }
             }
             if 'bin'.IO ~~ :d {
+                $to = $bin-prefix if $bin-prefix;
                 for find(dir => 'bin', type => 'file').list -> $bin {
                     next if $bin.basename.substr(0, 1) eq '.';
                     next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;

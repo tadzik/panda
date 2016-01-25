@@ -128,7 +128,7 @@ class Panda {
     }
 
     method install(Panda::Project $bone, $nodeps, $notests,
-                   Bool() $isdep, :$rebuild = True, :$prefix, Bool :$force) {
+                   Bool() $isdep, :$rebuild = True, :$prefix, :$bin-prefix, Bool :$force) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
         my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
@@ -157,7 +157,7 @@ class Panda {
             }
         }
         self.announce('installing', $bone);
-        $.installer.install($dir, $prefix, :$bone, :$force);
+        $.installer.install($dir, $prefix, :$bone, :$force, :$bin-prefix);
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
         $.ecosystem.project-set-state($bone, $s);
@@ -193,7 +193,7 @@ class Panda {
     }
 
     method resolve(Str() $proj is copy, Bool :$nodeps, Bool :$notests, Bool :$force,
-                   :$action = 'install', Str :$prefix) {
+                   :$action = 'install', Str :$prefix, Str :$bin-prefix) {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         mkpath $tmpdir;
@@ -225,12 +225,12 @@ class Panda {
                 $.ecosystem.project-get-state($_)
                     == Panda::Project::absent
             };
-            self.install($_, $nodeps, $notests, 1, :$prefix, :$force) for @deps;
+            self.install($_, $nodeps, $notests, 1, :$prefix, :$bin-prefix, :$force) for @deps;
         }
 
         given $action {
             when 'install' {
-                self.install($bone, $nodeps, $notests, 0, :$prefix, :$force);
+                self.install($bone, $nodeps, $notests, 0, :$prefix, :$bin-prefix, :$force);
             }
             when 'install-deps-only' { }
             when 'look'    { self.look($bone) };

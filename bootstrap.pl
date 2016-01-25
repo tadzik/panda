@@ -5,7 +5,7 @@ use lib 'ext/File__Find/lib/';
 use lib 'ext/Shell__Command/lib/';
 use Shell::Command;
 
-sub MAIN(Str :$prefix is copy) {
+sub MAIN(Str :$prefix is copy, Str :$bin-prefix is copy) {
     say '==> Bootstrapping Panda';
 
     # prevent a lot of expensive dynamic lookups
@@ -63,9 +63,11 @@ sub MAIN(Str :$prefix is copy) {
     );
 
     my $prefix_str = $prefix ?? "--prefix=$prefix" !! '';
+    $bin-prefix  //= "$prefix/bin";
+    $prefix_str   ~= " --bin-prefix=$bin-prefix";
     shell "$*EXECUTABLE --ll-exception bin/panda --force $prefix_str install $*CWD";
     $prefix = $prefix.substr(5) if $prefix.starts-with("inst#");
-    say "==> Please make sure that $prefix/bin is in your PATH";
+    say "==> Please make sure that $bin-prefix is in your PATH";
 
     unlink "$panda-base/projects.json";
 }
