@@ -63,7 +63,14 @@ sub MAIN(Str :$prefix is copy, Str :$bin-prefix is copy) {
     );
 
     my $prefix_str = $prefix ?? "--prefix=$prefix" !! '';
-    $bin-prefix  //= "$prefix/bin";
+    unless $bin-prefix {
+        if CompUnit::RepositoryRegistry.repository-for-spec($prefix, :next-repo($*REPO)) -> $cur {
+            $bin-prefix = "$cur/bin";
+        }
+        else {
+            $bin-prefix = "$prefix/bin";
+        }
+    }
     $prefix_str   ~= " --bin-prefix=$bin-prefix";
     shell "$*EXECUTABLE --ll-exception bin/panda --force $prefix_str install $*CWD";
     $prefix = $prefix.substr(5) if $prefix.starts-with("inst#");
