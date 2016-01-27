@@ -58,8 +58,7 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force, :$bin-p
                     ?? ~"resources/libraries".IO.child($*VM.platform-library-name($0.Str.IO))
                     !! ~"resources/$_".IO
             });
-            # Rakudo 2015.12 does not support setting the bindir, so we need to try here.
-            try $to.bindir = $bin-prefix.IO if $bin-prefix;
+            $to.bindir = $bin-prefix.IO if $bin-prefix;
             $to.install(
                 Distribution.new(|$bone.metainfo),
                 %sources,
