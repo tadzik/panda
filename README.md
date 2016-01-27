@@ -28,7 +28,7 @@ to PATH env variable in order to be able to run panda from the command line. For
 
 If you use bash, you can fulfill that requirement with the following:
 
-    echo 'export PATH=$PATH:/home/user/rakudo/install/share/perl6/site/bin' >> ~/.bashrc
+    echo "export PATH=\$PATH:$HOME/rakudo/install/share/perl6/site/bin" >> ~/.bashrc
     source ~/.bashrc
 
 
