@@ -127,7 +127,7 @@ class Panda {
         }
     }
 
-    method install(Panda::Project $bone, $nodeps, $notests,
+    method install(Panda::Project $bone is copy, $nodeps, $notests,
                    Bool() $isdep, :$rebuild = True, :$prefix, Bool :$force) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
@@ -141,6 +141,7 @@ class Panda {
         unless $_ = $.fetcher.fetch($source, $dir) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
+        $bone.update-from-meta-file(find-meta-file(~$dir));
 
         self!check-perl-version($bone);
         self.announce('building', $bone);

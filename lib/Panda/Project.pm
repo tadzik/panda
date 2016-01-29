@@ -18,4 +18,16 @@ class Panda::Project {
     method Str { $!name }
 
     method gist { "Panda::Project($!name)" }
+
+    method update-from-meta-file($metafile) {
+        my $mod = from-json slurp $metafile;
+        $!name     = $mod<name>;
+        $!version  = $mod<version>;
+        %!metainfo = $mod;
+        @!dependencies = (flat
+                @($mod<depends> // Empty),
+                @($mod<test-depends> // Empty),
+                @($mod<build-depends> // Empty)
+            ).unique.Array,
+    }
 }
