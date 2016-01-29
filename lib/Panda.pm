@@ -215,8 +215,8 @@ class Panda {
         if not $bone {
             sub die($m) { X::Panda.new($proj, 'resolve', $m).throw }
             my $suggestion = $.ecosystem.suggest-project($proj);
-            die "Project $proj not found in the ecosystem. Maybe you meant $suggestion?" if $suggestion;
-            die "Project $proj not found in the ecosystem";
+            $suggestion = $suggestion ?? " Maybe you meant $suggestion?" !! '';
+            die qq[Project $proj not found in the ecosystem.$suggestion Maybe try "panda update" first?];
         }
 
         unless $nodeps {
