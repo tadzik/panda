@@ -7,7 +7,7 @@ File::Find - Get a lazy list of a directory tree
     use File::Find;
 
     # recursively (and eagerly) find all files from the 'foo' directory
-    my @list := find(dir => 'foo');
+    my @list = find(dir => 'foo');
     say @list[0..3];
 
     # the same as above, but lazily return the results
@@ -15,7 +15,7 @@ File::Find - Get a lazy list of a directory tree
     say $list[0..3];
 
     # eagerly find all Perl-related files from the current directory
-    my @perl-files := find(dir => '.', name => /.p [l||m] $/);
+    my @perl-files = find(dir => '.', name => /.p [l||m] $/);
 
     # lazily find all directories within the 'rakudo' directory
     my $rakudo-dirs = find(dir => 'rakudo', type => 'dir');
@@ -47,6 +47,10 @@ pattern will be returned. Any other type of argument passed here will
 just be smartmatched against the path (which is exactly what happens to
 regexes passed, by the way).
 
+**exclude**
+
+Specify a regex (or any other smartmatchable type) to exclude files / directories from the search.
+
 **type**
 
 Given a type, `find()` will only return files being the given type.
@@ -68,5 +72,5 @@ File::Find::Rule, and its features are planned to be similar one day.
 
 List assignment is eager in Perl 6, so if you assign `find()` result
 to an array, the elements will be copied and the laziness will be
-spoiled. For a proper lazy list, use either binding (`:=`) or assign
-a result to a scalar value (see SYNOPSIS).
+spoiled. For a proper lazy list, assign a result to a scalar value
+(see SYNOPSIS).

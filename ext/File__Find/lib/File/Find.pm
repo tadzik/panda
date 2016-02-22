@@ -33,7 +33,7 @@ sub find (:$dir!, :$name, :$type, :$exclude = False, Bool :$recursive = True,
     Bool :$keep-going = False) is export {
 
     my @targets = dir($dir);
-    my $list = gather while @targets {
+    gather while @targets {
         my $elem = @targets.shift;
         # exclude is special because it also stops traversing inside,
         # which checkrules does not
@@ -49,7 +49,6 @@ sub find (:$dir!, :$name, :$type, :$exclude = False, Bool :$recursive = True,
             }
         }
     }
-    return $list;
 }
 
 =begin pod
