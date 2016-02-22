@@ -1,7 +1,7 @@
 use v6;
 use Test;
 use Shell::Command;
-plan 12;
+plan 16;
 
 mkpath 't/dupa/foo/bar';
 ok ('t/dupa/foo'.IO ~~ :d), 'mkpath, 1/2';
@@ -30,3 +30,11 @@ ok ! 't/dir2/foodir/not_a_dir'.IO.f, 'rm_rf';
 
 rm_rf 't/dir2';
 ok !'t/dir2'.IO.d, 'rm_rf';
+
+mkpath 't/dir2';
+lives-ok { cp 't/dir1/file.foo', 't/dir2'; }, '#5';
+ok 't/dir2/file.foo'.IO.f, '#5';
+rm_rf 't/dir2';
+
+ok which('perl6').IO.x, 'which - perl6 is found';
+nok which('scoodelyboopersnake'), 'which - missing exe is false';
