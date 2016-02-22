@@ -14,5 +14,24 @@
     "provides" : {
         "Shell::Command" : "lib/Shell/Command.pm"
     },
+    "authors" : [
+        "Tadeusz “tadzik” Sośnierz",
+        "Dagur Valberg Johansson",
+        "Elizabeth Mattijsen",
+        "Filip Sergot",
+        "Geoffrey Broadwell",
+        "GlitchMr",
+        "Heather",
+        "Kamil Kułaga",
+        "Moritz Lenz",
+        "Steve Mynott",
+        "timo",
+        "Tobias Leich",
+        "Tim Smith"
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tadzik/Shell-Command/issues",
+        "source" : "git://github.com/tadzik/Shell-Command.git"
+    },
     "source-url"  : "git://github.com/tadzik/Shell-Command.git"
 }

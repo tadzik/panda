@@ -1,0 +1,23 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+perl6:
+  - latest
+env:
+  - BACKEND=moar
+  - BACKEND=jvm
+matrix:
+  allow_failures:
+    - env: BACKEND=jvm
+install:
+  - rakudobrew build-panda ${TRAVIS_PERL6_VERSION#latest}
+  - panda installdeps .
+script:
+  # Test that module passes tests *before* compile. Then, run tests again,
+  # catching some heisenbugs (mostly with pre-compiled modules)
+  - prove -rsv -e "perl6 --ll-exception -Ilib" t
+  - PANDA_SUBMIT_TESTREPORTS=1 panda install .
+after_success:
+  - panda --installed --verbose list
+sudo: false

@@ -44,7 +44,7 @@ sub mv(*@args) is export {
     ???
 }
 
-sub cp($from as Str, $to as Str, :$r) is export {
+sub cp(Str() $from,Str() $to is copy, :$r) is export {
     if ($from.IO ~~ :d and $r) {
         mkdir("$to") if $to.IO !~~ :d;
         for dir($from)».basename -> $item {
@@ -52,6 +52,9 @@ sub cp($from as Str, $to as Str, :$r) is export {
             cp("$from/$item", "$to/$item", :r);
         }
     } else {
+        if $to.IO.d {
+            $to = "$to/" ~ $from.IO.basename;
+        }
         $from.IO.copy($to);
     }
 }
@@ -74,6 +77,13 @@ sub test_d($file) is export {
 
 sub dos2unix($file) is export {
     ???
+}
+
+sub which($name) is export {
+    for $*SPEC.path.map({ $*SPEC.catfile($^dir, $name) }) {
+        return $_ if .IO.x;
+    }
+    Str
 }
 
 # vim: ft=perl6
