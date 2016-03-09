@@ -28,8 +28,8 @@ method submit {
             $to-send = "POST http://testers.perl6.org/report HTTP/1.1\nHost: testers.perl6.org\nConnection: Close";
         }
 
-        my $buf = Buf.new(self.to-json.ords);
-        $s.print("$to-send\nContent-Type: application/json\r\nContent-Length: $buf.elems()\r\n\r\n");
+        my utf8 $buf = self.to-json.encode("utf-8");
+        $s.print("$to-send\nContent-Type: application/json; ; charset=utf-8\r\nContent-Length: $buf.elems()\r\n\r\n");
         $s.write($buf);
 
         my $report-id = '';
