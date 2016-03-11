@@ -1,6 +1,6 @@
 {
     "name"        : "panda",
-    "version"     : "0.1",
+    "version"     : "2016.02",
     "perl"	  : "6.c",
     "description" : "A module manager",
     "depends"     : [ "File::Find", "Shell::Command", "JSON::Fast" ],
