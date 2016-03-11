@@ -90,6 +90,7 @@ multi MAIN ('look', *@modules, Str :$prefix) {
 
 #| prints USAGE and exits
 multi sub MAIN('help') { USAGE }
+multi sub MAIN(Bool :$help) { USAGE }
 
 sub USAGE {
     note q:to/END_USAGE/.chomp; # 'note' adds a newline, so get rid of heredoc's
@@ -104,6 +105,7 @@ Examples:
 
 Common options:
     --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
+    --help                       Print the help/usage text.
 
 Actions:
     install        Installs the modules listed on the command line, and their
