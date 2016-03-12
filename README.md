@@ -1,6 +1,6 @@
 # Panda
 
-![Panda](http://modules.perl6.org/panda.png) Panda is a Perl 6 module manager.
+Panda is a Perl 6 module manager.
 
 ## Installation
 
