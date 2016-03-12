@@ -10,7 +10,7 @@ Panda is a Perl 6 module manager.
 
 To install Panda along with all its dependencies, simply run the script
 `bootstrap.pl` in the root of the panda git repo. You must have `perl6`
-installed in order to run `bootstrap.pl`
+installed in order to run `bootstrap.pl`.
 
     git clone --recursive git://github.com/tadzik/panda.git
 
@@ -21,7 +21,7 @@ installed in order to run `bootstrap.pl`
 Since the bootstrap step currently runs tests with `prove`, you will need a
 recent `TAP::Harness` (3.x) for it to work properly.
 
-After a successful bootstrap, a message will show up saying what path should
+After a successful bootstrap, a message will appear saying which path should
 be added to the `PATH` env variable in order to be able to run `panda` from
 the command line. For example:
 
@@ -38,9 +38,6 @@ One way to run the test suite is with `prove` from `TAP::Harness`
 
     prove -e perl6 -lrv t/
     # or on windows: prove -e "perl6 -lrv" t/
-
-You will need a recent `TAP::Harness` (3.x) to have a `prove` binary with a
-`-e` option.
 
 ## Usage
 
