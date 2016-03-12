@@ -53,6 +53,11 @@ Alternatively, you can install a package from the local disk by supplying its pa
 
     panda install ./perl6-Acme-Meow
 
+Or, similarly to `cpanm` you can install all dependencies by specifying
+simply the current directory:
+
+    panda install .
+
 You can also specify a git repository and panda will automatically fetch
 the code from it. It's also possible to specify a commit to checkout:
 
