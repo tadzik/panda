@@ -1,6 +1,11 @@
 use v6;
+
 use Test;
+
+use lib 'lib';
+
 use Shell::Command;
+
 plan 16;
 
 mkpath 't/dupa/foo/bar';
@@ -36,5 +41,9 @@ lives-ok { cp 't/dir1/file.foo', 't/dir2'; }, '#5';
 ok 't/dir2/file.foo'.IO.f, '#5';
 rm_rf 't/dir2';
 
-ok which('perl6').IO.x, 'which - perl6 is found';
+if $*DISTRO.is-win {
+  ok which('perl6'), 'which - perl6 is found';
+} else {
+  ok which('perl6').IO.x, 'which - perl6 is found';
+}
 nok which('scoodelyboopersnake'), 'which - missing exe is false';

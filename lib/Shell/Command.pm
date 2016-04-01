@@ -1,4 +1,7 @@
+use v6;
+
 unit module Shell::Command;
+
 use File::Find;
 
 sub cat(*@files) is export {
@@ -80,10 +83,8 @@ sub dos2unix($file) is export {
 }
 
 sub which($name) is export {
-    for $*SPEC.path.map({ $*SPEC.catfile($^dir, $name) }) {
-        return $_ if .IO.x;
-    }
-    Str
+  require File::Which <&which>;
+  which($name)
 }
 
 # vim: ft=perl6
