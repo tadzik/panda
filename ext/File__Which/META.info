@@ -1,0 +1,14 @@
+{
+  "name"        : "File::Which",
+  "version"     : "*",
+  "perl"        : "6.c",
+  "description" : "Cross platform Perl 6 executable path finder (aka which on UNIX)",
+  "depends"     : [],
+  "provides"    : {
+    "File::Which"          : "lib/File/Which.pm6",
+    "File::Which::MacOSX"  : "lib/File/Which/MacOSX.pm6",
+    "File::Which::Unix"    : "lib/File/Which/Unix.pm6",
+    "File::Which::Win32"   : "lib/File/Which/Win32.pm6"
+  },
+  "source-url"  : "git://github.com/azawawi/perl6-file-which.git"
+}
