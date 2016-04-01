@@ -11,7 +11,8 @@ sub update-one(Str() $prefix is copy) {
     $prefix.=chop if substr($prefix, *-1) eq '/';
     my $url = %subtrees{$prefix} // die "$prefix is not a known subtree directory"
         ~ " (known dirs: { %subtrees.keys.sort.join: ', ' }";
-    run 'git', 'subtree', 'pull', '--prefix', $prefix, $url, 'master', '--squash';
+    my $cmd = $prefix.IO.e ?? 'pull' !! 'add';
+    run 'git', 'subtree', $cmd, '--prefix', $prefix, $url, 'master', '--squash';
 }
 
 sub MAIN(Str $prefix) {
