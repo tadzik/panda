@@ -1,0 +1,18 @@
+sudo: required
+
+language: perl6
+
+os:
+  - linux
+  - osx
+
+perl6:
+  - 2016.02
+  - latest
+
+install:
+  - echo $TRAVIS_OS_NAME
+  - rakudobrew build panda
+  - panda installdeps .
+
+script: prove -v -e "perl6 -Ilib" t/
