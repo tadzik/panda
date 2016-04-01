@@ -2,6 +2,7 @@
 use v6;
 use v6.c;
 use lib 'ext/File__Find/lib/';
+use lib 'ext/File__Which/lib/';
 use lib 'ext/Shell__Command/lib/';
 use Shell::Command;
 
@@ -56,6 +57,7 @@ sub MAIN(Str :$prefix is copy) {
 
     %ENV<PERL6LIB>  = join( $env_sep,
       "file#$CWD/ext/File__Find/lib",
+      "file#$CWD/ext/File__Which/lib",
       "file#$CWD/ext/Shell__Command/lib",
       "file#$CWD/ext/JSON__Fast/lib",
       "file#$CWD/lib",
