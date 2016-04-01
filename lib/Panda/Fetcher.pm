@@ -43,11 +43,11 @@ sub git-fetch($from is copy, $to, $commit?) {
     if %*ENV<GIT_PROTOCOL> {
         $from ~~ s/^git/%*ENV<GIT_PROTOCOL>/
     }
-    shell "git clone -q $from \"$to\""
+    run('git', 'clone', '-q', $from, $to)
         or fail "Failed cloning git repository '$from'";
     if $commit {
         temp $*CWD = chdir($to);
-        shell "git checkout $commit";
+        run 'git', 'checkout', $commit;
     }
     return True;
 }
