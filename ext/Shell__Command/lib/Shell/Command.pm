@@ -83,8 +83,13 @@ sub dos2unix($file) is export {
 }
 
 sub which($name) is export {
-  require File::Which <&which>;
-  which($name)
+  warn "Please use File::Which instead for a more portable solution."
+    if $*DISTRO.is-win || $*DISTRO.name eq 'macosx';
+
+  for $*SPEC.path.map({ $*SPEC.catfile($^dir, $name) }) {
+    return $_ if .IO.x;
+  }
+  Str
 }
 
 # vim: ft=perl6
