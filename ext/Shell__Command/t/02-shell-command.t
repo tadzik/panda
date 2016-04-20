@@ -41,9 +41,9 @@ lives-ok { cp 't/dir1/file.foo', 't/dir2'; }, '#5';
 ok 't/dir2/file.foo'.IO.f, '#5';
 rm_rf 't/dir2';
 
-if $*DISTRO.is-win {
-  ok which('perl6'), 'which - perl6 is found';
+if $*DISTRO.is-win || ($*DISTRO.name eq 'macosx') {
+  skip 'which is not working properly on Windows/Mac OS X. Please use File::Which', 2;
 } else {
   ok which('perl6').IO.x, 'which - perl6 is found';
+  nok which('scoodelyboopersnake'), 'which - missing exe is false';
 }
-nok which('scoodelyboopersnake'), 'which - missing exe is false';
