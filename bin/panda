@@ -1,8 +1,5 @@
 #!/usr/bin/env perl6
-use Shell::Command;
 use Panda;
-use Panda::Ecosystem;
-use Panda::App;
 
 # default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
@@ -11,62 +8,64 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 my %failed;
 
 #| Install the specified modules
-multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force = False,
-            Str :$prefix) {
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+multi MAIN('install', *@modules,
+           Bool :$notests,
+           Bool :$nodeps,
+           Bool :$verbose,
+           Bool :$update,
+           Bool :$force = False,
+           Str :$prefix) is export {
+    my $panda = Panda.new;
     for @modules -> $x {
-        $panda.resolve($x, :$notests, :$nodeps, :action<install>, :$force,
-                       :$prefix);
+        $panda.resolve($x,
+                       :$notests, :$nodeps, :$verbose, :$update,
+                       :action<install>, :$force, :$prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
 }
 
 #| Install dependencies, but don't build the modules themselves
-multi MAIN ('installdeps', *@modules, Bool :$notests, Bool :$force = False, Str :$prefix) {
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+multi MAIN('installdeps', *@modules,
+            Bool :$notests,
+            Bool :$force = False,
+            Str :$prefix) is export {
+    my $panda = Panda.new;
     for @modules -> $x {
-        $panda.resolve($x, :$notests, :action<install-deps-only>, :$force,
-                       :$prefix);
+        $panda.resolve($x, :$notests, :action<install-deps-only>,
+                       :$force, :$prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
 }
 
 #| List all available modules
-multi MAIN ('list', Bool :$installed, Bool :$verbose, Str :$prefix) {
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
-    listprojects($panda, :$installed, :$verbose);
-}
-
-#| Update the module database
-multi MAIN ('update', Str :$prefix) {
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
-    $panda.ecosystem.update;
+multi MAIN('list', Bool :$installed, Bool :$verbose, Str :$prefix)
+is export {
+    Panda.new.listprojects(:$installed, :$verbose);
 }
 
 #| Display information about specified modules
-multi MAIN ('info', *@modules, Str :$prefix) {
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
-    projectinfo($panda, @modules);
+multi MAIN ('info', *@modules, Str :$prefix) is export {
+    Panda.new.projectinfo(@modules);
 }
 
 #| Search the name/description
-multi MAIN ('search', $pattern = '', Str :$prefix) {
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
-    search-projects($panda, $pattern);
+multi MAIN ('search', $pattern = '', Str :$prefix) is export {
+    Panda.new.search-projects($pattern);
 }
 
 #| Autogenerate META.info
 multi MAIN ('gen-meta', Bool :$notests, Str :$name, Str :$auth,
-            Str :$ver, Str :$desc, Str :$prefix) {
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
-    $panda.bundler.bundle($panda, :$notests, :$name, :$auth, :$ver, :$desc);
+            Str :$ver, Str :$desc, Str :$prefix) is export {
+    !!!
+    #my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    #$panda.bundler.bundle($panda, :$notests, :$name, :$auth, :$ver, :$desc);
 }
 
 #| Test and install all known distributions
-multi MAIN ('smoke', :$exclude = 'panda', Str :$prefix) {
+multi MAIN ('smoke', :$exclude = 'panda', Str :$prefix) is export {
     my @exclude = $exclude.split(',');
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
-    my @projects = $panda.ecosystem.project-list;
+    my $panda = Panda.new;
+    my @projects = $panda.project-list;
     for @projects -> $p {
         next if $p ~~ any @exclude;
         @exclude.push: $p;
@@ -80,8 +79,8 @@ multi MAIN ('smoke', :$exclude = 'panda', Str :$prefix) {
 }
 
 #| Download and unpack the distribution and then open the directory with your shell.
-multi MAIN ('look', *@modules, Str :$prefix) {
-    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+multi MAIN ('look', *@modules, Str :$prefix) is export {
+    my $panda = Panda.new;
     for @modules -> $x {
         $panda.resolve($x, :notests, :nodeps, :action<look>);
         CATCH { when X::Panda { %failed{$x}.push($_)  && say $_ } };
@@ -89,10 +88,10 @@ multi MAIN ('look', *@modules, Str :$prefix) {
 }
 
 #| prints USAGE and exits
-multi sub MAIN('help') { USAGE }
-multi sub MAIN(Bool :$help) { USAGE }
+multi sub MAIN('help') is export { USAGE }
+multi sub MAIN(Bool :$help) is export { USAGE }
 
-sub USAGE {
+sub USAGE is export {
     note q:to/END_USAGE/.chomp; # 'note' adds a newline, so get rid of heredoc's
 Panda -- Perl 6 Module Installer
 
@@ -150,6 +149,7 @@ END_USAGE
 }
 
 END {
+    use Shell::Command;
     rm_rf '.panda-work' if '.panda-work'.IO.e;
 
     for %failed.kv -> $source,$messages {

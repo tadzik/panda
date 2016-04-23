@@ -1,6 +1,0 @@
-#!/usr/bin/env perl6
-use Panda::Installer;
-
-sub MAIN($from = '.', $to?) {
-    exit Panda::Installer.new.install($from.IO.absolute, $to) ?? 0 !! 1;
-}

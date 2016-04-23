@@ -1,6 +1,0 @@
-#!/usr/bin/env perl6
-use Panda::Tester;
-
-sub MAIN($where = '.') {
-    exit Panda::Tester.test($where.IO.absolute) ?? 0 !! 1;
-}

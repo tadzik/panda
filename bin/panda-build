@@ -1,6 +1,0 @@
-#!/usr/bin/env perl6
-use Panda::Builder;
-
-sub MAIN($where = '.') {
-    exit Panda::Builder.build($where.IO.absolute) ?? 0 !! 1;
-}

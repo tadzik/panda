@@ -8,7 +8,8 @@ use MONKEY-SEE-NO-EVAL;
 sub guess-project($where, Str :$name is copy, Str :$desc is copy) {
     my $source-url;
 
-    indir $where, {
+    {
+        temp $*CWD = chdir($where);
         my $metafile = find-meta-file(".");
         if $metafile.IO.e {
             try my $json = from-json $metafile.IO.slurp;
@@ -33,7 +34,7 @@ sub guess-project($where, Str :$name is copy, Str :$desc is copy) {
                 }
             }
         }
-    };
+    }
 
     Panda::Project.new( :$name, :metainfo( :description($desc), :$source-url ) )
 }
