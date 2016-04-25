@@ -2,7 +2,7 @@
   "perl" : "6",
   "name" : "JSON::Fast",
   "description" : "A naive, fast json parser and serializer; drop-in replacement for JSON::Tiny",
-  "version" : "0.3",
+  "version" : "0.4",
   "test-depends" : [
     "Test"
   ],
