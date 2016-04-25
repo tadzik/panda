@@ -2,7 +2,7 @@ use Test;
 
 use JSON::Fast;
 
-my @s =
+my @s = 
         'Int'            => [ 1 ],
         'Rat'            => [ 3.2 ],
         'Str'            => [ 'one' ],
@@ -14,7 +14,9 @@ my @s =
         'Array of Int'   => [ 1, 2, 3, 123123123 ],
         'Array of Num'   => [ 1.3, 2.8, 32323423.4, 4.0 ],
         'Array of Str'   => [ <one two three gazooba> ],
+        'Array of Undef' => [ Any, Any ],
         'Empty Hash'     => {},
+        'Undef Hash Val' => { key => Any },
         'Hash of Int'    => { :one(1), :two(2), :three(3) },
         'Hash of Num'    => { :one-and-some[1], :almost-pie(3.3) },
         'Hash of Str'    => { :one<yes_one>, :two<but_two> },
