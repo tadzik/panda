@@ -14,8 +14,11 @@ multi MAIN('install', *@modules,
            Bool :$verbose,
            Bool :$update,
            Bool :$force = False,
-           Str :$prefix) is export {
+           Str() :$prefix is copy) is export {
     my $panda = Panda.new;
+    if $prefix {
+        $prefix = $prefix.IO
+    }
     for @modules -> $x {
         $panda.resolve($x,
                        :$notests, :$nodeps, :$verbose, :$update,
@@ -28,7 +31,7 @@ multi MAIN('install', *@modules,
 multi MAIN('installdeps', *@modules,
             Bool :$notests,
             Bool :$force = False,
-            Str :$prefix) is export {
+            IO::Path() :$prefix) is export {
     my $panda = Panda.new;
     for @modules -> $x {
         $panda.resolve($x, :$notests, :action<install-deps-only>,

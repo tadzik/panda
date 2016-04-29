@@ -107,16 +107,18 @@ method !check-perl-version(Distribution $bone) {
 #= C<$update>  -- install even if the same version is installed
 #= C<$verbose> -- don't surpress test output
 method resolve-one(Distribution $dist,
+                   IO::Path() :$prefix,
                    Bool() :$notests,
                    Bool() :$force,
                    Bool() :$update,
                    Bool() :$verbose) {
 
     sub test($dir) {
+        my $inc = "inst#{$prefix.absolute}";
         if $verbose {
-            self.test($dir, output => $*OUT)
+            self.test($dir, incdirs => [$inc], output => $*OUT)
         } else {
-            self.test($dir)
+            self.test($dir, incdirs => [$inc])
         }
     }
 
@@ -126,11 +128,18 @@ method resolve-one(Distribution $dist,
     unless $notests {
         self.announce('testing', $dist);
         unless test($tmpdir) or $force {
-            die X::Panda.new($dist.name, 'test');
+            die X::Panda.new($dist.name, 'test', 'FIXME');
         }
     }
+    my $rep = $*REPO;
     self.announce('installing', $dist);
-    self.install($tmpdir, :force($force or $update));
+    {
+        # needed because some of the dependencies needed to precompile
+        # this one may only exist in $prefix
+        my $*REPO = CompUnit::RepositoryRegistry.repository-for-spec(
+                            "inst#{$prefix.absolute}", :next-repo($rep));
+        self.install($tmpdir, $prefix, :force($force or $update));
+    }
     self.announce('success', $dist);
 
     #XXX ADDME
@@ -149,6 +158,7 @@ method resolve-one(Distribution $dist,
 #= C<$update>  -- install even if the same version is installed
 #= C<$verbose> -- don't surpress test output
 method resolve(Str   $name,
+               IO::Path :$prefix,
                Bool :$notests = False,
                Bool :$nodeps  = False,
                Bool :$force   = False,
@@ -156,7 +166,7 @@ method resolve(Str   $name,
                Bool :$verbose = False) {
 
     sub resolve(Distribution $target) {
-        self.resolve-one($target, :$notests, :$force,
+        self.resolve-one($target, :$notests, :$force, :$prefix,
                                   :$verbose, :$update)
     }
 
