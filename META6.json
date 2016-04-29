@@ -8,7 +8,7 @@
         "File::Temp",
         "Getopt::Type",
         "Module::Toolkit",
-        "Shell::Command",
+        "Shell::Command"
     ],
     "source-url"  : "git://github.com/tadzik/panda.git",
     "authors" : [
@@ -61,6 +61,6 @@
     },
     "provides"    : {
         "Panda"             : "lib/Panda.pm",
-        "Panda::Reporter"   : "lib/Panda/Reporter.pm",
+        "Panda::Reporter"   : "lib/Panda/Reporter.pm"
     }
 }
