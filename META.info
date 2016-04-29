@@ -1,9 +1,15 @@
 {
     "name"        : "panda",
-    "version"     : "2016.02",
-    "perl"	  : "6.c",
+    "version"     : "2016.04",
+    "perl"        : "6.c",
     "description" : "A module manager",
-    "depends"     : [ "File::Find", "Shell::Command", "JSON::Fast" ],
+    "depends"     : [
+        "File::Find",
+        "File::Temp",
+        "Getopt::Type",
+        "Module::Toolkit",
+        "Shell::Command",
+    ],
     "source-url"  : "git://github.com/tadzik/panda.git",
     "authors" : [
         "Tadeusz “tadzik” Sośnierz",
@@ -51,19 +57,10 @@
     ],
     "support" : {
         "bugtracker" : "https://github.com/tadzik/panda/issues",
-        "source" : "git://github.com/tadzik/panda.git"
+        "source"     : "git://github.com/tadzik/panda.git"
     },
     "provides"    : {
         "Panda"             : "lib/Panda.pm",
-        "Panda::App"        : "lib/Panda/App.pm",
-        "Panda::Builder"    : "lib/Panda/Builder.pm",
-        "Panda::Bundler"    : "lib/Panda/Bundler.pm",
-        "Panda::Common"     : "lib/Panda/Common.pm",
-        "Panda::Ecosystem"  : "lib/Panda/Ecosystem.pm",
-        "Panda::Fetcher"    : "lib/Panda/Fetcher.pm",
-        "Panda::Installer"  : "lib/Panda/Installer.pm",
-        "Panda::Project"    : "lib/Panda/Project.pm",
         "Panda::Reporter"   : "lib/Panda/Reporter.pm",
-        "Panda::Tester"     : "lib/Panda/Tester.pm"
     }
 }

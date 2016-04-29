@@ -4,7 +4,6 @@ use Module::Toolkit;
 #use Panda::Reporter;
 use Panda::Exceptions;
 use Shell::Command;
-use JSON::Fast;
 use File::Temp;
 
 has $.workdir = $*CWD.child('.panda-work');
