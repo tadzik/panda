@@ -21,8 +21,8 @@ multi MAIN('install', *@modules,
     }
     for @modules -> $x {
         $panda.resolve($x,
-                       :$notests, :$nodeps, :$verbose, :$update,
-                       :action<install>, :$force, :$prefix);
+                       :$notests, :$nodeps, :$verbose,
+                       :$update, :$force, :$prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
 }
@@ -34,7 +34,7 @@ multi MAIN('installdeps', *@modules,
             IO::Path() :$prefix) is export {
     my $panda = Panda.new;
     for @modules -> $x {
-        $panda.resolve($x, :$notests, :action<install-deps-only>,
+        $panda.resolve($x, :$notests, :nodeps
                        :$force, :$prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
@@ -73,7 +73,7 @@ multi MAIN ('smoke', :$exclude = 'panda', Str :$prefix) is export {
         next if $p ~~ any @exclude;
         @exclude.push: $p;
         try {
-            $panda.resolve($p, :action<install>);
+            $panda.resolve($p);
             CATCH {
                 default { }
             }
@@ -82,6 +82,7 @@ multi MAIN ('smoke', :$exclude = 'panda', Str :$prefix) is export {
 }
 
 #| Download and unpack the distribution and then open the directory with your shell.
+#FIXME
 multi MAIN ('look', *@modules, Str :$prefix) is export {
     my $panda = Panda.new;
     for @modules -> $x {
