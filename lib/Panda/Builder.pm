@@ -8,9 +8,7 @@ method build($where, :$bone, :@deps) {
         if "Build.pm".IO.f {
             GLOBAL::<Build>:delete;
             require "$where/Build.pm";
-            if ::('Build').isa(Panda::Builder) {
-                ::('Build').new.build($where);
-            }
+            ::('Build').new.build($where);
         }
     };
     return True;
