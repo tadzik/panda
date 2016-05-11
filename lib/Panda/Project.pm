@@ -1,4 +1,6 @@
 class Panda::Project {
+    use JSON::Fast;
+    
     has $.name;
     has $.version;
     has @.dependencies;
