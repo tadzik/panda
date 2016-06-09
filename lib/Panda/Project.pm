@@ -1,3 +1,5 @@
+use JSON::Fast;
+
 class Panda::Project {
     has $.name;
     has $.version;
