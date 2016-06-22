@@ -143,9 +143,8 @@ Actions:
     look           Downloads and unpacks the listed modules, afterwards going to
                    them with your shell.
 
-'list', 'update', and 'smoke' don't take a list of module names to
-install. 'search' takes a string to search case-insensitively for in the
-database.
+'list', 'update', and 'smoke' don't take a list of module names to install.
+'search' takes a string to search case-insensitively for in the database.
 END_USAGE
 }
 
