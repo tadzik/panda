@@ -4,6 +4,8 @@ use Panda;
 use Panda::Ecosystem;
 use Panda::App;
 
+my $*MAIN-ALLOW-NAMED-ANYWHERE = True;
+
 # default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
     @*ARGS = %*ENV<PANDA_DEFAULT_OPTS> ~ (@*ARGS ?? ' ' ~ @*ARGS !! '');
@@ -97,11 +99,11 @@ sub USAGE {
 Panda -- Perl 6 Module Installer
 
 Usage:
-    panda [options] <action> # OPTIONS GO IN FRONT!! Not like git.
+    panda <action> [options]
 
 Examples:
-    panda --installed list           # List only installed modules
-    panda --force install Foo::Bar   # Reinstall module
+    panda list --installed           # List only installed modules
+    panda install --force Foo::Bar   # Reinstall module
 
 Common options:
     --prefix=/path/to/modules    Place to put modules, executable scripts, etc.
