@@ -126,6 +126,26 @@ class Panda {
                 unless $supported;
         }
     }
+    method uninstall(Panda::Project $bone is copy, :$prefix) {
+        my $bmeta = $bone.metainfo;
+        my $name = $bmeta<name>;
+        my $auth = $bmeta<auth> // $bmeta<author> // $bmeta<authority> // '';
+        my $api = $bmeta<api> // ''; 
+        my $ver = $bmeta<ver> // $bmeta<version> //  '';
+
+        my $id;
+        {
+            use nqp;
+            $id = nqp::sha1("{$name}:ver<{$ver}>:auth<{$auth}>:api<{$api}>");
+        }
+
+        my $curli = CompUnit::RepositoryRegistry.repository-for-name("site");
+        my $dist-file = $curli.prefix.child('dist').child($id) ;
+        my %meta = Rakudo::Internals::JSON.from-json($dist-file.IO.slurp);
+        my $dist = Distribution::Hash.new({ %meta }, :prefix($*CWD) );
+
+        $curli.uninstall($dist);
+    }
 
     method install(Panda::Project $bone is copy, $nodeps, $notests,
                    Bool() $isdep, :$rebuild = True, :$prefix, Bool :$force) {
@@ -232,6 +252,9 @@ class Panda {
         given $action {
             when 'install' {
                 self.install($bone, $nodeps, $notests, 0, :$prefix, :$force);
+            }
+            when 'uninstall' {
+                self.uninstall($bone, :$prefix);
             }
             when 'install-deps-only' { }
             when 'look'    { self.look($bone) };

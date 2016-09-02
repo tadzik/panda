@@ -33,6 +33,15 @@ multi MAIN ('installdeps', *@modules, Bool :$notests, Bool :$force = False, Str 
     }
 }
 
+#| Uninstall the specified modules
+multi MAIN ('uninstall', *@modules, Str :$prefix) {
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
+    for $@modules -> $x {
+        $panda.resolve($x, :action<uninstall>);
+        CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
+    }
+    }
+
 #| List all available modules
 multi MAIN ('list', Bool :$installed, Bool :$verbose, Str :$prefix) {
     my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
