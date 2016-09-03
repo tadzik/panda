@@ -129,6 +129,9 @@ Actions:
                    modules themselves.
         --notests    Don't run tests for the dependencies being installed.
 
+    uninstall      Uninstall the module listed on the command line, leaving
+                   dependencies installed.
+
     list           Lists all the modules available.
         --verbose      Provide verbose output
         --installed    List only installed modules
