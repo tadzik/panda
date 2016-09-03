@@ -135,6 +135,8 @@ class Panda {
 
         my $comp-unit = $*REPO.resolve(CompUnit::DependencySpecification.new(:$short-name, :$ver, :$auth, :$api));
 
+        die "{$short-name} not installed" unless $comp-unit.defined;
+
         $comp-unit.repo.uninstall($comp-unit.distribution);
     }
 
