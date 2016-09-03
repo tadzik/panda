@@ -138,6 +138,10 @@ class Panda {
         die "{$short-name} not installed" unless $comp-unit.defined;
 
         $comp-unit.repo.uninstall($comp-unit.distribution);
+
+        my $s = Panda::Project::State::absent;
+        $.ecosystem.project-set-state($bone, $s);
+
     }
 
     method install(Panda::Project $bone is copy, $nodeps, $notests,
