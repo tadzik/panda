@@ -126,6 +126,23 @@ class Panda {
                 unless $supported;
         }
     }
+    method uninstall(Panda::Project $bone is copy, :$prefix) {
+        my $bmeta = $bone.metainfo;
+        my $short-name = $bmeta<name>;
+        my $ver = $bmeta<ver> // $bmeta<version> //  '';
+        my $auth = $bmeta<auth> // $bmeta<author> // $bmeta<authority> // '';
+        my $api = $bmeta<api> // ''; 
+
+        my $comp-unit = $*REPO.resolve(CompUnit::DependencySpecification.new(:$short-name, :$ver, :$auth, :$api));
+
+        die "{$short-name} not installed" unless $comp-unit.defined;
+
+        $comp-unit.repo.uninstall($comp-unit.distribution);
+
+        my $s = Panda::Project::State::absent;
+        $.ecosystem.project-set-state($bone, $s);
+
+    }
 
     method install(Panda::Project $bone is copy, $nodeps, $notests,
                    Bool() $isdep, :$rebuild = True, :$prefix, Bool :$force) {
@@ -232,6 +249,9 @@ class Panda {
         given $action {
             when 'install' {
                 self.install($bone, $nodeps, $notests, 0, :$prefix, :$force);
+            }
+            when 'uninstall' {
+                self.uninstall($bone, :$prefix);
             }
             when 'install-deps-only' { }
             when 'look'    { self.look($bone) };
