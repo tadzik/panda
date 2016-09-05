@@ -3,7 +3,7 @@
     "version"     : "2016.02",
     "perl"	  : "6.c",
     "description" : "A module manager",
-    "depends"     : [ "File::Find", "Shell::Command", "JSON::Fast" ],
+    "depends"     : [ "File::Find", "Shell::Command", "JSON::Fast", "File::Which" ],
     "source-url"  : "git://github.com/tadzik/panda.git",
     "authors" : [
         "Tadeusz “tadzik” Sośnierz",
