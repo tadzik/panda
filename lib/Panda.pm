@@ -9,6 +9,7 @@ use Panda::Bundler;
 use Panda::Reporter;
 use Shell::Command;
 use JSON::Fast;
+use File::Which :whence;
 
 sub tmpdir {
     state $i = 0;
@@ -169,8 +170,7 @@ class Panda {
             self.announce('testing', $bone);
 
             my %args =();
-            my $has-prove6 = try require TAP::Harness;
-            if $has-prove6.WHICH {
+            if whence('prove6') {
                 if $*DISTRO.name eq 'mswin32' {
                     %args = prove-command => 'prove6.bat';
                 }
