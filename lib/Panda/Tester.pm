@@ -19,7 +19,14 @@ method test($where, :$bone, :$prove-command = $*DISTRO.name eq 'mswin32' ?? 'pro
                 for @deps -> $lib {
                     $libs ~= ' -M' ~ $lib;
                 }
-                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output($prove-command, '-e', "$*EXECUTABLE $libs -Ilib", "--norc", '-r', 't/');
+
+                my @opts = $prove-command, '-e', "$*EXECUTABLE $libs -Ilib", "--norc", '-r', 't/';
+
+                if $prove-command ~~ /prove6/ {
+                    @opts = $prove-command, '-l', 't/';
+                }
+
+                my ( :$output, :$stdout, :$stderr, :$passed ) := run-and-gather-output(@opts);
 
                 if $bone {
                     $bone.test-output = $output;
