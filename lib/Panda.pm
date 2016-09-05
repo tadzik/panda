@@ -167,9 +167,20 @@ class Panda {
         }
         unless $notests {
             self.announce('testing', $bone);
-            my %args = %*ENV<PROVE_COMMAND>
-                ??  prove-command => %*ENV<PROVE_COMMAND>
-                !! ();
+
+            my %args =();
+            my $has-prove6 = try require TAP::Harness;
+            if $has-prove6.WHICH {
+                if $*DISTRO.name eq 'mswin32' {
+                    %args = prove-command => 'prove6.bat';
+                }
+                else {
+                    %args = prove-command => 'prove6';
+                }
+            }
+
+            %args = prove-command => %*ENV<PROVE_COMMAND> if %*ENV<PROVE_COMMAND>;
+
             unless $_ = $.tester.test($dir, :$bone, |%args) {
                 die X::Panda.new($bone.name, 'test', $_, :$bone)
             }
