@@ -82,7 +82,7 @@ sub run-and-gather-output(*@command) is export {
         });
         my $p = $proc.start;
         # workaround for OSX, see RT125758
-        $p.result;
+        sink $p.result;
         $passed = $p.result.exitcode == 0;
     }
     else {
