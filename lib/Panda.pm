@@ -7,6 +7,7 @@ use Panda::Tester;
 use Panda::Installer;
 use Panda::Bundler;
 use Panda::Reporter;
+use Panda::Project;
 use Shell::Command;
 use JSON::Fast;
 use File::Which :whence;
