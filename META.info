@@ -5,6 +5,7 @@
     "description" : "A module manager",
     "depends"     : [ "File::Find", "Shell::Command", "JSON::Fast", "File::Which" ],
     "source-url"  : "git://github.com/tadzik/panda.git",
+    "license"     : "MIT",
     "authors" : [
         "Tadeusz “tadzik” Sośnierz",
         "Ahmad M. Zawawi",
