@@ -2,6 +2,11 @@
 
 Panda is a Perl 6 module manager.
 
+## Deprecation notice
+
+Panda is not maintained and developed anymore; please use
+[zef](https://github.com/ugexe/zef.git) instead.
+
 ## Installation
 
 > Note: the most common way to install panda is via
