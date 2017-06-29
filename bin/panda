@@ -4,7 +4,8 @@ use Panda;
 use Panda::Ecosystem;
 use Panda::App;
 
-my $*MAIN-ALLOW-NAMED-ANYWHERE = True;
+my $*MAIN-ALLOW-NAMED-ANYWHERE  = True; # old way
+%*SUB-MAIN-OPTS<named-anywhere> = True; # new way (since v2017.06.112.g.40.b.0169.d.0)
 
 # default opts for MAIN
 if %*ENV<PANDA_DEFAULT_OPTS> {
